@@ -7,12 +7,12 @@ import (
 	"fmt"
 	"log"
 
-	"dcmbroker/ent/migrate"
+	"iotdor/ent/migrate"
 
-	"dcmbroker/ent/device"
-	"dcmbroker/ent/gateway"
-	"dcmbroker/ent/group"
-	"dcmbroker/ent/user"
+	"iotdor/ent/device"
+	"iotdor/ent/gateway"
+	"iotdor/ent/group"
+	"iotdor/ent/user"
 
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"

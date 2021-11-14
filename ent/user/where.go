@@ -3,7 +3,7 @@
 package user
 
 import (
-	"dcmbroker/ent/predicate"
+	"iotdor/ent/predicate"
 	"time"
 
 	"entgo.io/ent/dialect/sql"

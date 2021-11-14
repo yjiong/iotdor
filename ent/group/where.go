@@ -3,7 +3,7 @@
 package group
 
 import (
-	"dcmbroker/ent/predicate"
+	"iotdor/ent/predicate"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"

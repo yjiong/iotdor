@@ -3,11 +3,11 @@
 package ent
 
 import (
-	"dcmbroker/ent/device"
-	"dcmbroker/ent/gateway"
-	"dcmbroker/ent/group"
-	"dcmbroker/ent/schema"
-	"dcmbroker/ent/user"
+	"iotdor/ent/device"
+	"iotdor/ent/gateway"
+	"iotdor/ent/group"
+	"iotdor/ent/schema"
+	"iotdor/ent/user"
 	"time"
 )
 

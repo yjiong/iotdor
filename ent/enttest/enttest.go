@@ -4,9 +4,9 @@ package enttest
 
 import (
 	"context"
-	"dcmbroker/ent"
+	"iotdor/ent"
 	// required by schema hooks.
-	_ "dcmbroker/ent/runtime"
+	_ "iotdor/ent/runtime"
 
 	"entgo.io/ent/dialect/sql/schema"
 )

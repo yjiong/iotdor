@@ -3,9 +3,9 @@
 package ent
 
 import (
-	"dcmbroker/ent/device"
-	"dcmbroker/ent/gateway"
 	"fmt"
+	"iotdor/ent/device"
+	"iotdor/ent/gateway"
 	"strings"
 	"time"
 

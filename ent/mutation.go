@@ -4,12 +4,12 @@ package ent
 
 import (
 	"context"
-	"dcmbroker/ent/device"
-	"dcmbroker/ent/gateway"
-	"dcmbroker/ent/group"
-	"dcmbroker/ent/predicate"
-	"dcmbroker/ent/user"
 	"fmt"
+	"iotdor/ent/device"
+	"iotdor/ent/gateway"
+	"iotdor/ent/group"
+	"iotdor/ent/predicate"
+	"iotdor/ent/user"
 	"sync"
 	"time"
 

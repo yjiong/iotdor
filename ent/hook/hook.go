@@ -4,8 +4,8 @@ package hook
 
 import (
 	"context"
-	"dcmbroker/ent"
 	"fmt"
+	"iotdor/ent"
 )
 
 // The DeviceFunc type is an adapter to allow the use of ordinary

@@ -4,11 +4,11 @@ package ent
 
 import (
 	"context"
-	"dcmbroker/ent/gateway"
-	"dcmbroker/ent/group"
-	"dcmbroker/ent/user"
 	"errors"
 	"fmt"
+	"iotdor/ent/gateway"
+	"iotdor/ent/group"
+	"iotdor/ent/user"
 	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"

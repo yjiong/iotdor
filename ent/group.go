@@ -3,9 +3,9 @@
 package ent
 
 import (
-	"dcmbroker/ent/group"
-	"dcmbroker/ent/user"
 	"fmt"
+	"iotdor/ent/group"
+	"iotdor/ent/user"
 	"strings"
 
 	"entgo.io/ent/dialect/sql"

@@ -2,7 +2,7 @@ package ent
 
 import (
 	"context"
-	"dcmbroker/ent/migrate"
+	"iotdor/ent/migrate"
 	"testing"
 
 	// postgres driver

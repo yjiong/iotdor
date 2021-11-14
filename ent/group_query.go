@@ -5,11 +5,11 @@ package ent
 import (
 	"context"
 	"database/sql/driver"
-	"dcmbroker/ent/group"
-	"dcmbroker/ent/predicate"
-	"dcmbroker/ent/user"
 	"errors"
 	"fmt"
+	"iotdor/ent/group"
+	"iotdor/ent/predicate"
+	"iotdor/ent/user"
 	"math"
 
 	"entgo.io/ent/dialect/sql"

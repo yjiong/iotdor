@@ -4,9 +4,9 @@ package ent
 
 import (
 	"context"
-	"dcmbroker/ent/gateway"
-	"dcmbroker/ent/predicate"
 	"fmt"
+	"iotdor/ent/gateway"
+	"iotdor/ent/predicate"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"

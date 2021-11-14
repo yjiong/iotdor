@@ -4,11 +4,11 @@ package ent
 
 import (
 	"context"
-	"dcmbroker/ent/device"
-	"dcmbroker/ent/gateway"
-	"dcmbroker/ent/predicate"
 	"errors"
 	"fmt"
+	"iotdor/ent/device"
+	"iotdor/ent/gateway"
+	"iotdor/ent/predicate"
 	"math"
 
 	"entgo.io/ent/dialect/sql"

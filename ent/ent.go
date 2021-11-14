@@ -3,12 +3,12 @@
 package ent
 
 import (
-	"dcmbroker/ent/device"
-	"dcmbroker/ent/gateway"
-	"dcmbroker/ent/group"
-	"dcmbroker/ent/user"
 	"errors"
 	"fmt"
+	"iotdor/ent/device"
+	"iotdor/ent/gateway"
+	"iotdor/ent/group"
+	"iotdor/ent/user"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
