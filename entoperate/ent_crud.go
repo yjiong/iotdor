@@ -2,12 +2,13 @@ package entoperate
 
 import (
 	"context"
-	"dcmbroker/ent"
-	"dcmbroker/ent/device"
-	"dcmbroker/ent/gateway"
-	"dcmbroker/ent/group"
-	"dcmbroker/ent/migrate"
-	"dcmbroker/ent/user"
+
+	"github.com/yjiong/iotdor/ent"
+	"github.com/yjiong/iotdor/ent/device"
+	"github.com/yjiong/iotdor/ent/gateway"
+	"github.com/yjiong/iotdor/ent/group"
+	"github.com/yjiong/iotdor/ent/migrate"
+	"github.com/yjiong/iotdor/ent/user"
 
 	log "github.com/sirupsen/logrus"
 
