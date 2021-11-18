@@ -19,6 +19,7 @@ type Group struct {
 func (Group) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("name").
+			Unique().
 			Match(regexp.MustCompile("[a-zA-Z_]+$")).
 			Validate(func(s string) error {
 				if strings.ToLower(s) == s {

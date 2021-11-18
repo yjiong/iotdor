@@ -66,9 +66,37 @@ func (gu *GatewayUpdate) SetOnline(b bool) *GatewayUpdate {
 	return gu
 }
 
+// SetNillableOnline sets the "online" field if the given value is not nil.
+func (gu *GatewayUpdate) SetNillableOnline(b *bool) *GatewayUpdate {
+	if b != nil {
+		gu.SetOnline(*b)
+	}
+	return gu
+}
+
+// ClearOnline clears the value of the "online" field.
+func (gu *GatewayUpdate) ClearOnline() *GatewayUpdate {
+	gu.mutation.ClearOnline()
+	return gu
+}
+
 // SetIdDelete sets the "idDelete" field.
 func (gu *GatewayUpdate) SetIdDelete(b bool) *GatewayUpdate {
 	gu.mutation.SetIdDelete(b)
+	return gu
+}
+
+// SetNillableIdDelete sets the "idDelete" field if the given value is not nil.
+func (gu *GatewayUpdate) SetNillableIdDelete(b *bool) *GatewayUpdate {
+	if b != nil {
+		gu.SetIdDelete(*b)
+	}
+	return gu
+}
+
+// ClearIdDelete clears the value of the "idDelete" field.
+func (gu *GatewayUpdate) ClearIdDelete() *GatewayUpdate {
+	gu.mutation.ClearIdDelete()
 	return gu
 }
 
@@ -281,10 +309,22 @@ func (gu *GatewayUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: gateway.FieldOnline,
 		})
 	}
+	if gu.mutation.OnlineCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Column: gateway.FieldOnline,
+		})
+	}
 	if value, ok := gu.mutation.IdDelete(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeBool,
 			Value:  value,
+			Column: gateway.FieldIdDelete,
+		})
+	}
+	if gu.mutation.IdDeleteCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
 			Column: gateway.FieldIdDelete,
 		})
 	}
@@ -448,9 +488,37 @@ func (guo *GatewayUpdateOne) SetOnline(b bool) *GatewayUpdateOne {
 	return guo
 }
 
+// SetNillableOnline sets the "online" field if the given value is not nil.
+func (guo *GatewayUpdateOne) SetNillableOnline(b *bool) *GatewayUpdateOne {
+	if b != nil {
+		guo.SetOnline(*b)
+	}
+	return guo
+}
+
+// ClearOnline clears the value of the "online" field.
+func (guo *GatewayUpdateOne) ClearOnline() *GatewayUpdateOne {
+	guo.mutation.ClearOnline()
+	return guo
+}
+
 // SetIdDelete sets the "idDelete" field.
 func (guo *GatewayUpdateOne) SetIdDelete(b bool) *GatewayUpdateOne {
 	guo.mutation.SetIdDelete(b)
+	return guo
+}
+
+// SetNillableIdDelete sets the "idDelete" field if the given value is not nil.
+func (guo *GatewayUpdateOne) SetNillableIdDelete(b *bool) *GatewayUpdateOne {
+	if b != nil {
+		guo.SetIdDelete(*b)
+	}
+	return guo
+}
+
+// ClearIdDelete clears the value of the "idDelete" field.
+func (guo *GatewayUpdateOne) ClearIdDelete() *GatewayUpdateOne {
+	guo.mutation.ClearIdDelete()
 	return guo
 }
 
@@ -687,10 +755,22 @@ func (guo *GatewayUpdateOne) sqlSave(ctx context.Context) (_node *Gateway, err e
 			Column: gateway.FieldOnline,
 		})
 	}
+	if guo.mutation.OnlineCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Column: gateway.FieldOnline,
+		})
+	}
 	if value, ok := guo.mutation.IdDelete(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeBool,
 			Value:  value,
+			Column: gateway.FieldIdDelete,
+		})
+	}
+	if guo.mutation.IdDeleteCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
 			Column: gateway.FieldIdDelete,
 		})
 	}

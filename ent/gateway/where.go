@@ -662,6 +662,20 @@ func OnlineNEQ(v bool) predicate.Gateway {
 	})
 }
 
+// OnlineIsNil applies the IsNil predicate on the "online" field.
+func OnlineIsNil() predicate.Gateway {
+	return predicate.Gateway(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldOnline)))
+	})
+}
+
+// OnlineNotNil applies the NotNil predicate on the "online" field.
+func OnlineNotNil() predicate.Gateway {
+	return predicate.Gateway(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldOnline)))
+	})
+}
+
 // IdDeleteEQ applies the EQ predicate on the "idDelete" field.
 func IdDeleteEQ(v bool) predicate.Gateway {
 	return predicate.Gateway(func(s *sql.Selector) {
@@ -673,6 +687,20 @@ func IdDeleteEQ(v bool) predicate.Gateway {
 func IdDeleteNEQ(v bool) predicate.Gateway {
 	return predicate.Gateway(func(s *sql.Selector) {
 		s.Where(sql.NEQ(s.C(FieldIdDelete), v))
+	})
+}
+
+// IdDeleteIsNil applies the IsNil predicate on the "idDelete" field.
+func IdDeleteIsNil() predicate.Gateway {
+	return predicate.Gateway(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldIdDelete)))
+	})
+}
+
+// IdDeleteNotNil applies the NotNil predicate on the "idDelete" field.
+func IdDeleteNotNil() predicate.Gateway {
+	return predicate.Gateway(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldIdDelete)))
 	})
 }
 

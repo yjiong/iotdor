@@ -21,8 +21,10 @@ func (Gateway) Fields() []ent.Field {
 		field.String("broker"),
 		field.String("installationLocation").
 			Optional(),
-		field.Bool("online"),
-		field.Bool("idDelete"),
+		field.Bool("online").
+			Optional(),
+		field.Bool("idDelete").
+			Optional(),
 		field.Int("upInterval").
 			Default(60),
 	}

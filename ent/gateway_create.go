@@ -82,9 +82,25 @@ func (gc *GatewayCreate) SetOnline(b bool) *GatewayCreate {
 	return gc
 }
 
+// SetNillableOnline sets the "online" field if the given value is not nil.
+func (gc *GatewayCreate) SetNillableOnline(b *bool) *GatewayCreate {
+	if b != nil {
+		gc.SetOnline(*b)
+	}
+	return gc
+}
+
 // SetIdDelete sets the "idDelete" field.
 func (gc *GatewayCreate) SetIdDelete(b bool) *GatewayCreate {
 	gc.mutation.SetIdDelete(b)
+	return gc
+}
+
+// SetNillableIdDelete sets the "idDelete" field if the given value is not nil.
+func (gc *GatewayCreate) SetNillableIdDelete(b *bool) *GatewayCreate {
+	if b != nil {
+		gc.SetIdDelete(*b)
+	}
 	return gc
 }
 
@@ -234,12 +250,6 @@ func (gc *GatewayCreate) check() error {
 	}
 	if _, ok := gc.mutation.Broker(); !ok {
 		return &ValidationError{Name: "broker", err: errors.New(`ent: missing required field "broker"`)}
-	}
-	if _, ok := gc.mutation.Online(); !ok {
-		return &ValidationError{Name: "online", err: errors.New(`ent: missing required field "online"`)}
-	}
-	if _, ok := gc.mutation.IdDelete(); !ok {
-		return &ValidationError{Name: "idDelete", err: errors.New(`ent: missing required field "idDelete"`)}
 	}
 	if _, ok := gc.mutation.UpInterval(); !ok {
 		return &ValidationError{Name: "upInterval", err: errors.New(`ent: missing required field "upInterval"`)}

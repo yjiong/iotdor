@@ -2,12 +2,15 @@ package entoperate
 
 import (
 	"context"
+	"dcmbroker/ent"
+	"dcmbroker/ent/device"
+	"dcmbroker/ent/gateway"
+	"dcmbroker/ent/group"
+	"dcmbroker/ent/migrate"
+	"dcmbroker/ent/user"
+
 	log "github.com/sirupsen/logrus"
-	"github.com/yjiong/iotdor/ent"
-	"github.com/yjiong/iotdor/ent/device"
-	"github.com/yjiong/iotdor/ent/group"
-	"github.com/yjiong/iotdor/ent/migrate"
-	"github.com/yjiong/iotdor/ent/user"
+
 	// postgres driver
 	_ "github.com/lib/pq"
 )
@@ -80,7 +83,57 @@ func delUserByID(ctx context.Context, c *ent.Client, id int) error {
 }
 
 /************************** crud user *********************/
+
+/************************** crud gateway *********************/
+func addGateway(ctx context.Context,
+	c *ent.Client,
+	gwid, broker, installAt string,
+	upInterval int) (*ent.Gateway, error) {
+	return c.Gateway.Create().
+		SetGwid(gwid).
+		SetBroker(broker).
+		SetInstallationLocation(installAt).
+		SetUpInterval(upInterval).
+		Save(ctx)
+}
+
+func queryGateways(ctx context.Context, c *ent.Client) ([]*ent.Gateway, error) {
+	return c.Gateway.Query().All(ctx)
+}
+
+func queryGatewayByGWID(ctx context.Context, c *ent.Client, gwid string) (*ent.Gateway, error) {
+	return c.Gateway.Query().Where(gateway.Gwid(gwid)).Only(ctx)
+}
+
+func delGatewayByGWID(ctx context.Context, c *ent.Client, gwid string) error {
+	_, err := c.Gateway.Delete().Where((gateway.Gwid(gwid))).
+		Exec(ctx)
+	return err
+}
+
+func setBelong(ctx context.Context, gw *ent.Gateway, u *ent.User) error {
+	_, err := gw.Update().SetBelong(u).Save(ctx)
+	//_, err := c.Gateway.UpdateOneID(gw.ID).SetBelong(u).Save(ctx)
+	return err
+}
+
+/************************** crud gateway *********************/
+
 /************************** crud device *********************/
+func addDevice(ctx context.Context,
+	c *ent.Client,
+	did, dtype, daddr, conn, name string,
+	gw *ent.Gateway,
+	isDelete bool) (*ent.Device, error) {
+	return c.Device.Create().
+		SetDevID(did).
+		SetDevType(dtype).
+		SetDevAddr(daddr).
+		SetName(name).
+		SetGateway(gw).
+		Save(ctx)
+}
+
 func queryDevices(ctx context.Context, c *ent.Client) ([]*ent.Device, error) {
 	return c.Device.Query().All(ctx)
 }

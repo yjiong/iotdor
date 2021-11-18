@@ -50,8 +50,8 @@ var (
 		{Name: "gwid", Type: field.TypeString, Unique: true},
 		{Name: "broker", Type: field.TypeString},
 		{Name: "installation_location", Type: field.TypeString, Nullable: true},
-		{Name: "online", Type: field.TypeBool},
-		{Name: "id_delete", Type: field.TypeBool},
+		{Name: "online", Type: field.TypeBool, Nullable: true},
+		{Name: "id_delete", Type: field.TypeBool, Nullable: true},
 		{Name: "up_interval", Type: field.TypeInt, Default: 60},
 		{Name: "user_gateways", Type: field.TypeInt, Nullable: true},
 	}
@@ -79,7 +79,7 @@ var (
 	// GroupsColumns holds the columns for the "groups" table.
 	GroupsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "name", Type: field.TypeString},
+		{Name: "name", Type: field.TypeString, Unique: true},
 		{Name: "group_admin", Type: field.TypeInt, Nullable: true},
 	}
 	// GroupsTable holds the schema information for the "groups" table.

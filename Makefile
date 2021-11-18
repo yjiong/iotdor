@@ -23,11 +23,11 @@ ifeq ("$(GOARCH)", "arm64")
 	ENV = CC=aarch64-linux-gnu-gcc CXX=aarch64-linux-gnu-g++ CGO_ENABLED=1 GOOS=linux
 endif
 
-build:swagger FORCE
+build:
 	@echo "Compiling source for ENV=$(ENV) GOOS=$(GOOS) GOARCH=$(GOARCH) BUILDTAGS=$(BUILDTAGS)"
 	@echo $(FLAGS)
 	@mkdir -p build
-	@env $(ENV) go build $(FLAGS) -o ./build/$(PROJECT) ./cmd/lchj212/main.go
+	@env $(ENV) go build $(FLAGS) -o ./build/$(PROJECT) ./cmd/${PROJECT}/main.go
 
 swagger:
 	@swag init -g api/http_server.go -o api/docs

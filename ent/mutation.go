@@ -1121,9 +1121,22 @@ func (m *GatewayMutation) OldOnline(ctx context.Context) (v bool, err error) {
 	return oldValue.Online, nil
 }
 
+// ClearOnline clears the value of the "online" field.
+func (m *GatewayMutation) ClearOnline() {
+	m.online = nil
+	m.clearedFields[gateway.FieldOnline] = struct{}{}
+}
+
+// OnlineCleared returns if the "online" field was cleared in this mutation.
+func (m *GatewayMutation) OnlineCleared() bool {
+	_, ok := m.clearedFields[gateway.FieldOnline]
+	return ok
+}
+
 // ResetOnline resets all changes to the "online" field.
 func (m *GatewayMutation) ResetOnline() {
 	m.online = nil
+	delete(m.clearedFields, gateway.FieldOnline)
 }
 
 // SetIdDelete sets the "idDelete" field.
@@ -1157,9 +1170,22 @@ func (m *GatewayMutation) OldIdDelete(ctx context.Context) (v bool, err error) {
 	return oldValue.IdDelete, nil
 }
 
+// ClearIdDelete clears the value of the "idDelete" field.
+func (m *GatewayMutation) ClearIdDelete() {
+	m.idDelete = nil
+	m.clearedFields[gateway.FieldIdDelete] = struct{}{}
+}
+
+// IdDeleteCleared returns if the "idDelete" field was cleared in this mutation.
+func (m *GatewayMutation) IdDeleteCleared() bool {
+	_, ok := m.clearedFields[gateway.FieldIdDelete]
+	return ok
+}
+
 // ResetIdDelete resets all changes to the "idDelete" field.
 func (m *GatewayMutation) ResetIdDelete() {
 	m.idDelete = nil
+	delete(m.clearedFields, gateway.FieldIdDelete)
 }
 
 // SetUpInterval sets the "upInterval" field.
@@ -1517,6 +1543,12 @@ func (m *GatewayMutation) ClearedFields() []string {
 	if m.FieldCleared(gateway.FieldInstallationLocation) {
 		fields = append(fields, gateway.FieldInstallationLocation)
 	}
+	if m.FieldCleared(gateway.FieldOnline) {
+		fields = append(fields, gateway.FieldOnline)
+	}
+	if m.FieldCleared(gateway.FieldIdDelete) {
+		fields = append(fields, gateway.FieldIdDelete)
+	}
 	return fields
 }
 
@@ -1533,6 +1565,12 @@ func (m *GatewayMutation) ClearField(name string) error {
 	switch name {
 	case gateway.FieldInstallationLocation:
 		m.ClearInstallationLocation()
+		return nil
+	case gateway.FieldOnline:
+		m.ClearOnline()
+		return nil
+	case gateway.FieldIdDelete:
+		m.ClearIdDelete()
 		return nil
 	}
 	return fmt.Errorf("unknown Gateway nullable field %s", name)
