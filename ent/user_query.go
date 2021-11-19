@@ -7,7 +7,6 @@ import (
 	"database/sql/driver"
 	"errors"
 	"fmt"
-	"iotdor/ent/gateway"
 	"iotdor/ent/group"
 	"iotdor/ent/predicate"
 	"iotdor/ent/user"
@@ -28,9 +27,8 @@ type UserQuery struct {
 	fields     []string
 	predicates []predicate.User
 	// eager-loading edges.
-	withGateways *GatewayQuery
-	withGroups   *GroupQuery
-	withManage   *GroupQuery
+	withGroups *GroupQuery
+	withManage *GroupQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -65,28 +63,6 @@ func (uq *UserQuery) Unique(unique bool) *UserQuery {
 func (uq *UserQuery) Order(o ...OrderFunc) *UserQuery {
 	uq.order = append(uq.order, o...)
 	return uq
-}
-
-// QueryGateways chains the current query on the "gateways" edge.
-func (uq *UserQuery) QueryGateways() *GatewayQuery {
-	query := &GatewayQuery{config: uq.config}
-	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
-		if err := uq.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		selector := uq.sqlQuery(ctx)
-		if err := selector.Err(); err != nil {
-			return nil, err
-		}
-		step := sqlgraph.NewStep(
-			sqlgraph.From(user.Table, user.FieldID, selector),
-			sqlgraph.To(gateway.Table, gateway.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, user.GatewaysTable, user.GatewaysColumn),
-		)
-		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
-		return fromU, nil
-	}
-	return query
 }
 
 // QueryGroups chains the current query on the "groups" edge.
@@ -309,29 +285,17 @@ func (uq *UserQuery) Clone() *UserQuery {
 		return nil
 	}
 	return &UserQuery{
-		config:       uq.config,
-		limit:        uq.limit,
-		offset:       uq.offset,
-		order:        append([]OrderFunc{}, uq.order...),
-		predicates:   append([]predicate.User{}, uq.predicates...),
-		withGateways: uq.withGateways.Clone(),
-		withGroups:   uq.withGroups.Clone(),
-		withManage:   uq.withManage.Clone(),
+		config:     uq.config,
+		limit:      uq.limit,
+		offset:     uq.offset,
+		order:      append([]OrderFunc{}, uq.order...),
+		predicates: append([]predicate.User{}, uq.predicates...),
+		withGroups: uq.withGroups.Clone(),
+		withManage: uq.withManage.Clone(),
 		// clone intermediate query.
 		sql:  uq.sql.Clone(),
 		path: uq.path,
 	}
-}
-
-// WithGateways tells the query-builder to eager-load the nodes that are connected to
-// the "gateways" edge. The optional arguments are used to configure the query builder of the edge.
-func (uq *UserQuery) WithGateways(opts ...func(*GatewayQuery)) *UserQuery {
-	query := &GatewayQuery{config: uq.config}
-	for _, opt := range opts {
-		opt(query)
-	}
-	uq.withGateways = query
-	return uq
 }
 
 // WithGroups tells the query-builder to eager-load the nodes that are connected to
@@ -421,8 +385,7 @@ func (uq *UserQuery) sqlAll(ctx context.Context) ([]*User, error) {
 	var (
 		nodes       = []*User{}
 		_spec       = uq.querySpec()
-		loadedTypes = [3]bool{
-			uq.withGateways != nil,
+		loadedTypes = [2]bool{
 			uq.withGroups != nil,
 			uq.withManage != nil,
 		}
@@ -445,35 +408,6 @@ func (uq *UserQuery) sqlAll(ctx context.Context) ([]*User, error) {
 	}
 	if len(nodes) == 0 {
 		return nodes, nil
-	}
-
-	if query := uq.withGateways; query != nil {
-		fks := make([]driver.Value, 0, len(nodes))
-		nodeids := make(map[int]*User)
-		for i := range nodes {
-			fks = append(fks, nodes[i].ID)
-			nodeids[nodes[i].ID] = nodes[i]
-			nodes[i].Edges.Gateways = []*Gateway{}
-		}
-		query.withFKs = true
-		query.Where(predicate.Gateway(func(s *sql.Selector) {
-			s.Where(sql.InValues(user.GatewaysColumn, fks...))
-		}))
-		neighbors, err := query.All(ctx)
-		if err != nil {
-			return nil, err
-		}
-		for _, n := range neighbors {
-			fk := n.user_gateways
-			if fk == nil {
-				return nil, fmt.Errorf(`foreign-key "user_gateways" is nil for node %v`, n.ID)
-			}
-			node, ok := nodeids[*fk]
-			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "user_gateways" returned %v for node %v`, *fk, n.ID)
-			}
-			node.Edges.Gateways = append(node.Edges.Gateways, n)
-		}
 	}
 
 	if query := uq.withGroups; query != nil {

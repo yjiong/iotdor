@@ -25,10 +25,10 @@ var logLevel int
 //var gorillaWS *api.WSClient
 
 var rootCmd = &cobra.Command{
-	Use:   "lchj212",
-	Short: "LanChuang Hj212 data collectien device project",
+	Use:   "iotdor",
+	Short: "LanChuang iotdor data collectien device project",
 	Long: `	> documentation & support: http://www.xxx.com/
-	> source & copyright information: https://github.com/yjiong/fkhj212`,
+	> source & copyright information: https://github.com/yjiong/fkiotdor`,
 	RunE: run,
 }
 

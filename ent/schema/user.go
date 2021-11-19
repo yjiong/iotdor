@@ -20,13 +20,14 @@ func (User) Fields() []ent.Field {
 		field.String("name"),
 		field.String("passwd").
 			Sensitive(),
+		field.String("phone").
+			Optional(),
 	}
 }
 
 // Edges of the User.
 func (User) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.To("gateways", Gateway.Type),
 		edge.From("groups", Group.Type).
 			Ref("users"),
 		edge.From("manage", Group.Type).

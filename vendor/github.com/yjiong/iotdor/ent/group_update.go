@@ -5,6 +5,7 @@ package ent
 import (
 	"context"
 	"fmt"
+	"iotdor/ent/gateway"
 	"iotdor/ent/group"
 	"iotdor/ent/predicate"
 	"iotdor/ent/user"
@@ -67,6 +68,21 @@ func (gu *GroupUpdate) SetAdmin(u *User) *GroupUpdate {
 	return gu.SetAdminID(u.ID)
 }
 
+// AddGatewayIDs adds the "gateways" edge to the Gateway entity by IDs.
+func (gu *GroupUpdate) AddGatewayIDs(ids ...int) *GroupUpdate {
+	gu.mutation.AddGatewayIDs(ids...)
+	return gu
+}
+
+// AddGateways adds the "gateways" edges to the Gateway entity.
+func (gu *GroupUpdate) AddGateways(g ...*Gateway) *GroupUpdate {
+	ids := make([]int, len(g))
+	for i := range g {
+		ids[i] = g[i].ID
+	}
+	return gu.AddGatewayIDs(ids...)
+}
+
 // Mutation returns the GroupMutation object of the builder.
 func (gu *GroupUpdate) Mutation() *GroupMutation {
 	return gu.mutation
@@ -97,6 +113,27 @@ func (gu *GroupUpdate) RemoveUsers(u ...*User) *GroupUpdate {
 func (gu *GroupUpdate) ClearAdmin() *GroupUpdate {
 	gu.mutation.ClearAdmin()
 	return gu
+}
+
+// ClearGateways clears all "gateways" edges to the Gateway entity.
+func (gu *GroupUpdate) ClearGateways() *GroupUpdate {
+	gu.mutation.ClearGateways()
+	return gu
+}
+
+// RemoveGatewayIDs removes the "gateways" edge to Gateway entities by IDs.
+func (gu *GroupUpdate) RemoveGatewayIDs(ids ...int) *GroupUpdate {
+	gu.mutation.RemoveGatewayIDs(ids...)
+	return gu
+}
+
+// RemoveGateways removes "gateways" edges to Gateway entities.
+func (gu *GroupUpdate) RemoveGateways(g ...*Gateway) *GroupUpdate {
+	ids := make([]int, len(g))
+	for i := range g {
+		ids[i] = g[i].ID
+	}
+	return gu.RemoveGatewayIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -283,6 +320,60 @@ func (gu *GroupUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if gu.mutation.GatewaysCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   group.GatewaysTable,
+			Columns: []string{group.GatewaysColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: gateway.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := gu.mutation.RemovedGatewaysIDs(); len(nodes) > 0 && !gu.mutation.GatewaysCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   group.GatewaysTable,
+			Columns: []string{group.GatewaysColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: gateway.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := gu.mutation.GatewaysIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   group.GatewaysTable,
+			Columns: []string{group.GatewaysColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: gateway.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, gu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{group.Label}
@@ -342,6 +433,21 @@ func (guo *GroupUpdateOne) SetAdmin(u *User) *GroupUpdateOne {
 	return guo.SetAdminID(u.ID)
 }
 
+// AddGatewayIDs adds the "gateways" edge to the Gateway entity by IDs.
+func (guo *GroupUpdateOne) AddGatewayIDs(ids ...int) *GroupUpdateOne {
+	guo.mutation.AddGatewayIDs(ids...)
+	return guo
+}
+
+// AddGateways adds the "gateways" edges to the Gateway entity.
+func (guo *GroupUpdateOne) AddGateways(g ...*Gateway) *GroupUpdateOne {
+	ids := make([]int, len(g))
+	for i := range g {
+		ids[i] = g[i].ID
+	}
+	return guo.AddGatewayIDs(ids...)
+}
+
 // Mutation returns the GroupMutation object of the builder.
 func (guo *GroupUpdateOne) Mutation() *GroupMutation {
 	return guo.mutation
@@ -372,6 +478,27 @@ func (guo *GroupUpdateOne) RemoveUsers(u ...*User) *GroupUpdateOne {
 func (guo *GroupUpdateOne) ClearAdmin() *GroupUpdateOne {
 	guo.mutation.ClearAdmin()
 	return guo
+}
+
+// ClearGateways clears all "gateways" edges to the Gateway entity.
+func (guo *GroupUpdateOne) ClearGateways() *GroupUpdateOne {
+	guo.mutation.ClearGateways()
+	return guo
+}
+
+// RemoveGatewayIDs removes the "gateways" edge to Gateway entities by IDs.
+func (guo *GroupUpdateOne) RemoveGatewayIDs(ids ...int) *GroupUpdateOne {
+	guo.mutation.RemoveGatewayIDs(ids...)
+	return guo
+}
+
+// RemoveGateways removes "gateways" edges to Gateway entities.
+func (guo *GroupUpdateOne) RemoveGateways(g ...*Gateway) *GroupUpdateOne {
+	ids := make([]int, len(g))
+	for i := range g {
+		ids[i] = g[i].ID
+	}
+	return guo.RemoveGatewayIDs(ids...)
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
@@ -574,6 +701,60 @@ func (guo *GroupUpdateOne) sqlSave(ctx context.Context) (_node *Group, err error
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: user.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if guo.mutation.GatewaysCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   group.GatewaysTable,
+			Columns: []string{group.GatewaysColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: gateway.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := guo.mutation.RemovedGatewaysIDs(); len(nodes) > 0 && !guo.mutation.GatewaysCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   group.GatewaysTable,
+			Columns: []string{group.GatewaysColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: gateway.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := guo.mutation.GatewaysIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   group.GatewaysTable,
+			Columns: []string{group.GatewaysColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: gateway.FieldID,
 				},
 			},
 		}

@@ -46,7 +46,7 @@ func init() {
 	// gateway.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
 	gateway.UpdateDefaultUpdateTime = gatewayDescUpdateTime.UpdateDefault.(func() time.Time)
 	// gatewayDescUpInterval is the schema descriptor for upInterval field.
-	gatewayDescUpInterval := gatewayFields[5].Descriptor()
+	gatewayDescUpInterval := gatewayFields[6].Descriptor()
 	// gateway.DefaultUpInterval holds the default value on creation for the upInterval field.
 	gateway.DefaultUpInterval = gatewayDescUpInterval.Default.(int)
 	groupFields := schema.Group{}.Fields()

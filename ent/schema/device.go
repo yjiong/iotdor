@@ -16,13 +16,15 @@ type Device struct {
 // Fields of the Device.
 func (Device) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("devID"),
+		field.String("devID").
+			Unique(),
 		field.String("devType"),
 		field.String("devAddr"),
 		field.String("conn"),
 		field.String("name").
 			Optional(),
-		field.Bool("idDelete"),
+		field.Bool("idDelete").
+			Optional(),
 	}
 }
 

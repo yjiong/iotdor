@@ -9,8 +9,8 @@ import (
 	"fmt"
 	"iotdor/ent/device"
 	"iotdor/ent/gateway"
+	"iotdor/ent/group"
 	"iotdor/ent/predicate"
-	"iotdor/ent/user"
 	"math"
 
 	"entgo.io/ent/dialect/sql"
@@ -29,7 +29,7 @@ type GatewayQuery struct {
 	predicates []predicate.Gateway
 	// eager-loading edges.
 	withDevices *DeviceQuery
-	withBelong  *UserQuery
+	withGroup   *GroupQuery
 	withFKs     bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -89,9 +89,9 @@ func (gq *GatewayQuery) QueryDevices() *DeviceQuery {
 	return query
 }
 
-// QueryBelong chains the current query on the "belong" edge.
-func (gq *GatewayQuery) QueryBelong() *UserQuery {
-	query := &UserQuery{config: gq.config}
+// QueryGroup chains the current query on the "group" edge.
+func (gq *GatewayQuery) QueryGroup() *GroupQuery {
+	query := &GroupQuery{config: gq.config}
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := gq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -102,8 +102,8 @@ func (gq *GatewayQuery) QueryBelong() *UserQuery {
 		}
 		step := sqlgraph.NewStep(
 			sqlgraph.From(gateway.Table, gateway.FieldID, selector),
-			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, gateway.BelongTable, gateway.BelongColumn),
+			sqlgraph.To(group.Table, group.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, gateway.GroupTable, gateway.GroupColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(gq.driver.Dialect(), step)
 		return fromU, nil
@@ -293,7 +293,7 @@ func (gq *GatewayQuery) Clone() *GatewayQuery {
 		order:       append([]OrderFunc{}, gq.order...),
 		predicates:  append([]predicate.Gateway{}, gq.predicates...),
 		withDevices: gq.withDevices.Clone(),
-		withBelong:  gq.withBelong.Clone(),
+		withGroup:   gq.withGroup.Clone(),
 		// clone intermediate query.
 		sql:  gq.sql.Clone(),
 		path: gq.path,
@@ -311,14 +311,14 @@ func (gq *GatewayQuery) WithDevices(opts ...func(*DeviceQuery)) *GatewayQuery {
 	return gq
 }
 
-// WithBelong tells the query-builder to eager-load the nodes that are connected to
-// the "belong" edge. The optional arguments are used to configure the query builder of the edge.
-func (gq *GatewayQuery) WithBelong(opts ...func(*UserQuery)) *GatewayQuery {
-	query := &UserQuery{config: gq.config}
+// WithGroup tells the query-builder to eager-load the nodes that are connected to
+// the "group" edge. The optional arguments are used to configure the query builder of the edge.
+func (gq *GatewayQuery) WithGroup(opts ...func(*GroupQuery)) *GatewayQuery {
+	query := &GroupQuery{config: gq.config}
 	for _, opt := range opts {
 		opt(query)
 	}
-	gq.withBelong = query
+	gq.withGroup = query
 	return gq
 }
 
@@ -390,10 +390,10 @@ func (gq *GatewayQuery) sqlAll(ctx context.Context) ([]*Gateway, error) {
 		_spec       = gq.querySpec()
 		loadedTypes = [2]bool{
 			gq.withDevices != nil,
-			gq.withBelong != nil,
+			gq.withGroup != nil,
 		}
 	)
-	if gq.withBelong != nil {
+	if gq.withGroup != nil {
 		withFKs = true
 	}
 	if withFKs {
@@ -448,20 +448,20 @@ func (gq *GatewayQuery) sqlAll(ctx context.Context) ([]*Gateway, error) {
 		}
 	}
 
-	if query := gq.withBelong; query != nil {
+	if query := gq.withGroup; query != nil {
 		ids := make([]int, 0, len(nodes))
 		nodeids := make(map[int][]*Gateway)
 		for i := range nodes {
-			if nodes[i].user_gateways == nil {
+			if nodes[i].group_gateways == nil {
 				continue
 			}
-			fk := *nodes[i].user_gateways
+			fk := *nodes[i].group_gateways
 			if _, ok := nodeids[fk]; !ok {
 				ids = append(ids, fk)
 			}
 			nodeids[fk] = append(nodeids[fk], nodes[i])
 		}
-		query.Where(user.IDIn(ids...))
+		query.Where(group.IDIn(ids...))
 		neighbors, err := query.All(ctx)
 		if err != nil {
 			return nil, err
@@ -469,10 +469,10 @@ func (gq *GatewayQuery) sqlAll(ctx context.Context) ([]*Gateway, error) {
 		for _, n := range neighbors {
 			nodes, ok := nodeids[n.ID]
 			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "user_gateways" returned %v`, n.ID)
+				return nil, fmt.Errorf(`unexpected foreign-key "group_gateways" returned %v`, n.ID)
 			}
 			for i := range nodes {
-				nodes[i].Edges.Belong = n
+				nodes[i].Edges.Group = n
 			}
 		}
 	}

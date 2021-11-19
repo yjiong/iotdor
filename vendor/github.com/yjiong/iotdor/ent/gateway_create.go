@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"iotdor/ent/device"
 	"iotdor/ent/gateway"
-	"iotdor/ent/user"
+	"iotdor/ent/group"
 	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -53,6 +53,12 @@ func (gc *GatewayCreate) SetNillableUpdateTime(t *time.Time) *GatewayCreate {
 // SetGwid sets the "gwid" field.
 func (gc *GatewayCreate) SetGwid(s string) *GatewayCreate {
 	gc.mutation.SetGwid(s)
+	return gc
+}
+
+// SetSvrid sets the "svrid" field.
+func (gc *GatewayCreate) SetSvrid(s string) *GatewayCreate {
+	gc.mutation.SetSvrid(s)
 	return gc
 }
 
@@ -133,23 +139,23 @@ func (gc *GatewayCreate) AddDevices(d ...*Device) *GatewayCreate {
 	return gc.AddDeviceIDs(ids...)
 }
 
-// SetBelongID sets the "belong" edge to the User entity by ID.
-func (gc *GatewayCreate) SetBelongID(id int) *GatewayCreate {
-	gc.mutation.SetBelongID(id)
+// SetGroupID sets the "group" edge to the Group entity by ID.
+func (gc *GatewayCreate) SetGroupID(id int) *GatewayCreate {
+	gc.mutation.SetGroupID(id)
 	return gc
 }
 
-// SetNillableBelongID sets the "belong" edge to the User entity by ID if the given value is not nil.
-func (gc *GatewayCreate) SetNillableBelongID(id *int) *GatewayCreate {
+// SetNillableGroupID sets the "group" edge to the Group entity by ID if the given value is not nil.
+func (gc *GatewayCreate) SetNillableGroupID(id *int) *GatewayCreate {
 	if id != nil {
-		gc = gc.SetBelongID(*id)
+		gc = gc.SetGroupID(*id)
 	}
 	return gc
 }
 
-// SetBelong sets the "belong" edge to the User entity.
-func (gc *GatewayCreate) SetBelong(u *User) *GatewayCreate {
-	return gc.SetBelongID(u.ID)
+// SetGroup sets the "group" edge to the Group entity.
+func (gc *GatewayCreate) SetGroup(g *Group) *GatewayCreate {
+	return gc.SetGroupID(g.ID)
 }
 
 // Mutation returns the GatewayMutation object of the builder.
@@ -248,6 +254,9 @@ func (gc *GatewayCreate) check() error {
 	if _, ok := gc.mutation.Gwid(); !ok {
 		return &ValidationError{Name: "gwid", err: errors.New(`ent: missing required field "gwid"`)}
 	}
+	if _, ok := gc.mutation.Svrid(); !ok {
+		return &ValidationError{Name: "svrid", err: errors.New(`ent: missing required field "svrid"`)}
+	}
 	if _, ok := gc.mutation.Broker(); !ok {
 		return &ValidationError{Name: "broker", err: errors.New(`ent: missing required field "broker"`)}
 	}
@@ -304,6 +313,14 @@ func (gc *GatewayCreate) createSpec() (*Gateway, *sqlgraph.CreateSpec) {
 			Column: gateway.FieldGwid,
 		})
 		_node.Gwid = value
+	}
+	if value, ok := gc.mutation.Svrid(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: gateway.FieldSvrid,
+		})
+		_node.Svrid = value
 	}
 	if value, ok := gc.mutation.Broker(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -364,24 +381,24 @@ func (gc *GatewayCreate) createSpec() (*Gateway, *sqlgraph.CreateSpec) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := gc.mutation.BelongIDs(); len(nodes) > 0 {
+	if nodes := gc.mutation.GroupIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   gateway.BelongTable,
-			Columns: []string{gateway.BelongColumn},
+			Table:   gateway.GroupTable,
+			Columns: []string{gateway.GroupColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: user.FieldID,
+					Column: group.FieldID,
 				},
 			},
 		}
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.user_gateways = &nodes[0]
+		_node.group_gateways = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

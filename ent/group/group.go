@@ -13,6 +13,8 @@ const (
 	EdgeUsers = "users"
 	// EdgeAdmin holds the string denoting the admin edge name in mutations.
 	EdgeAdmin = "admin"
+	// EdgeGateways holds the string denoting the gateways edge name in mutations.
+	EdgeGateways = "gateways"
 	// Table holds the table name of the group in the database.
 	Table = "groups"
 	// UsersTable is the table that holds the users relation/edge. The primary key declared below.
@@ -27,6 +29,13 @@ const (
 	AdminInverseTable = "users"
 	// AdminColumn is the table column denoting the admin relation/edge.
 	AdminColumn = "group_admin"
+	// GatewaysTable is the table that holds the gateways relation/edge.
+	GatewaysTable = "gateways"
+	// GatewaysInverseTable is the table name for the Gateway entity.
+	// It exists in this package in order to avoid circular dependency with the "gateway" package.
+	GatewaysInverseTable = "gateways"
+	// GatewaysColumn is the table column denoting the gateways relation/edge.
+	GatewaysColumn = "group_gateways"
 )
 
 // Columns holds all SQL columns for group fields.

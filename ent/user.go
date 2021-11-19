@@ -24,6 +24,8 @@ type User struct {
 	Name string `json:"name,omitempty"`
 	// Passwd holds the value of the "passwd" field.
 	Passwd string `json:"-"`
+	// Phone holds the value of the "phone" field.
+	Phone string `json:"phone,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UserQuery when eager-loading is set.
 	Edges UserEdges `json:"edges"`
@@ -31,30 +33,19 @@ type User struct {
 
 // UserEdges holds the relations/edges for other nodes in the graph.
 type UserEdges struct {
-	// Gateways holds the value of the gateways edge.
-	Gateways []*Gateway `json:"gateways,omitempty"`
 	// Groups holds the value of the groups edge.
 	Groups []*Group `json:"groups,omitempty"`
 	// Manage holds the value of the manage edge.
 	Manage []*Group `json:"manage,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [3]bool
-}
-
-// GatewaysOrErr returns the Gateways value or an error if the edge
-// was not loaded in eager-loading.
-func (e UserEdges) GatewaysOrErr() ([]*Gateway, error) {
-	if e.loadedTypes[0] {
-		return e.Gateways, nil
-	}
-	return nil, &NotLoadedError{edge: "gateways"}
+	loadedTypes [2]bool
 }
 
 // GroupsOrErr returns the Groups value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) GroupsOrErr() ([]*Group, error) {
-	if e.loadedTypes[1] {
+	if e.loadedTypes[0] {
 		return e.Groups, nil
 	}
 	return nil, &NotLoadedError{edge: "groups"}
@@ -63,7 +54,7 @@ func (e UserEdges) GroupsOrErr() ([]*Group, error) {
 // ManageOrErr returns the Manage value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) ManageOrErr() ([]*Group, error) {
-	if e.loadedTypes[2] {
+	if e.loadedTypes[1] {
 		return e.Manage, nil
 	}
 	return nil, &NotLoadedError{edge: "manage"}
@@ -76,7 +67,7 @@ func (*User) scanValues(columns []string) ([]interface{}, error) {
 		switch columns[i] {
 		case user.FieldID:
 			values[i] = new(sql.NullInt64)
-		case user.FieldName, user.FieldPasswd:
+		case user.FieldName, user.FieldPasswd, user.FieldPhone:
 			values[i] = new(sql.NullString)
 		case user.FieldCreateTime, user.FieldUpdateTime:
 			values[i] = new(sql.NullTime)
@@ -125,14 +116,15 @@ func (u *User) assignValues(columns []string, values []interface{}) error {
 			} else if value.Valid {
 				u.Passwd = value.String
 			}
+		case user.FieldPhone:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field phone", values[i])
+			} else if value.Valid {
+				u.Phone = value.String
+			}
 		}
 	}
 	return nil
-}
-
-// QueryGateways queries the "gateways" edge of the User entity.
-func (u *User) QueryGateways() *GatewayQuery {
-	return (&UserClient{config: u.config}).QueryGateways(u)
 }
 
 // QueryGroups queries the "groups" edge of the User entity.
@@ -175,6 +167,8 @@ func (u *User) String() string {
 	builder.WriteString(", name=")
 	builder.WriteString(u.Name)
 	builder.WriteString(", passwd=<sensitive>")
+	builder.WriteString(", phone=")
+	builder.WriteString(u.Phone)
 	builder.WriteByte(')')
 	return builder.String()
 }

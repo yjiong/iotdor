@@ -17,6 +17,8 @@ const (
 	FieldUpdateTime = "update_time"
 	// FieldGwid holds the string denoting the gwid field in the database.
 	FieldGwid = "gwid"
+	// FieldSvrid holds the string denoting the svrid field in the database.
+	FieldSvrid = "svrid"
 	// FieldBroker holds the string denoting the broker field in the database.
 	FieldBroker = "broker"
 	// FieldInstallationLocation holds the string denoting the installationlocation field in the database.
@@ -29,8 +31,8 @@ const (
 	FieldUpInterval = "up_interval"
 	// EdgeDevices holds the string denoting the devices edge name in mutations.
 	EdgeDevices = "devices"
-	// EdgeBelong holds the string denoting the belong edge name in mutations.
-	EdgeBelong = "belong"
+	// EdgeGroup holds the string denoting the group edge name in mutations.
+	EdgeGroup = "group"
 	// Table holds the table name of the gateway in the database.
 	Table = "gateways"
 	// DevicesTable is the table that holds the devices relation/edge.
@@ -40,13 +42,13 @@ const (
 	DevicesInverseTable = "devices"
 	// DevicesColumn is the table column denoting the devices relation/edge.
 	DevicesColumn = "gateway_devices"
-	// BelongTable is the table that holds the belong relation/edge.
-	BelongTable = "gateways"
-	// BelongInverseTable is the table name for the User entity.
-	// It exists in this package in order to avoid circular dependency with the "user" package.
-	BelongInverseTable = "users"
-	// BelongColumn is the table column denoting the belong relation/edge.
-	BelongColumn = "user_gateways"
+	// GroupTable is the table that holds the group relation/edge.
+	GroupTable = "gateways"
+	// GroupInverseTable is the table name for the Group entity.
+	// It exists in this package in order to avoid circular dependency with the "group" package.
+	GroupInverseTable = "groups"
+	// GroupColumn is the table column denoting the group relation/edge.
+	GroupColumn = "group_gateways"
 )
 
 // Columns holds all SQL columns for gateway fields.
@@ -55,6 +57,7 @@ var Columns = []string{
 	FieldCreateTime,
 	FieldUpdateTime,
 	FieldGwid,
+	FieldSvrid,
 	FieldBroker,
 	FieldInstallationLocation,
 	FieldOnline,
@@ -65,7 +68,7 @@ var Columns = []string{
 // ForeignKeys holds the SQL foreign-keys that are owned by the "gateways"
 // table and are not defined as standalone fields in the schema.
 var ForeignKeys = []string{
-	"user_gateways",
+	"group_gateways",
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).

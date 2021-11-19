@@ -266,6 +266,34 @@ func HasAdminWith(preds ...predicate.User) predicate.Group {
 	})
 }
 
+// HasGateways applies the HasEdge predicate on the "gateways" edge.
+func HasGateways() predicate.Group {
+	return predicate.Group(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(GatewaysTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, GatewaysTable, GatewaysColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasGatewaysWith applies the HasEdge predicate on the "gateways" edge with a given conditions (other predicates).
+func HasGatewaysWith(preds ...predicate.Gateway) predicate.Group {
+	return predicate.Group(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(GatewaysInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, GatewaysTable, GatewaysColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.Group) predicate.Group {
 	return predicate.Group(func(s *sql.Selector) {

@@ -13,12 +13,12 @@ var (
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime},
-		{Name: "dev_id", Type: field.TypeString},
+		{Name: "dev_id", Type: field.TypeString, Unique: true},
 		{Name: "dev_type", Type: field.TypeString},
 		{Name: "dev_addr", Type: field.TypeString},
 		{Name: "conn", Type: field.TypeString},
 		{Name: "name", Type: field.TypeString, Nullable: true},
-		{Name: "id_delete", Type: field.TypeBool},
+		{Name: "id_delete", Type: field.TypeBool, Nullable: true},
 		{Name: "gateway_devices", Type: field.TypeInt, Nullable: true},
 	}
 	// DevicesTable holds the schema information for the "devices" table.
@@ -48,12 +48,13 @@ var (
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime},
 		{Name: "gwid", Type: field.TypeString, Unique: true},
+		{Name: "svrid", Type: field.TypeString},
 		{Name: "broker", Type: field.TypeString},
 		{Name: "installation_location", Type: field.TypeString, Nullable: true},
 		{Name: "online", Type: field.TypeBool, Nullable: true},
 		{Name: "id_delete", Type: field.TypeBool, Nullable: true},
 		{Name: "up_interval", Type: field.TypeInt, Default: 60},
-		{Name: "user_gateways", Type: field.TypeInt, Nullable: true},
+		{Name: "group_gateways", Type: field.TypeInt, Nullable: true},
 	}
 	// GatewaysTable holds the schema information for the "gateways" table.
 	GatewaysTable = &schema.Table{
@@ -62,9 +63,9 @@ var (
 		PrimaryKey: []*schema.Column{GatewaysColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "gateways_users_gateways",
-				Columns:    []*schema.Column{GatewaysColumns[9]},
-				RefColumns: []*schema.Column{UsersColumns[0]},
+				Symbol:     "gateways_groups_gateways",
+				Columns:    []*schema.Column{GatewaysColumns[10]},
+				RefColumns: []*schema.Column{GroupsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 		},
@@ -103,6 +104,7 @@ var (
 		{Name: "update_time", Type: field.TypeTime},
 		{Name: "name", Type: field.TypeString},
 		{Name: "passwd", Type: field.TypeString},
+		{Name: "phone", Type: field.TypeString, Nullable: true},
 	}
 	// UsersTable holds the schema information for the "users" table.
 	UsersTable = &schema.Table{
@@ -147,7 +149,7 @@ var (
 
 func init() {
 	DevicesTable.ForeignKeys[0].RefTable = GatewaysTable
-	GatewaysTable.ForeignKeys[0].RefTable = UsersTable
+	GatewaysTable.ForeignKeys[0].RefTable = GroupsTable
 	GroupsTable.ForeignKeys[0].RefTable = UsersTable
 	GroupUsersTable.ForeignKeys[0].RefTable = GroupsTable
 	GroupUsersTable.ForeignKeys[1].RefTable = UsersTable

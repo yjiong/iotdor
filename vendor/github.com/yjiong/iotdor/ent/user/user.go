@@ -19,21 +19,14 @@ const (
 	FieldName = "name"
 	// FieldPasswd holds the string denoting the passwd field in the database.
 	FieldPasswd = "passwd"
-	// EdgeGateways holds the string denoting the gateways edge name in mutations.
-	EdgeGateways = "gateways"
+	// FieldPhone holds the string denoting the phone field in the database.
+	FieldPhone = "phone"
 	// EdgeGroups holds the string denoting the groups edge name in mutations.
 	EdgeGroups = "groups"
 	// EdgeManage holds the string denoting the manage edge name in mutations.
 	EdgeManage = "manage"
 	// Table holds the table name of the user in the database.
 	Table = "users"
-	// GatewaysTable is the table that holds the gateways relation/edge.
-	GatewaysTable = "gateways"
-	// GatewaysInverseTable is the table name for the Gateway entity.
-	// It exists in this package in order to avoid circular dependency with the "gateway" package.
-	GatewaysInverseTable = "gateways"
-	// GatewaysColumn is the table column denoting the gateways relation/edge.
-	GatewaysColumn = "user_gateways"
 	// GroupsTable is the table that holds the groups relation/edge. The primary key declared below.
 	GroupsTable = "group_users"
 	// GroupsInverseTable is the table name for the Group entity.
@@ -55,6 +48,7 @@ var Columns = []string{
 	FieldUpdateTime,
 	FieldName,
 	FieldPasswd,
+	FieldPhone,
 }
 
 var (

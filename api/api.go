@@ -236,7 +236,7 @@ var wus = &webui{
 	path:    "static",
 }
 
-var jwts = []byte("HJ212-yjiong@msn.com")
+var jwts = []byte("iotdor-yjiong@msn.com")
 
 // TUser ...
 type TUser struct {

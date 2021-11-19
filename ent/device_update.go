@@ -77,6 +77,20 @@ func (du *DeviceUpdate) SetIdDelete(b bool) *DeviceUpdate {
 	return du
 }
 
+// SetNillableIdDelete sets the "idDelete" field if the given value is not nil.
+func (du *DeviceUpdate) SetNillableIdDelete(b *bool) *DeviceUpdate {
+	if b != nil {
+		du.SetIdDelete(*b)
+	}
+	return du
+}
+
+// ClearIdDelete clears the value of the "idDelete" field.
+func (du *DeviceUpdate) ClearIdDelete() *DeviceUpdate {
+	du.mutation.ClearIdDelete()
+	return du
+}
+
 // SetGatewayID sets the "gateway" edge to the Gateway entity by ID.
 func (du *DeviceUpdate) SetGatewayID(id int) *DeviceUpdate {
 	du.mutation.SetGatewayID(id)
@@ -243,6 +257,12 @@ func (du *DeviceUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: device.FieldIdDelete,
 		})
 	}
+	if du.mutation.IdDeleteCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Column: device.FieldIdDelete,
+		})
+	}
 	if du.mutation.GatewayCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -344,6 +364,20 @@ func (duo *DeviceUpdateOne) ClearName() *DeviceUpdateOne {
 // SetIdDelete sets the "idDelete" field.
 func (duo *DeviceUpdateOne) SetIdDelete(b bool) *DeviceUpdateOne {
 	duo.mutation.SetIdDelete(b)
+	return duo
+}
+
+// SetNillableIdDelete sets the "idDelete" field if the given value is not nil.
+func (duo *DeviceUpdateOne) SetNillableIdDelete(b *bool) *DeviceUpdateOne {
+	if b != nil {
+		duo.SetIdDelete(*b)
+	}
+	return duo
+}
+
+// ClearIdDelete clears the value of the "idDelete" field.
+func (duo *DeviceUpdateOne) ClearIdDelete() *DeviceUpdateOne {
+	duo.mutation.ClearIdDelete()
 	return duo
 }
 
@@ -534,6 +568,12 @@ func (duo *DeviceUpdateOne) sqlSave(ctx context.Context) (_node *Device, err err
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeBool,
 			Value:  value,
+			Column: device.FieldIdDelete,
+		})
+	}
+	if duo.mutation.IdDeleteCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
 			Column: device.FieldIdDelete,
 		})
 	}

@@ -93,6 +93,14 @@ func (dc *DeviceCreate) SetIdDelete(b bool) *DeviceCreate {
 	return dc
 }
 
+// SetNillableIdDelete sets the "idDelete" field if the given value is not nil.
+func (dc *DeviceCreate) SetNillableIdDelete(b *bool) *DeviceCreate {
+	if b != nil {
+		dc.SetIdDelete(*b)
+	}
+	return dc
+}
+
 // SetGatewayID sets the "gateway" edge to the Gateway entity by ID.
 func (dc *DeviceCreate) SetGatewayID(id int) *DeviceCreate {
 	dc.mutation.SetGatewayID(id)
@@ -212,9 +220,6 @@ func (dc *DeviceCreate) check() error {
 	}
 	if _, ok := dc.mutation.Conn(); !ok {
 		return &ValidationError{Name: "conn", err: errors.New(`ent: missing required field "conn"`)}
-	}
-	if _, ok := dc.mutation.IdDelete(); !ok {
-		return &ValidationError{Name: "idDelete", err: errors.New(`ent: missing required field "idDelete"`)}
 	}
 	return nil
 }

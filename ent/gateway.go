@@ -5,7 +5,7 @@ package ent
 import (
 	"fmt"
 	"iotdor/ent/gateway"
-	"iotdor/ent/user"
+	"iotdor/ent/group"
 	"strings"
 	"time"
 
@@ -23,6 +23,8 @@ type Gateway struct {
 	UpdateTime time.Time `json:"update_time,omitempty"`
 	// Gwid holds the value of the "gwid" field.
 	Gwid string `json:"gwid,omitempty"`
+	// Svrid holds the value of the "svrid" field.
+	Svrid string `json:"svrid,omitempty"`
 	// Broker holds the value of the "broker" field.
 	Broker string `json:"broker,omitempty"`
 	// InstallationLocation holds the value of the "installationLocation" field.
@@ -35,16 +37,16 @@ type Gateway struct {
 	UpInterval int `json:"upInterval,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the GatewayQuery when eager-loading is set.
-	Edges         GatewayEdges `json:"edges"`
-	user_gateways *int
+	Edges          GatewayEdges `json:"edges"`
+	group_gateways *int
 }
 
 // GatewayEdges holds the relations/edges for other nodes in the graph.
 type GatewayEdges struct {
 	// Devices holds the value of the devices edge.
 	Devices []*Device `json:"devices,omitempty"`
-	// Belong holds the value of the belong edge.
-	Belong *User `json:"belong,omitempty"`
+	// Group holds the value of the group edge.
+	Group *Group `json:"group,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [2]bool
@@ -59,18 +61,18 @@ func (e GatewayEdges) DevicesOrErr() ([]*Device, error) {
 	return nil, &NotLoadedError{edge: "devices"}
 }
 
-// BelongOrErr returns the Belong value or an error if the edge
+// GroupOrErr returns the Group value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
-func (e GatewayEdges) BelongOrErr() (*User, error) {
+func (e GatewayEdges) GroupOrErr() (*Group, error) {
 	if e.loadedTypes[1] {
-		if e.Belong == nil {
-			// The edge belong was loaded in eager-loading,
+		if e.Group == nil {
+			// The edge group was loaded in eager-loading,
 			// but was not found.
-			return nil, &NotFoundError{label: user.Label}
+			return nil, &NotFoundError{label: group.Label}
 		}
-		return e.Belong, nil
+		return e.Group, nil
 	}
-	return nil, &NotLoadedError{edge: "belong"}
+	return nil, &NotLoadedError{edge: "group"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -82,11 +84,11 @@ func (*Gateway) scanValues(columns []string) ([]interface{}, error) {
 			values[i] = new(sql.NullBool)
 		case gateway.FieldID, gateway.FieldUpInterval:
 			values[i] = new(sql.NullInt64)
-		case gateway.FieldGwid, gateway.FieldBroker, gateway.FieldInstallationLocation:
+		case gateway.FieldGwid, gateway.FieldSvrid, gateway.FieldBroker, gateway.FieldInstallationLocation:
 			values[i] = new(sql.NullString)
 		case gateway.FieldCreateTime, gateway.FieldUpdateTime:
 			values[i] = new(sql.NullTime)
-		case gateway.ForeignKeys[0]: // user_gateways
+		case gateway.ForeignKeys[0]: // group_gateways
 			values[i] = new(sql.NullInt64)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type Gateway", columns[i])
@@ -127,6 +129,12 @@ func (ga *Gateway) assignValues(columns []string, values []interface{}) error {
 			} else if value.Valid {
 				ga.Gwid = value.String
 			}
+		case gateway.FieldSvrid:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field svrid", values[i])
+			} else if value.Valid {
+				ga.Svrid = value.String
+			}
 		case gateway.FieldBroker:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field broker", values[i])
@@ -159,10 +167,10 @@ func (ga *Gateway) assignValues(columns []string, values []interface{}) error {
 			}
 		case gateway.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for edge-field user_gateways", value)
+				return fmt.Errorf("unexpected type %T for edge-field group_gateways", value)
 			} else if value.Valid {
-				ga.user_gateways = new(int)
-				*ga.user_gateways = int(value.Int64)
+				ga.group_gateways = new(int)
+				*ga.group_gateways = int(value.Int64)
 			}
 		}
 	}
@@ -174,9 +182,9 @@ func (ga *Gateway) QueryDevices() *DeviceQuery {
 	return (&GatewayClient{config: ga.config}).QueryDevices(ga)
 }
 
-// QueryBelong queries the "belong" edge of the Gateway entity.
-func (ga *Gateway) QueryBelong() *UserQuery {
-	return (&GatewayClient{config: ga.config}).QueryBelong(ga)
+// QueryGroup queries the "group" edge of the Gateway entity.
+func (ga *Gateway) QueryGroup() *GroupQuery {
+	return (&GatewayClient{config: ga.config}).QueryGroup(ga)
 }
 
 // Update returns a builder for updating this Gateway.
@@ -208,6 +216,8 @@ func (ga *Gateway) String() string {
 	builder.WriteString(ga.UpdateTime.Format(time.ANSIC))
 	builder.WriteString(", gwid=")
 	builder.WriteString(ga.Gwid)
+	builder.WriteString(", svrid=")
+	builder.WriteString(ga.Svrid)
 	builder.WriteString(", broker=")
 	builder.WriteString(ga.Broker)
 	builder.WriteString(", installationLocation=")

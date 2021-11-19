@@ -18,6 +18,7 @@ func (Gateway) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("gwid").
 			Unique(),
+		field.String("svrid"),
 		field.String("broker"),
 		field.String("installationLocation").
 			Optional(),
@@ -34,7 +35,7 @@ func (Gateway) Fields() []ent.Field {
 func (Gateway) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("devices", Device.Type),
-		edge.From("belong", User.Type).
+		edge.From("group", Group.Type).
 			Ref("gateways").
 			Unique(),
 	}

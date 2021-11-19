@@ -30,9 +30,11 @@ type GroupEdges struct {
 	Users []*User `json:"users,omitempty"`
 	// Admin holds the value of the admin edge.
 	Admin *User `json:"admin,omitempty"`
+	// Gateways holds the value of the gateways edge.
+	Gateways []*Gateway `json:"gateways,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [2]bool
+	loadedTypes [3]bool
 }
 
 // UsersOrErr returns the Users value or an error if the edge
@@ -56,6 +58,15 @@ func (e GroupEdges) AdminOrErr() (*User, error) {
 		return e.Admin, nil
 	}
 	return nil, &NotLoadedError{edge: "admin"}
+}
+
+// GatewaysOrErr returns the Gateways value or an error if the edge
+// was not loaded in eager-loading.
+func (e GroupEdges) GatewaysOrErr() ([]*Gateway, error) {
+	if e.loadedTypes[2] {
+		return e.Gateways, nil
+	}
+	return nil, &NotLoadedError{edge: "gateways"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -116,6 +127,11 @@ func (gr *Group) QueryUsers() *UserQuery {
 // QueryAdmin queries the "admin" edge of the Group entity.
 func (gr *Group) QueryAdmin() *UserQuery {
 	return (&GroupClient{config: gr.config}).QueryAdmin(gr)
+}
+
+// QueryGateways queries the "gateways" edge of the Group entity.
+func (gr *Group) QueryGateways() *GatewayQuery {
+	return (&GroupClient{config: gr.config}).QueryGateways(gr)
 }
 
 // Update returns a builder for updating this Group.

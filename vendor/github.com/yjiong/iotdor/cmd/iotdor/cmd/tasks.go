@@ -15,10 +15,10 @@ import (
 var extendYml embed.FS
 
 func setLogLevel() error {
-	fp := filepath.Join(BASEPATH, "log/hj212.log-%Y%m%d")
+	fp := filepath.Join(BASEPATH, "log/iotdor.log-%Y%m%d")
 	fw, err := rotatelogs.New(
 		fp,
-		rotatelogs.WithLinkName(filepath.Join(BASEPATH, "log/hj212.log")),
+		rotatelogs.WithLinkName(filepath.Join(BASEPATH, "log/iotdor.log")),
 		//rotatelogs.WithMaxAge(time.Hour*24*7),
 		rotatelogs.WithRotationTime(time.Hour*24),
 		rotatelogs.WithRotationSize(50*1024*1024),

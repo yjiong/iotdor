@@ -884,6 +884,20 @@ func IdDeleteNEQ(v bool) predicate.Device {
 	})
 }
 
+// IdDeleteIsNil applies the IsNil predicate on the "idDelete" field.
+func IdDeleteIsNil() predicate.Device {
+	return predicate.Device(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldIdDelete)))
+	})
+}
+
+// IdDeleteNotNil applies the NotNil predicate on the "idDelete" field.
+func IdDeleteNotNil() predicate.Device {
+	return predicate.Device(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldIdDelete)))
+	})
+}
+
 // HasGateway applies the HasEdge predicate on the "gateway" edge.
 func HasGateway() predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {

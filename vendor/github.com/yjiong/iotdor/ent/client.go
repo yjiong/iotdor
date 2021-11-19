@@ -350,15 +350,15 @@ func (c *GatewayClient) QueryDevices(ga *Gateway) *DeviceQuery {
 	return query
 }
 
-// QueryBelong queries the belong edge of a Gateway.
-func (c *GatewayClient) QueryBelong(ga *Gateway) *UserQuery {
-	query := &UserQuery{config: c.config}
+// QueryGroup queries the group edge of a Gateway.
+func (c *GatewayClient) QueryGroup(ga *Gateway) *GroupQuery {
+	query := &GroupQuery{config: c.config}
 	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
 		id := ga.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(gateway.Table, gateway.FieldID, id),
-			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, gateway.BelongTable, gateway.BelongColumn),
+			sqlgraph.To(group.Table, group.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, gateway.GroupTable, gateway.GroupColumn),
 		)
 		fromV = sqlgraph.Neighbors(ga.driver.Dialect(), step)
 		return fromV, nil
@@ -488,6 +488,22 @@ func (c *GroupClient) QueryAdmin(gr *Group) *UserQuery {
 	return query
 }
 
+// QueryGateways queries the gateways edge of a Group.
+func (c *GroupClient) QueryGateways(gr *Group) *GatewayQuery {
+	query := &GatewayQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := gr.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(group.Table, group.FieldID, id),
+			sqlgraph.To(gateway.Table, gateway.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, group.GatewaysTable, group.GatewaysColumn),
+		)
+		fromV = sqlgraph.Neighbors(gr.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *GroupClient) Hooks() []Hook {
 	return c.hooks.Group
@@ -576,22 +592,6 @@ func (c *UserClient) GetX(ctx context.Context, id int) *User {
 		panic(err)
 	}
 	return obj
-}
-
-// QueryGateways queries the gateways edge of a User.
-func (c *UserClient) QueryGateways(u *User) *GatewayQuery {
-	query := &GatewayQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
-		id := u.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(user.Table, user.FieldID, id),
-			sqlgraph.To(gateway.Table, gateway.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, user.GatewaysTable, user.GatewaysColumn),
-		)
-		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
 }
 
 // QueryGroups queries the groups edge of a User.

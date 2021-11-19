@@ -88,10 +88,11 @@ func delUserByID(ctx context.Context, c *ent.Client, id int) error {
 /************************** crud gateway *********************/
 func addGateway(ctx context.Context,
 	c *ent.Client,
-	gwid, broker, installAt string,
+	gwid, svrid, broker, installAt string,
 	upInterval int) (*ent.Gateway, error) {
 	return c.Gateway.Create().
 		SetGwid(gwid).
+		SetSvrid(svrid).
 		SetBroker(broker).
 		SetInstallationLocation(installAt).
 		SetUpInterval(upInterval).
@@ -112,9 +113,9 @@ func delGatewayByGWID(ctx context.Context, c *ent.Client, gwid string) error {
 	return err
 }
 
-func setBelong(ctx context.Context, gw *ent.Gateway, u *ent.User) error {
-	_, err := gw.Update().SetBelong(u).Save(ctx)
-	//_, err := c.Gateway.UpdateOneID(gw.ID).SetBelong(u).Save(ctx)
+func setGwGroup(ctx context.Context, gw *ent.Gateway, g *ent.Group) error {
+	_, err := gw.Update().SetGroup(g).Save(ctx)
+	//_, err := c.Gateway.UpdateOneID(gw.ID).SetGroup(g).Save(ctx)
 	return err
 }
 
@@ -130,6 +131,7 @@ func addDevice(ctx context.Context,
 		SetDevID(did).
 		SetDevType(dtype).
 		SetDevAddr(daddr).
+		SetConn(conn).
 		SetName(name).
 		SetGateway(gw).
 		Save(ctx)
@@ -139,8 +141,22 @@ func queryDevices(ctx context.Context, c *ent.Client) ([]*ent.Device, error) {
 	return c.Device.Query().All(ctx)
 }
 
-func queryDeviceByID(ctx context.Context, c *ent.Client, devid string) (*ent.Device, error) {
+func queryDeviceByDevID(ctx context.Context, c *ent.Client, devid string) (*ent.Device, error) {
 	return c.Device.Query().Where(device.DevID(devid)).Only(ctx)
+}
+
+func updateDevice(ctx context.Context, d *ent.Device,
+	did, dtype, daddr, conn, name string,
+	gw *ent.Gateway,
+	isDelete bool) error {
+	return d.Update().
+		SetDevID(did).
+		SetDevType(dtype).
+		SetDevAddr(daddr).
+		SetConn(conn).
+		SetName(name).
+		SetGateway(gw).
+		Exec(ctx)
 }
 
 func delDeviceByID(ctx context.Context, c *ent.Client, id int) error {

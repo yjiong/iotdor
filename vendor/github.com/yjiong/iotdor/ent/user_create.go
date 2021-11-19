@@ -6,7 +6,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"iotdor/ent/gateway"
 	"iotdor/ent/group"
 	"iotdor/ent/user"
 	"time"
@@ -62,19 +61,18 @@ func (uc *UserCreate) SetPasswd(s string) *UserCreate {
 	return uc
 }
 
-// AddGatewayIDs adds the "gateways" edge to the Gateway entity by IDs.
-func (uc *UserCreate) AddGatewayIDs(ids ...int) *UserCreate {
-	uc.mutation.AddGatewayIDs(ids...)
+// SetPhone sets the "phone" field.
+func (uc *UserCreate) SetPhone(s string) *UserCreate {
+	uc.mutation.SetPhone(s)
 	return uc
 }
 
-// AddGateways adds the "gateways" edges to the Gateway entity.
-func (uc *UserCreate) AddGateways(g ...*Gateway) *UserCreate {
-	ids := make([]int, len(g))
-	for i := range g {
-		ids[i] = g[i].ID
+// SetNillablePhone sets the "phone" field if the given value is not nil.
+func (uc *UserCreate) SetNillablePhone(s *string) *UserCreate {
+	if s != nil {
+		uc.SetPhone(*s)
 	}
-	return uc.AddGatewayIDs(ids...)
+	return uc
 }
 
 // AddGroupIDs adds the "groups" edge to the Group entity by IDs.
@@ -261,24 +259,13 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		})
 		_node.Passwd = value
 	}
-	if nodes := uc.mutation.GatewaysIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   user.GatewaysTable,
-			Columns: []string{user.GatewaysColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: gateway.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges = append(_spec.Edges, edge)
+	if value, ok := uc.mutation.Phone(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: user.FieldPhone,
+		})
+		_node.Phone = value
 	}
 	if nodes := uc.mutation.GroupsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

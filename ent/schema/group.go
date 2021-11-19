@@ -36,5 +36,6 @@ func (Group) Edges() []ent.Edge {
 		edge.To("users", User.Type),
 		edge.To("admin", User.Type).
 			Unique(),
+		edge.To("gateways", Gateway.Type),
 	}
 }

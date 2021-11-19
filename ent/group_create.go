@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"iotdor/ent/gateway"
 	"iotdor/ent/group"
 	"iotdor/ent/user"
 
@@ -58,6 +59,21 @@ func (gc *GroupCreate) SetNillableAdminID(id *int) *GroupCreate {
 // SetAdmin sets the "admin" edge to the User entity.
 func (gc *GroupCreate) SetAdmin(u *User) *GroupCreate {
 	return gc.SetAdminID(u.ID)
+}
+
+// AddGatewayIDs adds the "gateways" edge to the Gateway entity by IDs.
+func (gc *GroupCreate) AddGatewayIDs(ids ...int) *GroupCreate {
+	gc.mutation.AddGatewayIDs(ids...)
+	return gc
+}
+
+// AddGateways adds the "gateways" edges to the Gateway entity.
+func (gc *GroupCreate) AddGateways(g ...*Gateway) *GroupCreate {
+	ids := make([]int, len(g))
+	for i := range g {
+		ids[i] = g[i].ID
+	}
+	return gc.AddGatewayIDs(ids...)
 }
 
 // Mutation returns the GroupMutation object of the builder.
@@ -210,6 +226,25 @@ func (gc *GroupCreate) createSpec() (*Group, *sqlgraph.CreateSpec) {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_node.group_admin = &nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := gc.mutation.GatewaysIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   group.GatewaysTable,
+			Columns: []string{group.GatewaysColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: gateway.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

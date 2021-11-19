@@ -5,7 +5,6 @@ package ent
 import (
 	"context"
 	"fmt"
-	"iotdor/ent/gateway"
 	"iotdor/ent/group"
 	"iotdor/ent/predicate"
 	"iotdor/ent/user"
@@ -40,19 +39,24 @@ func (uu *UserUpdate) SetPasswd(s string) *UserUpdate {
 	return uu
 }
 
-// AddGatewayIDs adds the "gateways" edge to the Gateway entity by IDs.
-func (uu *UserUpdate) AddGatewayIDs(ids ...int) *UserUpdate {
-	uu.mutation.AddGatewayIDs(ids...)
+// SetPhone sets the "phone" field.
+func (uu *UserUpdate) SetPhone(s string) *UserUpdate {
+	uu.mutation.SetPhone(s)
 	return uu
 }
 
-// AddGateways adds the "gateways" edges to the Gateway entity.
-func (uu *UserUpdate) AddGateways(g ...*Gateway) *UserUpdate {
-	ids := make([]int, len(g))
-	for i := range g {
-		ids[i] = g[i].ID
+// SetNillablePhone sets the "phone" field if the given value is not nil.
+func (uu *UserUpdate) SetNillablePhone(s *string) *UserUpdate {
+	if s != nil {
+		uu.SetPhone(*s)
 	}
-	return uu.AddGatewayIDs(ids...)
+	return uu
+}
+
+// ClearPhone clears the value of the "phone" field.
+func (uu *UserUpdate) ClearPhone() *UserUpdate {
+	uu.mutation.ClearPhone()
+	return uu
 }
 
 // AddGroupIDs adds the "groups" edge to the Group entity by IDs.
@@ -88,27 +92,6 @@ func (uu *UserUpdate) AddManage(g ...*Group) *UserUpdate {
 // Mutation returns the UserMutation object of the builder.
 func (uu *UserUpdate) Mutation() *UserMutation {
 	return uu.mutation
-}
-
-// ClearGateways clears all "gateways" edges to the Gateway entity.
-func (uu *UserUpdate) ClearGateways() *UserUpdate {
-	uu.mutation.ClearGateways()
-	return uu
-}
-
-// RemoveGatewayIDs removes the "gateways" edge to Gateway entities by IDs.
-func (uu *UserUpdate) RemoveGatewayIDs(ids ...int) *UserUpdate {
-	uu.mutation.RemoveGatewayIDs(ids...)
-	return uu
-}
-
-// RemoveGateways removes "gateways" edges to Gateway entities.
-func (uu *UserUpdate) RemoveGateways(g ...*Gateway) *UserUpdate {
-	ids := make([]int, len(g))
-	for i := range g {
-		ids[i] = g[i].ID
-	}
-	return uu.RemoveGatewayIDs(ids...)
 }
 
 // ClearGroups clears all "groups" edges to the Group entity.
@@ -255,59 +238,18 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: user.FieldPasswd,
 		})
 	}
-	if uu.mutation.GatewaysCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   user.GatewaysTable,
-			Columns: []string{user.GatewaysColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: gateway.FieldID,
-				},
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	if value, ok := uu.mutation.Phone(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: user.FieldPhone,
+		})
 	}
-	if nodes := uu.mutation.RemovedGatewaysIDs(); len(nodes) > 0 && !uu.mutation.GatewaysCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   user.GatewaysTable,
-			Columns: []string{user.GatewaysColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: gateway.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := uu.mutation.GatewaysIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   user.GatewaysTable,
-			Columns: []string{user.GatewaysColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: gateway.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	if uu.mutation.PhoneCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: user.FieldPhone,
+		})
 	}
 	if uu.mutation.GroupsCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -448,19 +390,24 @@ func (uuo *UserUpdateOne) SetPasswd(s string) *UserUpdateOne {
 	return uuo
 }
 
-// AddGatewayIDs adds the "gateways" edge to the Gateway entity by IDs.
-func (uuo *UserUpdateOne) AddGatewayIDs(ids ...int) *UserUpdateOne {
-	uuo.mutation.AddGatewayIDs(ids...)
+// SetPhone sets the "phone" field.
+func (uuo *UserUpdateOne) SetPhone(s string) *UserUpdateOne {
+	uuo.mutation.SetPhone(s)
 	return uuo
 }
 
-// AddGateways adds the "gateways" edges to the Gateway entity.
-func (uuo *UserUpdateOne) AddGateways(g ...*Gateway) *UserUpdateOne {
-	ids := make([]int, len(g))
-	for i := range g {
-		ids[i] = g[i].ID
+// SetNillablePhone sets the "phone" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillablePhone(s *string) *UserUpdateOne {
+	if s != nil {
+		uuo.SetPhone(*s)
 	}
-	return uuo.AddGatewayIDs(ids...)
+	return uuo
+}
+
+// ClearPhone clears the value of the "phone" field.
+func (uuo *UserUpdateOne) ClearPhone() *UserUpdateOne {
+	uuo.mutation.ClearPhone()
+	return uuo
 }
 
 // AddGroupIDs adds the "groups" edge to the Group entity by IDs.
@@ -496,27 +443,6 @@ func (uuo *UserUpdateOne) AddManage(g ...*Group) *UserUpdateOne {
 // Mutation returns the UserMutation object of the builder.
 func (uuo *UserUpdateOne) Mutation() *UserMutation {
 	return uuo.mutation
-}
-
-// ClearGateways clears all "gateways" edges to the Gateway entity.
-func (uuo *UserUpdateOne) ClearGateways() *UserUpdateOne {
-	uuo.mutation.ClearGateways()
-	return uuo
-}
-
-// RemoveGatewayIDs removes the "gateways" edge to Gateway entities by IDs.
-func (uuo *UserUpdateOne) RemoveGatewayIDs(ids ...int) *UserUpdateOne {
-	uuo.mutation.RemoveGatewayIDs(ids...)
-	return uuo
-}
-
-// RemoveGateways removes "gateways" edges to Gateway entities.
-func (uuo *UserUpdateOne) RemoveGateways(g ...*Gateway) *UserUpdateOne {
-	ids := make([]int, len(g))
-	for i := range g {
-		ids[i] = g[i].ID
-	}
-	return uuo.RemoveGatewayIDs(ids...)
 }
 
 // ClearGroups clears all "groups" edges to the Group entity.
@@ -687,59 +613,18 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Column: user.FieldPasswd,
 		})
 	}
-	if uuo.mutation.GatewaysCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   user.GatewaysTable,
-			Columns: []string{user.GatewaysColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: gateway.FieldID,
-				},
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	if value, ok := uuo.mutation.Phone(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: user.FieldPhone,
+		})
 	}
-	if nodes := uuo.mutation.RemovedGatewaysIDs(); len(nodes) > 0 && !uuo.mutation.GatewaysCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   user.GatewaysTable,
-			Columns: []string{user.GatewaysColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: gateway.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := uuo.mutation.GatewaysIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   user.GatewaysTable,
-			Columns: []string{user.GatewaysColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: gateway.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	if uuo.mutation.PhoneCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: user.FieldPhone,
+		})
 	}
 	if uuo.mutation.GroupsCleared() {
 		edge := &sqlgraph.EdgeSpec{

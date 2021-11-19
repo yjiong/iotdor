@@ -7,8 +7,8 @@ import (
 	"fmt"
 	"iotdor/ent/device"
 	"iotdor/ent/gateway"
+	"iotdor/ent/group"
 	"iotdor/ent/predicate"
-	"iotdor/ent/user"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -31,6 +31,12 @@ func (gu *GatewayUpdate) Where(ps ...predicate.Gateway) *GatewayUpdate {
 // SetGwid sets the "gwid" field.
 func (gu *GatewayUpdate) SetGwid(s string) *GatewayUpdate {
 	gu.mutation.SetGwid(s)
+	return gu
+}
+
+// SetSvrid sets the "svrid" field.
+func (gu *GatewayUpdate) SetSvrid(s string) *GatewayUpdate {
+	gu.mutation.SetSvrid(s)
 	return gu
 }
 
@@ -136,23 +142,23 @@ func (gu *GatewayUpdate) AddDevices(d ...*Device) *GatewayUpdate {
 	return gu.AddDeviceIDs(ids...)
 }
 
-// SetBelongID sets the "belong" edge to the User entity by ID.
-func (gu *GatewayUpdate) SetBelongID(id int) *GatewayUpdate {
-	gu.mutation.SetBelongID(id)
+// SetGroupID sets the "group" edge to the Group entity by ID.
+func (gu *GatewayUpdate) SetGroupID(id int) *GatewayUpdate {
+	gu.mutation.SetGroupID(id)
 	return gu
 }
 
-// SetNillableBelongID sets the "belong" edge to the User entity by ID if the given value is not nil.
-func (gu *GatewayUpdate) SetNillableBelongID(id *int) *GatewayUpdate {
+// SetNillableGroupID sets the "group" edge to the Group entity by ID if the given value is not nil.
+func (gu *GatewayUpdate) SetNillableGroupID(id *int) *GatewayUpdate {
 	if id != nil {
-		gu = gu.SetBelongID(*id)
+		gu = gu.SetGroupID(*id)
 	}
 	return gu
 }
 
-// SetBelong sets the "belong" edge to the User entity.
-func (gu *GatewayUpdate) SetBelong(u *User) *GatewayUpdate {
-	return gu.SetBelongID(u.ID)
+// SetGroup sets the "group" edge to the Group entity.
+func (gu *GatewayUpdate) SetGroup(g *Group) *GatewayUpdate {
+	return gu.SetGroupID(g.ID)
 }
 
 // Mutation returns the GatewayMutation object of the builder.
@@ -181,9 +187,9 @@ func (gu *GatewayUpdate) RemoveDevices(d ...*Device) *GatewayUpdate {
 	return gu.RemoveDeviceIDs(ids...)
 }
 
-// ClearBelong clears the "belong" edge to the User entity.
-func (gu *GatewayUpdate) ClearBelong() *GatewayUpdate {
-	gu.mutation.ClearBelong()
+// ClearGroup clears the "group" edge to the Group entity.
+func (gu *GatewayUpdate) ClearGroup() *GatewayUpdate {
+	gu.mutation.ClearGroup()
 	return gu
 }
 
@@ -280,6 +286,13 @@ func (gu *GatewayUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Type:   field.TypeString,
 			Value:  value,
 			Column: gateway.FieldGwid,
+		})
+	}
+	if value, ok := gu.mutation.Svrid(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: gateway.FieldSvrid,
 		})
 	}
 	if value, ok := gu.mutation.Broker(); ok {
@@ -396,33 +409,33 @@ func (gu *GatewayUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if gu.mutation.BelongCleared() {
+	if gu.mutation.GroupCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   gateway.BelongTable,
-			Columns: []string{gateway.BelongColumn},
+			Table:   gateway.GroupTable,
+			Columns: []string{gateway.GroupColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: user.FieldID,
+					Column: group.FieldID,
 				},
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := gu.mutation.BelongIDs(); len(nodes) > 0 {
+	if nodes := gu.mutation.GroupIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   gateway.BelongTable,
-			Columns: []string{gateway.BelongColumn},
+			Table:   gateway.GroupTable,
+			Columns: []string{gateway.GroupColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: user.FieldID,
+					Column: group.FieldID,
 				},
 			},
 		}
@@ -453,6 +466,12 @@ type GatewayUpdateOne struct {
 // SetGwid sets the "gwid" field.
 func (guo *GatewayUpdateOne) SetGwid(s string) *GatewayUpdateOne {
 	guo.mutation.SetGwid(s)
+	return guo
+}
+
+// SetSvrid sets the "svrid" field.
+func (guo *GatewayUpdateOne) SetSvrid(s string) *GatewayUpdateOne {
+	guo.mutation.SetSvrid(s)
 	return guo
 }
 
@@ -558,23 +577,23 @@ func (guo *GatewayUpdateOne) AddDevices(d ...*Device) *GatewayUpdateOne {
 	return guo.AddDeviceIDs(ids...)
 }
 
-// SetBelongID sets the "belong" edge to the User entity by ID.
-func (guo *GatewayUpdateOne) SetBelongID(id int) *GatewayUpdateOne {
-	guo.mutation.SetBelongID(id)
+// SetGroupID sets the "group" edge to the Group entity by ID.
+func (guo *GatewayUpdateOne) SetGroupID(id int) *GatewayUpdateOne {
+	guo.mutation.SetGroupID(id)
 	return guo
 }
 
-// SetNillableBelongID sets the "belong" edge to the User entity by ID if the given value is not nil.
-func (guo *GatewayUpdateOne) SetNillableBelongID(id *int) *GatewayUpdateOne {
+// SetNillableGroupID sets the "group" edge to the Group entity by ID if the given value is not nil.
+func (guo *GatewayUpdateOne) SetNillableGroupID(id *int) *GatewayUpdateOne {
 	if id != nil {
-		guo = guo.SetBelongID(*id)
+		guo = guo.SetGroupID(*id)
 	}
 	return guo
 }
 
-// SetBelong sets the "belong" edge to the User entity.
-func (guo *GatewayUpdateOne) SetBelong(u *User) *GatewayUpdateOne {
-	return guo.SetBelongID(u.ID)
+// SetGroup sets the "group" edge to the Group entity.
+func (guo *GatewayUpdateOne) SetGroup(g *Group) *GatewayUpdateOne {
+	return guo.SetGroupID(g.ID)
 }
 
 // Mutation returns the GatewayMutation object of the builder.
@@ -603,9 +622,9 @@ func (guo *GatewayUpdateOne) RemoveDevices(d ...*Device) *GatewayUpdateOne {
 	return guo.RemoveDeviceIDs(ids...)
 }
 
-// ClearBelong clears the "belong" edge to the User entity.
-func (guo *GatewayUpdateOne) ClearBelong() *GatewayUpdateOne {
-	guo.mutation.ClearBelong()
+// ClearGroup clears the "group" edge to the Group entity.
+func (guo *GatewayUpdateOne) ClearGroup() *GatewayUpdateOne {
+	guo.mutation.ClearGroup()
 	return guo
 }
 
@@ -728,6 +747,13 @@ func (guo *GatewayUpdateOne) sqlSave(ctx context.Context) (_node *Gateway, err e
 			Column: gateway.FieldGwid,
 		})
 	}
+	if value, ok := guo.mutation.Svrid(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: gateway.FieldSvrid,
+		})
+	}
 	if value, ok := guo.mutation.Broker(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
@@ -842,33 +868,33 @@ func (guo *GatewayUpdateOne) sqlSave(ctx context.Context) (_node *Gateway, err e
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if guo.mutation.BelongCleared() {
+	if guo.mutation.GroupCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   gateway.BelongTable,
-			Columns: []string{gateway.BelongColumn},
+			Table:   gateway.GroupTable,
+			Columns: []string{gateway.GroupColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: user.FieldID,
+					Column: group.FieldID,
 				},
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := guo.mutation.BelongIDs(); len(nodes) > 0 {
+	if nodes := guo.mutation.GroupIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   gateway.BelongTable,
-			Columns: []string{gateway.BelongColumn},
+			Table:   gateway.GroupTable,
+			Columns: []string{gateway.GroupColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: user.FieldID,
+					Column: group.FieldID,
 				},
 			},
 		}

@@ -114,6 +114,13 @@ func Gwid(v string) predicate.Gateway {
 	})
 }
 
+// Svrid applies equality check predicate on the "svrid" field. It's identical to SvridEQ.
+func Svrid(v string) predicate.Gateway {
+	return predicate.Gateway(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldSvrid), v))
+	})
+}
+
 // Broker applies equality check predicate on the "broker" field. It's identical to BrokerEQ.
 func Broker(v string) predicate.Gateway {
 	return predicate.Gateway(func(s *sql.Selector) {
@@ -409,6 +416,117 @@ func GwidEqualFold(v string) predicate.Gateway {
 func GwidContainsFold(v string) predicate.Gateway {
 	return predicate.Gateway(func(s *sql.Selector) {
 		s.Where(sql.ContainsFold(s.C(FieldGwid), v))
+	})
+}
+
+// SvridEQ applies the EQ predicate on the "svrid" field.
+func SvridEQ(v string) predicate.Gateway {
+	return predicate.Gateway(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldSvrid), v))
+	})
+}
+
+// SvridNEQ applies the NEQ predicate on the "svrid" field.
+func SvridNEQ(v string) predicate.Gateway {
+	return predicate.Gateway(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldSvrid), v))
+	})
+}
+
+// SvridIn applies the In predicate on the "svrid" field.
+func SvridIn(vs ...string) predicate.Gateway {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Gateway(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldSvrid), v...))
+	})
+}
+
+// SvridNotIn applies the NotIn predicate on the "svrid" field.
+func SvridNotIn(vs ...string) predicate.Gateway {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Gateway(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldSvrid), v...))
+	})
+}
+
+// SvridGT applies the GT predicate on the "svrid" field.
+func SvridGT(v string) predicate.Gateway {
+	return predicate.Gateway(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldSvrid), v))
+	})
+}
+
+// SvridGTE applies the GTE predicate on the "svrid" field.
+func SvridGTE(v string) predicate.Gateway {
+	return predicate.Gateway(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldSvrid), v))
+	})
+}
+
+// SvridLT applies the LT predicate on the "svrid" field.
+func SvridLT(v string) predicate.Gateway {
+	return predicate.Gateway(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldSvrid), v))
+	})
+}
+
+// SvridLTE applies the LTE predicate on the "svrid" field.
+func SvridLTE(v string) predicate.Gateway {
+	return predicate.Gateway(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldSvrid), v))
+	})
+}
+
+// SvridContains applies the Contains predicate on the "svrid" field.
+func SvridContains(v string) predicate.Gateway {
+	return predicate.Gateway(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldSvrid), v))
+	})
+}
+
+// SvridHasPrefix applies the HasPrefix predicate on the "svrid" field.
+func SvridHasPrefix(v string) predicate.Gateway {
+	return predicate.Gateway(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldSvrid), v))
+	})
+}
+
+// SvridHasSuffix applies the HasSuffix predicate on the "svrid" field.
+func SvridHasSuffix(v string) predicate.Gateway {
+	return predicate.Gateway(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldSvrid), v))
+	})
+}
+
+// SvridEqualFold applies the EqualFold predicate on the "svrid" field.
+func SvridEqualFold(v string) predicate.Gateway {
+	return predicate.Gateway(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldSvrid), v))
+	})
+}
+
+// SvridContainsFold applies the ContainsFold predicate on the "svrid" field.
+func SvridContainsFold(v string) predicate.Gateway {
+	return predicate.Gateway(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldSvrid), v))
 	})
 }
 
@@ -808,25 +926,25 @@ func HasDevicesWith(preds ...predicate.Device) predicate.Gateway {
 	})
 }
 
-// HasBelong applies the HasEdge predicate on the "belong" edge.
-func HasBelong() predicate.Gateway {
+// HasGroup applies the HasEdge predicate on the "group" edge.
+func HasGroup() predicate.Gateway {
 	return predicate.Gateway(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(BelongTable, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, BelongTable, BelongColumn),
+			sqlgraph.To(GroupTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, GroupTable, GroupColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasBelongWith applies the HasEdge predicate on the "belong" edge with a given conditions (other predicates).
-func HasBelongWith(preds ...predicate.User) predicate.Gateway {
+// HasGroupWith applies the HasEdge predicate on the "group" edge with a given conditions (other predicates).
+func HasGroupWith(preds ...predicate.Group) predicate.Gateway {
 	return predicate.Gateway(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(BelongInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, BelongTable, BelongColumn),
+			sqlgraph.To(GroupInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, GroupTable, GroupColumn),
 		)
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
