@@ -1,5 +1,5 @@
 brokers: 
-- url: mqtt.yaojiont.top:1883
+- url: mqtt.yaojiong.top:1883
   username: yj
   password: yj12345
   keepalive: 60
@@ -8,7 +8,7 @@ brokers:
   cafile:
   certfile:
   keyfile:
-- url: iot.yaojiont.top:1883
+- url: iot.yaojiong.top:1883
   username: yj
   password: yj12345
   keepalive: 60
@@ -18,7 +18,7 @@ brokers:
   certfile:
   keyfile:
 database:
-- type: postgres 
+  db: postgres 
   host: mqtt.yaojiong.top
   port: 5432
   user: iotd
