@@ -3,14 +3,13 @@ package cmd
 import (
 	"embed"
 	"io"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"time"
 
 	rotatelogs "github.com/lestrrat-go/file-rotatelogs"
 	log "github.com/sirupsen/logrus"
-	"gopkg.in/yaml.v2"
+	"github.com/spf13/viper"
 )
 
 //go:embed config.yml
@@ -66,17 +65,12 @@ func startGorilla() error {
 			}
 		}
 	}
-	//v := viper.New()
-	//v.AddConfigPath("/etc/iotdor")
-	//v.AddConfigPath(BASEPATH)
-	//v.SetConfigName("config.yml")
-	//v.SetConfigType("yml")
-	//err = v.ReadInConfig()
-	c, err := os.OpenFile(conyml, os.O_RDONLY, 0666)
-	b, err := ioutil.ReadAll(c)
-	var f map[string]interface{}
-	yaml.UnmarshalStrict(b, &f)
-	log.Debugln(f)
+	v := viper.New()
+	v.AddConfigPath("/etc/iotdor")
+	v.AddConfigPath(BASEPATH)
+	v.SetConfigName("config.yml")
+	v.SetConfigType("yml")
+	err = v.ReadInConfig()
 	return err
 }
 

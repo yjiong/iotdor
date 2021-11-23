@@ -1,14 +1,5 @@
-brokers: 
-- url: mqtt.yaojiong.top:1883
-  username: yj
-  password: yj12345
-  keepalive: 60
-  qos: 1
-  retain: false
-  cafile:
-  certfile:
-  keyfile:
-- url: iot.yaojiong.top:1883
+broker:
+  url: mqtt.yaojiong.top:1883
   username: yj
   password: yj12345
   keepalive: 60
