@@ -9,10 +9,11 @@ import (
 
 	rotatelogs "github.com/lestrrat-go/file-rotatelogs"
 	log "github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 )
 
-//go:embed extend.yml
-var extendYml embed.FS
+//go:embed config.yml
+var configYml embed.FS
 
 func setLogLevel() error {
 	fp := filepath.Join(BASEPATH, "log/iotdor.log-%Y%m%d")
@@ -44,6 +45,33 @@ func printStartMessage() error {
 		"docs":    "http://github.com/yjiong",
 	}).Info("starting iotdor process")
 	return nil
+}
+
+func startGorilla() error {
+	conyml := filepath.Join(BASEPATH, "config.yml")
+	sysconyml := filepath.Join("/etc/iotdor", "config.yml")
+	var df *os.File
+	var err error
+	if _, err = os.Stat(sysconyml); err != nil {
+		if os.IsNotExist(err) {
+			if _, err = os.Stat(conyml); err != nil {
+				if os.IsNotExist(err) {
+					if df, err = os.OpenFile(conyml, os.O_WRONLY|os.O_CREATE, 0666); err == nil {
+						sexyml, _ := configYml.Open("config.yml")
+						io.Copy(df, sexyml)
+						df.Sync()
+					}
+				}
+			}
+		}
+	}
+	v := viper.New()
+	v.AddConfigPath("/etc/iotdor")
+	v.AddConfigPath(BASEPATH)
+	v.SetConfigName("config.yml")
+	v.SetConfigType("yml")
+	err = v.ReadInConfig()
+	return err
 }
 
 func startAPI() error {

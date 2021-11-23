@@ -1,0 +1,16 @@
+tags
+# hidden files
+# Vagrant
+Vagrantfile
+# logs
+*.log
+# certs
+certs/
+
+# builds
+dist/
+build/
+docs/public/
+debpackage/opt/*
+*.deb            
+test/
