@@ -9,7 +9,7 @@ certs/
 
 # builds
 dist/
-build/
+build/*
 docs/public/
 debpackage/opt/*
 *.deb            
