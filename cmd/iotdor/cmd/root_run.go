@@ -21,6 +21,7 @@ func run(cmd *cobra.Command, args []string) error {
 	tasks := []func() error{
 		setLogLevel,
 		printStartMessage,
+		getDataSrc,
 		//setDataProcess,
 		//setHjClient,
 		//startAPI,

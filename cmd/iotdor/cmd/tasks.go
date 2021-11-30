@@ -47,7 +47,7 @@ func printStartMessage() error {
 	return nil
 }
 
-func startGorilla() error {
+func getDataSrc() error {
 	conyml := filepath.Join(BASEPATH, "config.yml")
 	sysconyml := filepath.Join("/etc/iotdor", "config.yml")
 	var df *os.File
@@ -71,7 +71,15 @@ func startGorilla() error {
 	v.SetConfigName("config.yml")
 	v.SetConfigType("yml")
 	err = v.ReadInConfig()
+	b := v.GetStringMapString("broker")
+	log.Debugln(b)
+	d := v.GetStringMapString("database")
+	log.Debugln(d)
 	return err
+}
+
+func getDatabaseEngin() error {
+	return nil
 }
 
 func startAPI() error {

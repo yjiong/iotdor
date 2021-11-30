@@ -47,7 +47,8 @@ test:
 run: build 
 	@cd build && $(THISDIR)/build/./$(PROJECT) -L 5
 
-debug:swagger FORCE
+#debug:swagger FORCE
+debug:
 	@mkdir -p build
 	@env $(ENV) go build $(DFLAGS) -o ./build/$(PROJECT) ./cmd/$(PROJECT)/main.go
 	@cd build && dlv exec ./$(PROJECT) -- -L 5

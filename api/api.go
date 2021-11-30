@@ -2,29 +2,20 @@ package api
 
 import (
 	"bytes"
-	"embed"
 	"encoding/json"
 	"fmt"
-	"io"
-	"io/fs"
 	"net"
 	"net/http"
-	"net/http/pprof"
-	"path"
-	"path/filepath"
 	"strings"
 	"sync"
 	"time"
 
-	jwt "github.com/dgrijalva/jwt-go"
-	"github.com/dgrijalva/jwt-go/request"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/render"
 
 	//"github.com/gin-gonic/gin/render"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
-	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -200,6 +191,7 @@ func (dtr *iotdorTran) tranSport(w http.ResponseWriter, r *http.Request) {
 	dtr.SetTR(sn, wconn)
 }
 
+/*
 //go:embed static/*
 var wstatic embed.FS
 
@@ -335,3 +327,4 @@ func PprofGroup(r *mux.Router) {
 	r.PathPrefix("/debug/trace").HandlerFunc(pprof.Trace)
 	r.PathPrefix("/debug/mutex").Handler(pprof.Handler("mutex"))
 }
+*/
