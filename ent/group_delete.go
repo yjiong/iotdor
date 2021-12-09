@@ -5,12 +5,12 @@ package ent
 import (
 	"context"
 	"fmt"
-	"iotdor/ent/group"
-	"iotdor/ent/predicate"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/yjiong/iotdor/ent/group"
+	"github.com/yjiong/iotdor/ent/predicate"
 )
 
 // GroupDelete is the builder for deleting a Group entity.

@@ -7,12 +7,12 @@ import (
 	"fmt"
 	"log"
 
-	"iotdor/ent/migrate"
+	"github.com/yjiong/iotdor/ent/migrate"
 
-	"iotdor/ent/device"
-	"iotdor/ent/gateway"
-	"iotdor/ent/group"
-	"iotdor/ent/user"
+	"github.com/yjiong/iotdor/ent/device"
+	"github.com/yjiong/iotdor/ent/gateway"
+	"github.com/yjiong/iotdor/ent/group"
+	"github.com/yjiong/iotdor/ent/user"
 
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"

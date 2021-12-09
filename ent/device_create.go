@@ -6,12 +6,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"iotdor/ent/device"
-	"iotdor/ent/gateway"
 	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/yjiong/iotdor/ent/device"
+	"github.com/yjiong/iotdor/ent/gateway"
 )
 
 // DeviceCreate is the builder for creating a Device entity.

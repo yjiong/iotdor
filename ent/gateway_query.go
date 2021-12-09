@@ -7,15 +7,15 @@ import (
 	"database/sql/driver"
 	"errors"
 	"fmt"
-	"iotdor/ent/device"
-	"iotdor/ent/gateway"
-	"iotdor/ent/group"
-	"iotdor/ent/predicate"
 	"math"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/yjiong/iotdor/ent/device"
+	"github.com/yjiong/iotdor/ent/gateway"
+	"github.com/yjiong/iotdor/ent/group"
+	"github.com/yjiong/iotdor/ent/predicate"
 )
 
 // GatewayQuery is the builder for querying Gateway entities.

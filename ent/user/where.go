@@ -3,11 +3,11 @@
 package user
 
 import (
-	"iotdor/ent/predicate"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"github.com/yjiong/iotdor/ent/predicate"
 )
 
 // ID filters vertices based on their ID field.

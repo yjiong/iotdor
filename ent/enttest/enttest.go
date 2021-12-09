@@ -4,9 +4,10 @@ package enttest
 
 import (
 	"context"
-	"iotdor/ent"
+
+	"github.com/yjiong/iotdor/ent"
 	// required by schema hooks.
-	_ "iotdor/ent/runtime"
+	_ "github.com/yjiong/iotdor/ent/runtime"
 
 	"entgo.io/ent/dialect/sql/schema"
 )

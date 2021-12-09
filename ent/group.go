@@ -4,11 +4,11 @@ package ent
 
 import (
 	"fmt"
-	"iotdor/ent/group"
-	"iotdor/ent/user"
 	"strings"
 
 	"entgo.io/ent/dialect/sql"
+	"github.com/yjiong/iotdor/ent/group"
+	"github.com/yjiong/iotdor/ent/user"
 )
 
 // Group is the model entity for the Group schema.

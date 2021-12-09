@@ -5,13 +5,13 @@ package ent
 import (
 	"errors"
 	"fmt"
-	"iotdor/ent/device"
-	"iotdor/ent/gateway"
-	"iotdor/ent/group"
-	"iotdor/ent/user"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"github.com/yjiong/iotdor/ent/device"
+	"github.com/yjiong/iotdor/ent/gateway"
+	"github.com/yjiong/iotdor/ent/group"
+	"github.com/yjiong/iotdor/ent/user"
 )
 
 // ent aliases to avoid import conflicts in user's code.

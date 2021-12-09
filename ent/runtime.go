@@ -3,12 +3,13 @@
 package ent
 
 import (
-	"iotdor/ent/device"
-	"iotdor/ent/gateway"
-	"iotdor/ent/group"
-	"iotdor/ent/schema"
-	"iotdor/ent/user"
 	"time"
+
+	"github.com/yjiong/iotdor/ent/device"
+	"github.com/yjiong/iotdor/ent/gateway"
+	"github.com/yjiong/iotdor/ent/group"
+	"github.com/yjiong/iotdor/ent/schema"
+	"github.com/yjiong/iotdor/ent/user"
 )
 
 // The init function reads all schema descriptors with runtime code

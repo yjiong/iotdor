@@ -6,13 +6,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"iotdor/ent/device"
-	"iotdor/ent/gateway"
-	"iotdor/ent/group"
 	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/yjiong/iotdor/ent/device"
+	"github.com/yjiong/iotdor/ent/gateway"
+	"github.com/yjiong/iotdor/ent/group"
 )
 
 // GatewayCreate is the builder for creating a Gateway entity.

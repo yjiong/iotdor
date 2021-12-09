@@ -5,13 +5,14 @@ package ent
 import (
 	"context"
 	"fmt"
-	"iotdor/ent/device"
-	"iotdor/ent/gateway"
-	"iotdor/ent/group"
-	"iotdor/ent/predicate"
-	"iotdor/ent/user"
 	"sync"
 	"time"
+
+	"github.com/yjiong/iotdor/ent/device"
+	"github.com/yjiong/iotdor/ent/gateway"
+	"github.com/yjiong/iotdor/ent/group"
+	"github.com/yjiong/iotdor/ent/predicate"
+	"github.com/yjiong/iotdor/ent/user"
 
 	"entgo.io/ent"
 )

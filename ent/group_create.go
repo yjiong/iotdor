@@ -6,12 +6,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"iotdor/ent/gateway"
-	"iotdor/ent/group"
-	"iotdor/ent/user"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/yjiong/iotdor/ent/gateway"
+	"github.com/yjiong/iotdor/ent/group"
+	"github.com/yjiong/iotdor/ent/user"
 )
 
 // GroupCreate is the builder for creating a Group entity.

@@ -4,12 +4,12 @@ package ent
 
 import (
 	"fmt"
-	"iotdor/ent/device"
-	"iotdor/ent/gateway"
 	"strings"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
+	"github.com/yjiong/iotdor/ent/device"
+	"github.com/yjiong/iotdor/ent/gateway"
 )
 
 // Device is the model entity for the Device schema.

@@ -4,11 +4,11 @@ package ent
 
 import (
 	"fmt"
-	"iotdor/ent/user"
 	"strings"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
+	"github.com/yjiong/iotdor/ent/user"
 )
 
 // User is the model entity for the User schema.

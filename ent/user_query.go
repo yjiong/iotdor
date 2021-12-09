@@ -7,14 +7,14 @@ import (
 	"database/sql/driver"
 	"errors"
 	"fmt"
-	"iotdor/ent/group"
-	"iotdor/ent/predicate"
-	"iotdor/ent/user"
 	"math"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/yjiong/iotdor/ent/group"
+	"github.com/yjiong/iotdor/ent/predicate"
+	"github.com/yjiong/iotdor/ent/user"
 )
 
 // UserQuery is the builder for querying User entities.

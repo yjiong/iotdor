@@ -5,12 +5,12 @@ package ent
 import (
 	"context"
 	"fmt"
-	"iotdor/ent/device"
-	"iotdor/ent/predicate"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/yjiong/iotdor/ent/device"
+	"github.com/yjiong/iotdor/ent/predicate"
 )
 
 // DeviceDelete is the builder for deleting a Device entity.

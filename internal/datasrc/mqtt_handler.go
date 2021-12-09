@@ -15,7 +15,6 @@ import (
 
 	//"github.com/eclipse/paho.mqtt.golang/packets"
 	log "github.com/sirupsen/logrus"
-	//"github.com/yjiong/iotor/internal/common"
 )
 
 // DataDownPayload ...
@@ -43,10 +42,8 @@ func NewMQTTDSrcer(conm map[string]string) DSrcer {
 	}
 
 	opts := mqtt.NewClientOptions()
-	//opts.AddBroker(server)
 	server := conm["url"]
 	h.Iotdname = conm["iotdname"]
-	log.Debugf("xxxxxxxxxxxxsub_topic=%s", h.Iotdname)
 	log.Debugln(conm)
 	opts.SetUsername(conm["username"])
 	opts.SetPassword(conm["password"])
@@ -164,11 +161,6 @@ func (h *MQTTDSrcer) DataDownChan() chan DataDownPayload {
 func (h *MQTTDSrcer) rxmsgDSrcer(c mqtt.Client, msg mqtt.Message) {
 	h.wg.Add(1)
 	defer h.wg.Done()
-
-	//	dec := json.NewDecoder(bytes.NewReader(msg.Payload()))
-	//	if err := dec.Decode(&pl); err != nil {
-	//		return
-	//	}
 	mymsgjson, err := simplejson.NewJson(msg.Payload())
 	if err != nil {
 		log.WithFields(log.Fields{

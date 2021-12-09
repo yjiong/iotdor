@@ -4,12 +4,12 @@ package ent
 
 import (
 	"fmt"
-	"iotdor/ent/gateway"
-	"iotdor/ent/group"
 	"strings"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
+	"github.com/yjiong/iotdor/ent/gateway"
+	"github.com/yjiong/iotdor/ent/group"
 )
 
 // Gateway is the model entity for the Gateway schema.

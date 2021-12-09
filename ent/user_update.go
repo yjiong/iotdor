@@ -5,13 +5,13 @@ package ent
 import (
 	"context"
 	"fmt"
-	"iotdor/ent/group"
-	"iotdor/ent/predicate"
-	"iotdor/ent/user"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/yjiong/iotdor/ent/group"
+	"github.com/yjiong/iotdor/ent/predicate"
+	"github.com/yjiong/iotdor/ent/user"
 )
 
 // UserUpdate is the builder for updating User entities.

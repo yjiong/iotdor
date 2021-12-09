@@ -5,7 +5,8 @@ package hook
 import (
 	"context"
 	"fmt"
-	"iotdor/ent"
+
+	"github.com/yjiong/iotdor/ent"
 )
 
 // The DeviceFunc type is an adapter to allow the use of ordinary

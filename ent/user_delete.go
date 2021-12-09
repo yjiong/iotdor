@@ -5,12 +5,12 @@ package ent
 import (
 	"context"
 	"fmt"
-	"iotdor/ent/predicate"
-	"iotdor/ent/user"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/yjiong/iotdor/ent/predicate"
+	"github.com/yjiong/iotdor/ent/user"
 )
 
 // UserDelete is the builder for deleting a User entity.

@@ -6,14 +6,14 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"iotdor/ent/device"
-	"iotdor/ent/gateway"
-	"iotdor/ent/predicate"
 	"math"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/yjiong/iotdor/ent/device"
+	"github.com/yjiong/iotdor/ent/gateway"
+	"github.com/yjiong/iotdor/ent/predicate"
 )
 
 // DeviceQuery is the builder for querying Device entities.

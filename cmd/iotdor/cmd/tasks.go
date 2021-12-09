@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"embed"
+	"fmt"
 	"io"
 	"os"
 	"path/filepath"
@@ -10,13 +11,16 @@ import (
 	rotatelogs "github.com/lestrrat-go/file-rotatelogs"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
+	"github.com/yjiong/iotdor/ent"
 	"github.com/yjiong/iotdor/internal/datasrc"
+	"github.com/yjiong/iotdor/internal/entoperate"
 )
 
 //go:embed config.yml
 var configYml embed.FS
 
 var dataSrc datasrc.DSrcer
+var dbClient *ent.Client
 
 func setLogLevel() error {
 	fp := filepath.Join(BASEPATH, "log/iotdor.log-%Y%m%d")
@@ -79,6 +83,13 @@ func initDataSrcAndDB() error {
 	dataSrc = datasrc.NewMQTTDSrcer(b)
 	d := v.GetStringMapString("database")
 	log.Debugln(d)
+	dns := fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s",
+		d["host"],
+		d["port"],
+		d["user"],
+		d["dbname"],
+		d["password"])
+	dbClient = entoperate.OpenMigrate(d["db"], dns)
 	return err
 }
 

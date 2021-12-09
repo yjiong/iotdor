@@ -5,12 +5,12 @@ package ent
 import (
 	"context"
 	"fmt"
-	"iotdor/ent/gateway"
-	"iotdor/ent/predicate"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/yjiong/iotdor/ent/gateway"
+	"github.com/yjiong/iotdor/ent/predicate"
 )
 
 // GatewayDelete is the builder for deleting a Gateway entity.

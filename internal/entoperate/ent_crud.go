@@ -30,6 +30,7 @@ func OpenMigrate(driveName, dns string) *ent.Client {
 	if client.Schema.Create(context.Background(), migrate.WithDropColumn(true), migrate.WithDropIndex(true)) != nil {
 		log.Fatal()
 	}
+	log.Infof("%s client init ok", driveName)
 	return client
 }
 
