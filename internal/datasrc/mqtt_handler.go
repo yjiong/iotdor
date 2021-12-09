@@ -28,8 +28,7 @@ type MQTTDSrcer struct {
 	conn         mqtt.Client
 	dataDownChan chan DataDownPayload
 	wg           sync.WaitGroup
-	ClientID     string
-	ServerID     string
+	Iotdname     string
 	onlinemsg    string
 	pqos         byte
 	sqos         byte
@@ -38,14 +37,17 @@ type MQTTDSrcer struct {
 }
 
 // NewMQTTDSrcer creates a new MQTTDSrcer.
-func NewMQTTDSrcer(conm map[string]string, willmsg, onlinemsg string) (DSrcer, error) {
+func NewMQTTDSrcer(conm map[string]string) DSrcer {
 	h := MQTTDSrcer{
 		dataDownChan: make(chan DataDownPayload),
 	}
 
 	opts := mqtt.NewClientOptions()
 	//opts.AddBroker(server)
-	server := conm["serverIp"] + ":" + conm["serverPort"]
+	server := conm["url"]
+	h.Iotdname = conm["iotdname"]
+	log.Debugf("xxxxxxxxxxxxsub_topic=%s", h.Iotdname)
+	log.Debugln(conm)
 	opts.SetUsername(conm["username"])
 	opts.SetPassword(conm["password"])
 	opts.SetOnConnectHandler(h.onConnected)
@@ -58,12 +60,7 @@ func NewMQTTDSrcer(conm map[string]string, willmsg, onlinemsg string) (DSrcer, e
 	h.sqos = byte(sqos)
 	h.retain, _ = strconv.ParseBool(conm["retain"])
 	opts.SetKeepAlive(time.Duration(kplv) * time.Second)
-	h.ClientID = conm["clientId"]
-	h.ServerID = conm["serverName"]
-	h.onlinemsg = onlinemsg
-	h.SubTopic = conm["sub_topic"]
-	//opts.SetWill(h.ServerID+"/"+h.ClientID, willmsg, 1, true)
-	opts.SetClientID(h.ClientID)
+	opts.SetClientID(h.Iotdname)
 	optserver := "tcp://" + server
 	if conm["cafile"] != "" {
 		tlsconfig, err := newTLSConfig(conm)
@@ -94,7 +91,7 @@ func NewMQTTDSrcer(conm map[string]string, willmsg, onlinemsg string) (DSrcer, e
 			break
 		}
 	}
-	return &h, nil
+	return &h
 }
 
 func newTLSConfig(cm map[string]string) (*tls.Config, error) {
@@ -134,8 +131,8 @@ func newTLSConfig(cm map[string]string) (*tls.Config, error) {
 // Close stops the handler.
 func (h *MQTTDSrcer) Close() error {
 	log.Info("handler/mqtt: closing handler")
-	if token := h.conn.Unsubscribe(h.ClientID + "/" + h.ServerID); token.Wait() && token.Error() != nil {
-		return fmt.Errorf("handler/mqtt: unsubscribe from %s error: %s", h.ClientID, token.Error())
+	if token := h.conn.Unsubscribe(h.Iotdname + "/+"); token.Wait() && token.Error() != nil {
+		return fmt.Errorf("handler/mqtt: unsubscribe from %s error: %s", h.Iotdname, token.Error())
 	}
 	log.Info("handler/mqtt: handling last items in queue")
 	h.wg.Wait()
@@ -149,10 +146,6 @@ func (h *MQTTDSrcer) SendData(tp string, payload interface{}) error {
 	topic := tp
 	if err != nil {
 		return fmt.Errorf("handler/mqtt: data-up payload marshal error: %s", err)
-	}
-
-	if tp == "" {
-		topic = h.ServerID + "/" + h.ClientID
 	}
 	if token := h.conn.Publish(topic, h.pqos, h.retain, b); token.Wait() && token.Error() != nil {
 		return fmt.Errorf("handler/mqtt: publish data-up error: %s", err)
@@ -190,7 +183,7 @@ func (h *MQTTDSrcer) rxmsgDSrcer(c mqtt.Client, msg mqtt.Message) {
 
 func (h *MQTTDSrcer) onConnected(c mqtt.Client) {
 	log.Infof("handler/mqtt: connected to mqtt broker subscribe qos=%d, Publish qos=%d", h.sqos, h.pqos)
-	tps := []string{h.ClientID, h.ClientID + "/" + h.ServerID}
+	tps := []string{h.Iotdname + "/+"}
 	if h.SubTopic != "" {
 		tps = append(tps, h.SubTopic)
 	}
@@ -206,8 +199,6 @@ func (h *MQTTDSrcer) onConnected(c mqtt.Client) {
 			break
 		}
 	}
-	//common.Mqttconnected = true
-	h.conn.Publish(h.ServerID+"/"+h.ClientID, 1, true, h.onlinemsg)
 }
 
 func (h *MQTTDSrcer) onConnectionLost(c mqtt.Client, reason error) {

@@ -15,6 +15,6 @@ func Test_task(t *testing.T) {
 		FullTimestamp:   true,
 	})
 	Convey("==================test task=====================\n", t, func() {
-		startGorilla()
+		initDataSrcAndDB()
 	})
 }

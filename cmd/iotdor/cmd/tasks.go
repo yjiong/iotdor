@@ -10,10 +10,13 @@ import (
 	rotatelogs "github.com/lestrrat-go/file-rotatelogs"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
+	"github.com/yjiong/iotdor/internal/datasrc"
 )
 
 //go:embed config.yml
 var configYml embed.FS
+
+var dataSrc datasrc.DSrcer
 
 func setLogLevel() error {
 	fp := filepath.Join(BASEPATH, "log/iotdor.log-%Y%m%d")
@@ -47,7 +50,7 @@ func printStartMessage() error {
 	return nil
 }
 
-func getDataSrc() error {
+func initDataSrcAndDB() error {
 	conyml := filepath.Join(BASEPATH, "config.yml")
 	sysconyml := filepath.Join("/etc/iotdor", "config.yml")
 	var df *os.File
@@ -73,6 +76,7 @@ func getDataSrc() error {
 	err = v.ReadInConfig()
 	b := v.GetStringMapString("broker")
 	log.Debugln(b)
+	dataSrc = datasrc.NewMQTTDSrcer(b)
 	d := v.GetStringMapString("database")
 	log.Debugln(d)
 	return err

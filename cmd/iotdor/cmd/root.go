@@ -19,6 +19,7 @@ import (
 var BASEPATH string
 var cfgtype string
 var version string
+
 var dataDBpath string
 var logLevel int
 
