@@ -19,7 +19,7 @@ import (
 
 // DataDownPayload ...
 type DataDownPayload struct {
-	Pj *simplejson.Json
+	*simplejson.Json
 }
 
 // MQTTDSrcer ...
@@ -170,7 +170,7 @@ func (h *MQTTDSrcer) rxmsgDSrcer(c mqtt.Client, msg mqtt.Message) {
 	}
 	logsb, _ := mymsgjson.EncodePretty()
 	log.WithFields(log.Fields{"topic": msg.Topic(), "messageType": "received cmd", "Qos": msg.Qos()}).Info(string(logsb))
-	h.dataDownChan <- DataDownPayload{Pj: mymsgjson}
+	h.dataDownChan <- DataDownPayload{mymsgjson}
 }
 
 func (h *MQTTDSrcer) onConnected(c mqtt.Client) {

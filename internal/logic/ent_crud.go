@@ -1,4 +1,4 @@
-package entoperate
+package logic
 
 import (
 	"context"

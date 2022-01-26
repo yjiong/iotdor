@@ -13,7 +13,7 @@ import (
 	"github.com/spf13/viper"
 	"github.com/yjiong/iotdor/ent"
 	"github.com/yjiong/iotdor/internal/datasrc"
-	"github.com/yjiong/iotdor/internal/entoperate"
+	"github.com/yjiong/iotdor/internal/logic"
 )
 
 //go:embed config.yml
@@ -89,7 +89,7 @@ func initDataSrcAndDB() error {
 		d["user"],
 		d["dbname"],
 		d["password"])
-	dbClient = entoperate.OpenMigrate(d["db"], dns)
+	dbClient = logic.OpenMigrate(d["db"], dns)
 	return err
 }
 
