@@ -21,7 +21,7 @@ database:
   password: yaojiong
 redis:
   host: mqtt.yaojiong.top
-  port: 56789
+  port: 56379
   password: yaojiong
 
   

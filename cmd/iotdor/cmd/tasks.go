@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"time"
 
+	"github.com/go-redis/redis/v8"
 	rotatelogs "github.com/lestrrat-go/file-rotatelogs"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
@@ -21,6 +22,7 @@ var configYml embed.FS
 
 var dataSrc datasrc.DSrcer
 var dbClient *ent.Client
+var redisClient *redis.Client
 
 func setLogLevel() error {
 	fp := filepath.Join(BASEPATH, "log/iotdor.log-%Y%m%d")
@@ -90,10 +92,19 @@ func initDataSrcAndDB() error {
 		d["dbname"],
 		d["password"])
 	dbClient = logic.OpenMigrate(d["db"], dns)
+	r := v.GetStringMapString("redis")
+	redisClient = redis.NewClient(&redis.Options{
+		Addr:     fmt.Sprintf("%s:%s", r["host"], r["port"]),
+		Password: r["password"],
+		DB:       0, // use default DB
+	})
+	err = redisClient.Ping(ctx).Err()
 	return err
 }
 
-func getDatabaseEngin() error {
+func runLogicMsgHandle() error {
+	lm := logic.NewManage(ctx, dataSrc, dbClient, redisClient)
+	go lm.MsgHandle()
 	return nil
 }
 
