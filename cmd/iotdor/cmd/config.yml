@@ -13,7 +13,7 @@ broker:
   keyfile:
   iotdname: iotd-test
 database:
-  db: postgres 
+  type: postgres 
   host: mqtt.yaojiong.top
   port: 5432
   user: iotd

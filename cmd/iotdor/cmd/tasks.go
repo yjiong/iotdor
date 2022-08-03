@@ -91,7 +91,7 @@ func initDataSrcAndDB() error {
 		d["user"],
 		d["dbname"],
 		d["password"])
-	dbClient = logic.OpenMigrate(d["db"], dns)
+	dbClient = logic.OpenMigrate(d["type"], dns)
 	r := v.GetStringMapString("redis")
 	redisClient = redis.NewClient(&redis.Options{
 		Addr:     fmt.Sprintf("%s:%s", r["host"], r["port"]),
@@ -111,4 +111,22 @@ func runLogicMsgHandle() error {
 func startAPI() error {
 	//go api.StartHTTP(dataProcess)
 	return nil
+}
+
+func mkDBDns(param map[string]string) (dns string) {
+	//"mysql", "root:pass@tcp(localhost:3306)/test"
+	//"postgres","host=<host> port=<port> user=<user> dbname=<database> password=<pass>"
+	//"sqlite3", "file:ent?mode=memory&cache=shared&_fk=1"
+	//"gremlin", "http://localhost:8182"
+	//"postgres", "host=mqtt.yaojiong.top port=5432 user=iotd dbname=iotd password=yaojiong"
+	switch param["type"] {
+	case "mysql":
+		dns = fmt.Sprintf("%s:%s@tcp(%s:%s)/%s",
+			param["user"],
+			param["password"],
+			param["host"],
+			param["port"],
+			param["dbname"])
+	}
+	return
 }

@@ -33,7 +33,7 @@ func (m *Manage) MsgHandle() {
 			case AutoUpdata:
 				if md, err := msg.Get("data").Map(); err == nil {
 					if devID, ok := md["devid"].(string); ok {
-						m.redisC.HSet(m.ctx, devID, md)
+						go m.redisC.HSet(m.ctx, devID, md)
 					}
 				}
 			}
