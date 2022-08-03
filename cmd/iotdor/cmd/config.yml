@@ -19,6 +19,11 @@ database:
   user: iotd
   dbname: iotd
   password: yaojiong
+redis:
+  host: mqtt.yaojiong.top
+  port: 56789
+  password: yaojiong
+
   
 
 
