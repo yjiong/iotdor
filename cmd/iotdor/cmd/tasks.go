@@ -105,7 +105,11 @@ func initDataSrcAndDB() error {
 }
 
 func runLogicMsgHandle() error {
-	lm := logic.NewManage(ctx, dataSrc, dbClient, redisClient)
+	lm := logic.NewManage(ctx,
+		dataSrc,
+		dbClient,
+		redisClient,
+		configViper.GetString("broker.iotdname"))
 	go lm.MsgHandle()
 	return nil
 }
