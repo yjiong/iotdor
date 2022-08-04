@@ -23,9 +23,7 @@ func run(cmd *cobra.Command, args []string) error {
 		printStartMessage,
 		initDataSrcAndDB,
 		runLogicMsgHandle,
-		//setDataProcess,
-		//setHjClient,
-		//startAPI,
+		startAPI,
 		//chkReInit,
 		//startGorilla,
 	}

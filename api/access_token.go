@@ -16,6 +16,8 @@ import (
 
 var jwts = []byte("IOTDOR-yjiong@msn.com")
 
+type controller struct{}
+
 // @Summary login
 // @Description
 // @Accept  json
@@ -34,19 +36,19 @@ func (ct *controller) login(c *gin.Context) {
 		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 		return
 	}
-	ruser := ct.UserInfo(loginUser.Username)
-	if len(ruser) == 0 || loginUser.Username != "admin" && ruser[0].Username == "" {
+	//ruser := ct.UserInfo(loginUser.Username)
+	//if len(ruser) == 0 || loginUser.Username != "admin" && ruser[0].Username == "" {
+	//err = errors.Errorf("username not exist or password error")
+	//c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+	//return
+	//}
+	//dpw, _ := hex.DecodeString(ruser[0].Password)
+	dpw, _ := hex.DecodeString("password")
+	//if err := bcrypt.CompareHashAndPassword(dpw, []byte(loginUser.Password)); err != nil {
+	if err := bcrypt.CompareHashAndPassword(dpw, []byte("Password")); err != nil {
 		err = errors.Errorf("username not exist or password error")
-		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		c.JSON(http.StatusNotAcceptable, gin.H{"error": err.Error()})
 		return
-	}
-	dpw, _ := hex.DecodeString(ruser[0].Password)
-	if !(loginUser.Username == "admin" && loginUser.Password == "lcdcm") {
-		if err := bcrypt.CompareHashAndPassword(dpw, []byte(loginUser.Password)); err != nil {
-			err = errors.Errorf("username not exist or password error")
-			c.JSON(http.StatusNotAcceptable, gin.H{"error": err.Error()})
-			return
-		}
 	}
 	token := jwt.New(jwt.SigningMethodHS256)
 	claims := make(jwt.MapClaims)

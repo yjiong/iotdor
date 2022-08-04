@@ -12,6 +12,7 @@ import (
 	rotatelogs "github.com/lestrrat-go/file-rotatelogs"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
+	"github.com/yjiong/iotdor/api"
 	"github.com/yjiong/iotdor/ent"
 	"github.com/yjiong/iotdor/internal/datasrc"
 	"github.com/yjiong/iotdor/internal/logic"
@@ -23,6 +24,7 @@ var configYml embed.FS
 var dataSrc datasrc.DSrcer
 var dbClient *ent.Client
 var redisClient *redis.Client
+var configViper *viper.Viper
 
 func setLogLevel() error {
 	fp := filepath.Join(BASEPATH, "log/iotdor.log-%Y%m%d")
@@ -74,16 +76,16 @@ func initDataSrcAndDB() error {
 			}
 		}
 	}
-	v := viper.New()
-	v.AddConfigPath("/etc/iotdor")
-	v.AddConfigPath(BASEPATH)
-	v.SetConfigName("config.yml")
-	v.SetConfigType("yml")
-	err = v.ReadInConfig()
-	b := v.GetStringMapString("broker")
+	configViper = viper.New()
+	configViper.AddConfigPath("/etc/iotdor")
+	configViper.AddConfigPath(BASEPATH)
+	configViper.SetConfigName("config.yml")
+	configViper.SetConfigType("yml")
+	err = configViper.ReadInConfig()
+	b := configViper.GetStringMapString("broker")
 	log.Debugln(b)
 	dataSrc = datasrc.NewMQTTDSrcer(b)
-	d := v.GetStringMapString("database")
+	d := configViper.GetStringMapString("database")
 	log.Debugln(d)
 	dns := fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s",
 		d["host"],
@@ -92,7 +94,7 @@ func initDataSrcAndDB() error {
 		d["dbname"],
 		d["password"])
 	dbClient = logic.OpenMigrate(d["type"], dns)
-	r := v.GetStringMapString("redis")
+	r := configViper.GetStringMapString("redis")
 	redisClient = redis.NewClient(&redis.Options{
 		Addr:     fmt.Sprintf("%s:%s", r["host"], r["port"]),
 		Password: r["password"],
@@ -109,7 +111,10 @@ func runLogicMsgHandle() error {
 }
 
 func startAPI() error {
-	//go api.StartHTTP(dataProcess)
+	hs := configViper.GetStringMapString("http_server")
+	if configViper.GetBool("http_server.debug_flag") {
+		go api.APIserver(hs["port"])
+	}
 	return nil
 }
 

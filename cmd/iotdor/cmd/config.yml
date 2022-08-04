@@ -23,6 +23,12 @@ redis:
   host: mqtt.yaojiong.top
   port: 56379
   password: yaojiong
+http_server:
+  port: 8888
+  cert: server.cert
+  key: server.key
+  debug_flag: true
+  
 
   
 

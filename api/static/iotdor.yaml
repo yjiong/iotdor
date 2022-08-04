@@ -1,0 +1,1363 @@
+swagger: '2.0'
+info:
+  description: This is iotdor server .
+  title: IOTDOR API
+  contact:
+    url: 'https://github.com/yjiong'
+    email: yjiong@msn.com
+  version: v1.0.0
+basePath: /
+paths:
+  /api/login:
+    post:
+      consumes:
+        - application/json
+      tags:
+        - 登录
+      summary: login
+      parameters:
+        - description: 登录
+          name: user_info
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/dataprocess.TUser'
+      responses:
+        '200':
+          description: ok
+          schema:
+            type: string
+        '404':
+          description: login failed
+          schema:
+            type: object
+  /gateways/list:
+    post:
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      tags:
+        - 网关列表
+      summary: 网关列表(格式为序列号和最近一次与middle broker的连接时间)
+      responses:
+        '200':
+          description: ok
+          schema:
+            type: object
+        '404':
+          description: Can not query history data
+          schema:
+            type: object
+  '/{gatewaysn}/gateway/version':
+    get:
+      consumes:
+        - application/json
+      tags:
+        - 配置信息
+      summary: 获取主程序和驱动程序的版本和当前网关的SN(需1.2.0以上版本支持)
+      parameters:
+        - type: string
+          description: gatewaysn 网关序列号
+          name: gatewaysn
+          in: path
+          required: true
+      responses:
+        '200':
+          description: ok
+          schema:
+            type: object
+        '404':
+          description: get version string error
+          schema:
+            type: object
+  '/{gatewaysn}/gateway/cmdline':
+    post:
+      security:
+        - ApiKeyAuth: []
+      consumes:
+        - application/json
+      tags:
+        - 系统命令
+      summary: 执行shell命令
+      parameters:
+        - type: string
+          description: gatewaysn 网关序列号
+          name: gatewaysn
+          in: path
+          required: true
+        - type: string
+          description: cmd
+          name: cmd
+          in: query
+          required: true
+      responses:
+        '200':
+          description: ok
+          schema:
+            type: string
+        '401':
+          description: access denided
+          schema:
+            type: object
+        '404':
+          description: Can not alibration time
+          schema:
+            type: object
+  '/{gatewaysn}/gateway/set_sn':
+    post:
+      security:
+        - ApiKeyAuth: []
+      consumes:
+        - application/json
+      tags:
+        - 系统命令
+      summary: 修改SN（需1.2.0版本以上)
+      parameters:
+        - type: string
+          description: gatewaysn 网关序列号
+          name: gatewaysn
+          in: path
+          required: true
+        - type: string
+          description: sn 更改后的序列号
+          name: sn 
+          in: query
+          required: true
+      responses:
+        '200':
+          description: ok
+          schema:
+            type: string
+        '401':
+          description: access denided
+          schema:
+            type: object
+        '404':
+          description: Can not set the SN
+          schema:
+            type: object
+  '/{gatewaysn}/gateway/sample_retention':
+    post:
+      security:
+        - ApiKeyAuth: []
+      consumes:
+        - application/json
+      tags:
+        - 系统命令
+      summary: 立即留样(主程序版本 > v1.3.7, 驱动版本 >= v1.7.6)
+      parameters:
+        - type: string
+          description: gatewaysn 网关序列号
+          name: gatewaysn
+          in: path
+          required: true
+        - type: string
+          description: 留样设备类型(比如"derun-803m")
+          name: sample_retention  
+          in: query
+          required: true
+      responses:
+        '200':
+          description: ok
+          schema:
+            type: string
+        '401':
+          description: access denided
+          schema:
+            type: object
+        '404':
+          description: Can not sample retention
+          schema:
+            type: object
+  '/{gatewaysn}/gateway/daily_data':
+    get:
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      tags:
+        - 当前数据
+      summary: 获取最近一次日数据
+      parameters:
+        - type: string
+          description: gatewaysn 网关序列号
+          name: gatewaysn
+          in: path
+          required: true
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+        '404':
+          description: Can not get daily_data
+          schema:
+            type: object
+  '/{gatewaysn}/gateway/device':
+    get:
+      consumes:
+        - application/json
+      tags:
+        - 配置信息
+      summary: 获取设备信息
+      parameters:
+        - type: string
+          description: gatewaysn 网关序列号
+          name: gatewaysn
+          in: path
+          required: true
+      responses:
+        '200':
+          description: ok
+          schema:
+            type: object
+        '404':
+          description: Can not list device add device first
+          schema:
+            type: object
+    put:
+      security:
+        - ApiKeyAuth: []
+      consumes:
+        - application/json
+      tags:
+        - 配置信息
+      summary: 添加或更新设备
+      parameters:
+        - type: string
+          description: gatewaysn 网关序列号
+          name: gatewaysn
+          in: path
+          required: true
+        - description: 设备信息(若ID存在则为更新，否则为新添加)
+          name: t_mn_info
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/dataprocess.TDevice'
+      responses:
+        '200':
+          description: ok
+          schema:
+            type: object
+        '401':
+          description: access denided
+          schema:
+            type: object
+        '404':
+          description: Can not insert device
+          schema:
+            type: object
+    delete:
+      security:
+        - ApiKeyAuth: []
+      consumes:
+        - application/json
+      tags:
+        - 配置信息
+      summary: 删除设备
+      parameters:
+        - type: string
+          description: gatewaysn 网关序列号
+          name: gatewaysn
+          in: path
+          required: true
+        - type: string
+          description: 设备ID
+          name: device_id
+          in: query
+          required: true
+      responses:
+        '200':
+          description: ok
+          schema:
+            type: object
+        '401':
+          description: access denided
+          schema:
+            type: object
+        '404':
+          description: Can not delete MNinfo
+          schema:
+            type: object
+  '/{gatewaysn}/gateway/device_factor':
+    get:
+      consumes:
+        - application/json
+      tags:
+        - 配置信息
+      summary: 获取设备的因子信息
+      parameters:
+        - type: string
+          description: gatewaysn 网关序列号
+          name: gatewaysn
+          in: path
+          required: true
+      responses:
+        '200':
+          description: ok
+          schema:
+            type: object
+        '404':
+          description: Can not get device factor info
+          schema:
+            type: object
+    put:
+      security:
+        - ApiKeyAuth: []
+      consumes:
+        - application/json
+      tags:
+        - 配置信息
+      summary: 添加或更新设备的因子(v1.2版本添加 is_manual_flag 和 manual_flag 字段)
+      parameters:
+        - type: string
+          description: gatewaysn 网关序列号
+          name: gatewaysn
+          in: path
+          required: true
+        - description: 设备因子(若factor_code存在则为更新，否则为新添加)
+          name: t_mn_info
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/dataprocess.TDeviceFactor'
+      responses:
+        '200':
+          description: ok
+          schema:
+            type: object
+        '401':
+          description: access denided
+          schema:
+            type: object
+        '404':
+          description: Can not insert device
+          schema:
+            type: object
+    delete:
+      security:
+        - ApiKeyAuth: []
+      consumes:
+        - application/json
+      tags:
+        - 配置信息
+      summary: 删除设备的因子
+      parameters:
+        - type: string
+          description: gatewaysn 网关序列号
+          name: gatewaysn
+          in: path
+          required: true
+        - type: string
+          description: 设备因子ID
+          name: factor_id
+          in: query
+          required: true
+      responses:
+        '200':
+          description: ok
+          schema:
+            type: object
+        '401':
+          description: access denided
+          schema:
+            type: object
+        '404':
+          description: Can not delete MNinfo
+          schema:
+            type: object
+  '/{gatewaysn}/gateway/factor':
+    get:
+      consumes:
+        - application/json
+      tags:
+        - 配置信息
+      summary: 获取常用因子列表
+      parameters:
+        - type: string
+          description: gatewaysn 网关序列号
+          name: gatewaysn
+          in: path
+          required: true
+      responses:
+        '200':
+          description: ok
+          schema:
+            type: object
+        '404':
+          description: Can not get factor list
+          schema:
+            type: object
+    put:
+      security:
+        - ApiKeyAuth: []
+      consumes:
+        - application/json
+      tags:
+        - 配置信息
+      summary: 添加或更新常用因子列表
+      parameters:
+        - type: string
+          description: gatewaysn 网关序列号
+          name: gatewaysn
+          in: path
+          required: true
+        - description: 常用因子列表(若factor_code存在则为更新，否则为新添加)
+          name: t_mn_info
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/dataprocess.TFactor'
+      responses:
+        '200':
+          description: ok
+          schema:
+            type: object
+        '401':
+          description: access denided
+          schema:
+            type: object
+        '404':
+          description: Can not insert factor
+          schema:
+            type: object
+    delete:
+      security:
+        - ApiKeyAuth: []
+      consumes:
+        - application/json
+      tags:
+        - 配置信息
+      summary: 删除常用因子列表内的因子
+      parameters:
+        - type: string
+          description: 因子ID
+          name: factor_id
+          in: query
+          required: true
+        - type: string
+          description: gatewaysn 网关序列号
+          name: gatewaysn
+          in: path
+          required: true
+      responses:
+        '200':
+          description: ok
+          schema:
+            type: object
+        '401':
+          description: access denided
+          schema:
+            type: object
+        '404':
+          description: Can not delete factor
+          schema:
+            type: object
+  '/{gatewaysn}/gateway/history/manual_send_msg':
+    post:
+      security:
+        - ApiKeyAuth: []
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      tags:
+        - 历史数据
+      summary: 手工补发
+      parameters:
+        - type: string
+          description: gatewaysn 网关序列号
+          name: gatewaysn
+          in: path
+          required: true
+        - type: string
+          description: 平台地址
+          name: up_addr
+          in: query
+          required: true
+        - type: string
+          description: 开始时间
+          name: startt
+          in: query
+          required: true
+        - type: string
+          description: 终止时间
+          name: endt
+          in: query
+          required: true
+      responses:
+        '200':
+          description: ok
+          schema:
+            type: object
+        '404':
+          description: Can not send data
+          schema:
+            type: object
+  '/{gatewaysn}/gateway/history/realtime_data':
+    post:
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      tags:
+        - 历史数据
+      summary: 查询历史实时数据
+      parameters:
+        - type: string
+          description: gatewaysn 网关序列号
+          name: gatewaysn
+          in: path
+          required: true
+        - type: string
+          description: 因子编码
+          name: factor_code
+          in: query
+          required: true
+        - description: 查询格式
+          name: query_section
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/dataprocess.QuerySection'
+      responses:
+        '200':
+          description: ok
+          schema:
+            type: object
+        '404':
+          description: Can not query history data
+          schema:
+            type: object
+  '/{gatewaysn}/gateway/history/up_message':
+    post:
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      tags:
+        - 历史数据
+      summary: 查询历史上传报文
+      parameters:
+        - type: string
+          description: gatewaysn 网关序列号
+          name: gatewaysn
+          in: path
+          required: true
+        - type: string
+          description: 平台地址
+          name: up_addr
+          in: query
+          required: true
+        - description: 查询格式
+          name: query_section
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/dataprocess.QuerySection'
+      responses:
+        '200':
+          description: ok
+          schema:
+            type: object
+        '404':
+          description: Can not query history data
+          schema:
+            type: object
+  '/{gatewaysn}/gateway/history/{type}':
+    post:
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      tags:
+        - 历史数据
+      summary: '查询历史(分钟, 小时，天, 月)数据'
+      parameters:
+        - type: string
+          description: gatewaysn 网关序列号
+          name: gatewaysn
+          in: path
+          required: true
+        - type: string
+          description: 'minute, hour, daily, month'
+          name: type
+          in: path
+          required: true
+        - description: 查询格式
+          name: query_section
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/dataprocess.QuerySection'
+      responses:
+        '200':
+          description: ok
+          schema:
+            type: object
+        '404':
+          description: Can not query history data
+          schema:
+            type: object
+  '/{gatewaysn}/gateway/hour_data':
+    get:
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      tags:
+        - 当前数据
+      summary: 获取最近一次小时数据
+      parameters:
+        - type: string
+          description: gatewaysn 网关序列号
+          name: gatewaysn
+          in: path
+          required: true
+        - type: string
+          description: gatewaysn 网关序列号
+          name: gatewaysn
+          in: path
+          required: true
+      responses:
+        '200':
+          description: ok
+          schema:
+            type: object
+        '404':
+          description: Can not get hour_data
+          schema:
+            type: object
+  '/{gatewaysn}/gateway/minute_data':
+    get:
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      tags:
+        - 当前数据
+      summary: 获取最近一次分钟数据
+      parameters:
+        - type: string
+          description: gatewaysn 网关序列号
+          name: gatewaysn
+          in: path
+          required: true
+      responses:
+        '200':
+          description: ok
+          schema:
+            type: object
+        '404':
+          description: Can not get minute_data
+          schema:
+            type: object
+  '/{gatewaysn}/gateway/mninfo':
+    get:
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      tags:
+        - 配置信息
+      summary: 获取平台信息
+      parameters:
+        - type: string
+          description: gatewaysn 网关序列号
+          name: gatewaysn
+          in: path
+          required: true
+      responses:
+        '200':
+          description: ok
+          schema:
+            type: object
+        '404':
+          description: Can not get MNinfo
+          schema:
+            type: object
+    put:
+      security:
+        - ApiKeyAuth: []
+      consumes:
+        - application/json
+      tags:
+        - 配置信息
+      summary: 添加或更新上报平台
+      parameters:
+        - type: string
+          description: gatewaysn 网关序列号
+          name: gatewaysn
+          in: path
+          required: true
+        - description: 平台信息(若ip_addr_port已经存在，则为更新，否则为新添加)
+          name: t_mn_info
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/dataprocess.TMnInfo'
+      responses:
+        '200':
+          description: ok
+          schema:
+            type: object
+        '401':
+          description: access denided
+          schema:
+            type: object
+        '404':
+          description: Can not insert MNinfo
+          schema:
+            type: object
+    delete:
+      security:
+        - ApiKeyAuth: []
+      consumes:
+        - application/json
+      tags:
+        - 配置信息
+      summary: 删除上报平台
+      parameters:
+        - type: string
+          description: gatewaysn 网关序列号
+          name: gatewaysn
+          in: path
+          required: true
+        - type: string
+          description: 平台地址
+          name: ip_addr_port
+          in: query
+          required: true
+      responses:
+        '200':
+          description: ok
+          schema:
+            type: object
+        '401':
+          description: access denided
+          schema:
+            type: object
+        '404':
+          description: Can not delete MNinfo
+          schema:
+            type: object
+  '/{gatewaysn}/gateway/realtime_data':
+    get:
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      tags:
+        - 当前数据
+      summary: 获取实时数据
+      parameters:
+        - type: string
+          description: gatewaysn 网关序列号
+          name: gatewaysn
+          in: path
+          required: true
+      responses:
+        '200':
+          description: ok
+          schema:
+            type: object
+        '404':
+          description: Can not get realtime data
+          schema:
+            type: object
+  '/{gatewaysn}/gateway/serial_debug':
+    post:
+      security:
+        - ApiKeyAuth: []
+      consumes:
+        - application/json
+      tags:
+        - 系统命令
+      summary: 串口调试
+      parameters:
+        - type: string
+          description: gatewaysn 网关序列号
+          name: gatewaysn
+          in: path
+          required: true
+        - description: 串口调试参数
+          name: serial_params
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/dataprocess.SerialParams'
+      responses:
+        '200':
+          description: ok
+          schema:
+            type: string
+        '401':
+          description: access denided
+          schema:
+            type: object
+        '404':
+          description: Can not debug serial port
+          schema:
+            type: object
+  '/{gatewaysn}/gateway/screen':
+    get:
+      consumes:
+        - application/json
+      tags:
+        - 系统命令
+      summary: 截屏
+      parameters:
+        - type: string
+          description: gatewaysn 网关序列号
+          name: gatewaysn
+          in: path
+          required: true
+      responses:
+        '200':
+          description: ok
+          schema:
+            type: file
+        '401':
+          description: access denided
+          schema:
+            type: object
+        '404':
+          description: Can not shot screen
+          schema:
+            type: object
+  '/{gatewaysn}/gateway/set_time':
+    post:
+      consumes:
+        - application/json
+      tags:
+        - 系统命令
+      summary: 校准系统时间
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - type: string
+          description: gatewaysn 网关序列号
+          name: gatewaysn
+          in: path
+          required: true
+        - type: string
+          description: '时间格式:2021-01-02 03:04:05'
+          name: time
+          in: query
+          required: true
+      responses:
+        '200':
+          description: ok
+          schema:
+            type: object
+        '401':
+          description: access denided
+          schema:
+            type: object
+        '404':
+          description: Can not alibration time
+          schema:
+            type: object
+  '/{gatewaysn}/gateway/suport_device':
+    get:
+      consumes:
+        - application/json
+      tags:
+        - 配置信息
+      summary: 获取驱动支持的设备类型信息
+      parameters:
+        - type: string
+          description: gatewaysn 网关序列号
+          name: gatewaysn
+          in: path
+          required: true
+      responses:
+        '200':
+          description: ok
+          schema:
+            type: object
+        '404':
+          description: please check gatewaydrive program is running
+          schema:
+            type: object
+  '/{gatewaysn}/gateway/system_code':
+    get:
+      consumes:
+        - application/json
+      tags:
+        - 配置信息
+      summary: 获取ST系统名称列表(id 对应 ST 编码)
+      parameters:
+        - type: string
+          description: gatewaysn 网关序列号
+          name: gatewaysn
+          in: path
+          required: true
+      responses:
+        '200':
+          description: ok
+          schema:
+            type: object
+        '404':
+          description: Can not get system_code list
+          schema:
+            type: object
+  '/{gatewaysn}/gateway/update_qt':
+    post:
+      security:
+        - ApiKeyAuth: []
+      description: update Qt 请上传文件名为demo.zip的Qt程序（demo的压缩文件)
+      consumes:
+        - multipart/form-data
+      produces:
+        - application/json
+      tags:
+        - 系统命令
+      summary: 更新网关Qt前端
+      parameters:
+        - type: string
+          description: gatewaysn 网关序列号
+          name: gatewaysn
+          in: path
+          required: true
+        - type: file
+          description: 上传Qt更新文件
+          name: file
+          in: formData
+          required: true
+      responses:
+        '200':
+          description: ok
+          schema:
+            type: object
+        '401':
+          description: access denided
+          schema:
+            type: object
+        '404':
+          description: update Qt failed
+          schema:
+            type: object
+  '/{gatewaysn}/gateway/update_gatewaydrive':
+    post:
+      security:
+        - ApiKeyAuth: []
+      description: update gatewaydrive 请上传文件名为gatewaydrive.zip的网关驱动程序（gatewaydrive的压缩文件)
+      consumes:
+        - multipart/form-data
+      produces:
+        - application/json
+      tags:
+        - 系统命令
+      summary: 更新网关设备驱动
+      operationId: file.upload
+      parameters:
+        - type: string
+          description: gatewaysn 网关序列号
+          name: gatewaysn
+          in: path
+          required: true
+        - type: file
+          description: 上传驱动更新文件
+          name: file
+          in: formData
+          required: true
+      responses:
+        '200':
+          description: ok
+          schema:
+            type: object
+        '404':
+          description: update gatewaydrive failed
+          schema:
+            type: object
+  '/{gatewaysn}/gateway/update_hj212':
+    post:
+      security:
+        - ApiKeyAuth: []
+      description: update hj212 请上传文件名为hj212.zip的网关主程序（hj212的压缩文件)
+      consumes:
+        - multipart/form-data
+      produces:
+        - application/json
+      tags:
+        - 系统命令
+      summary: 更新网关主程序
+      parameters:
+        - type: string
+          description: gatewaysn 网关序列号
+          name: gatewaysn
+          in: path
+          required: true
+        - type: file
+          description: 上传网关主程序更新文件
+          name: file
+          in: formData
+          required: true
+      responses:
+        '200':
+          description: ok
+          schema:
+            type: object
+        '401':
+          description: access denided
+          schema:
+            type: object
+        '404':
+          description: update hj212 failed
+          schema:
+            type: object
+  '/{gatewaysn}/gateway/user':
+    get:
+      security:
+        - ApiKeyAuth: []
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      tags:
+        - 配置信息
+      summary: 获取用户信息
+      parameters:
+        - type: string
+          description: gatewaysn 网关序列号
+          name: gatewaysn
+          in: path
+          required: true
+      responses:
+        '200':
+          description: ok
+          schema:
+            type: object
+        '401':
+          description: access denided
+          schema:
+            type: object
+        '404':
+          description: Can not get user
+          schema:
+            type: object
+    put:
+      security:
+        - ApiKeyAuth: []
+      consumes:
+        - application/json
+      tags:
+        - 配置信息
+      summary: 添加或更新用户信息
+      parameters:
+        - type: string
+          description: gatewaysn 网关序列号
+          name: gatewaysn
+          in: path
+          required: true
+        - description: 用户信息
+          name: user_info
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/dataprocess.WTUser'
+      responses:
+        '200':
+          description: ok
+          schema:
+            type: object
+        '401':
+          description: access denided
+          schema:
+            type: object
+        '404':
+          description: Can not insert User
+          schema:
+            type: object
+    delete:
+      security:
+        - ApiKeyAuth: []
+      consumes:
+        - application/json
+      tags:
+        - 配置信息
+      summary: 删除用户
+      parameters:
+        - type: string
+          description: gatewaysn 网关序列号
+          name: gatewaysn
+          in: path
+          required: true
+        - type: string
+          description: 用户
+          name: username
+          in: query
+          required: true
+      responses:
+        '200':
+          description: ok
+          schema:
+            type: object
+        '401':
+          description: access denided
+          schema:
+            type: object
+        '404':
+          description: Can not delete User
+          schema:
+            type: object
+  '/{gatewaysn}/gateway/special_set':
+    post:
+      security:
+        - ApiKeyAuth: []
+      consumes:
+        - application/json
+      tags:
+        - 配置信息
+      summary: 特殊设置
+      parameters:
+        - type: string
+          description: gatewaysn 网关序列号
+          name: gatewaysn
+          in: path
+          required: true
+        - description: 配置参数
+          name: specail_set_params
+          in: body
+          required: true
+          schema:
+            type: object
+      responses:
+        '200':
+          description: ok
+          schema:
+            type: string
+        '401':
+          description: access denided
+          schema:
+            type: object
+        '404':
+          description: Can not set specail params
+          schema:
+            type: object
+definitions:
+  dataprocess.QuerySection:
+    type: object
+    properties:
+      page_size:
+        description: 每页记录数
+        type: integer
+      pages_index:
+        description: 第几页 （开始页为0）
+        type: integer
+      since:
+        description: '起始时间 (比如 "2021-01-02 15:04:05")'
+        type: string
+      until:
+        description: '终止时间 (比如 "2021-01-03 15:04:05")'
+        type: string
+  dataprocess.SerialParams:
+    type: object
+    properties:
+      baudrate:
+        description: 波特率 e.g. 9600
+        type: integer
+      com:
+        description: 串口
+        type: string
+      data_bit:
+        description: 数据位 e.g. 8
+        type: integer
+      is_hex:
+        description: 16进制发送 =1 ，assic 发送 =0
+        type: integer
+      parity:
+        description: '奇偶校验 N, E或O'
+        type: string
+      payload:
+        description: 发送内容
+        type: string
+      stop_bit:
+        description: 停止位 e.g. 1
+        type: integer
+      time_out:
+        description: 超时 e.g. 1
+        type: integer
+  dataprocess.TDevice:
+    type: object
+    properties:
+      address:
+        description: 通讯地址(比如moodbus地址)
+        type: integer
+      baudrate:
+        description: 波特率
+        type: integer
+      com:
+        description: 通讯串口
+        type: string
+      data_bit:
+        description: 数据位
+        type: integer
+      dev_name:
+        description: 设备名称
+        type: string
+      dev_params:
+        description: 设备的参数(一般情况不需要)
+        type: string
+      dev_type:
+        description: 设备类型(驱动名)
+        type: string
+      id:
+        description: device_id
+        type: string
+      ip_addr:
+        description: 若是网络设备，填ip地址或url
+        type: string
+      parity:
+        description: '奇偶校验("N", "E", "O")'
+        type: string
+      stop_bit:
+        description: 停止位
+        type: string
+  dataprocess.TDeviceFactor:
+    type: object
+    properties:
+      alarm_lower:
+        description: 报警下限值(不是必须)
+        type: number
+      alarm_upper:
+        description: 报警上限值(不是必须)
+        type: number
+      calc_type:
+        description: 因子数值类型 1：数字，2：字符
+        type: integer
+      decimals:
+        description: 保留几位小数
+        type: integer
+      device_id:
+        description: device_id
+        type: string
+      factor_alias:
+        description: 因子别名(也可以是寄存器地址编号)
+        type: string
+      factor_code:
+        description: 因子编码
+        type: string
+      id:
+        description: factor_id 随便填不空即可，会自动生成新的
+        type: string
+      is_change_send_msg:
+        description: 是否数据一发生变化就上传
+        type: integer
+      is_change_send_msg_store:
+        description: 是否数据一发生变化就存储(若变化频率高，建议不存储，比如1秒就变化了)
+        type: integer
+      is_continuous_alarm_over_standard:
+        description: 超标是否连续报警(不是必须)
+        type: integer
+      st:
+        description: 系统编码
+        type: string
+      is_manual_flag:
+        description: 是否使用手动FLAG 1:是, 0:否
+        type: integer
+      manual_flag:
+        description: 要使用的手动FLAG标记
+        type: string
+      tag_id:
+        description: 标签id，不同设备下如果有相同的因子，则需要该字段来区分
+        type: string
+      doefficient:
+        description: 计算系数
+        type: number
+  dataprocess.TFactor:
+    type: object
+    properties:
+      calc_type:
+        description: '因子类型1:正常参与统计计算，2：参数类型和自定义类型'
+        type: integer
+      code:
+        description: 因子编码
+        type: string
+      data_type:
+        description: 数据类型
+        type: string
+      id:
+        description: ID
+        type: string
+      is_calc_cou:
+        description: 是否计算排放量
+        type: integer
+      is_calc_statistic:
+        description: 是否计算统计值
+        type: integer
+      is_calc_zs:
+        description: 是计算折算值
+        type: integer
+      name:
+        description: 因子名称
+        type: string
+      original_code:
+        description: 原编码
+        type: string
+      statistics_unit:
+        description: 计量单位(排放量)
+        type: string
+      unit:
+        description: 计量单位
+        type: string
+  dataprocess.TMnInfo:
+    type: object
+    properties:
+      id:
+        description: just ID 随便填不空即可，会自动生成新的
+        type: string
+      interval_heartbeat:
+        description: 心跳间隔(秒)推荐值(60-300)
+        type: integer
+      interval_minute_data_upload:
+        description: 分钟数据间隔(分)
+        type: integer
+      interval_upload:
+        description: 上报间隔(秒)
+        type: integer
+      ip_addr_port:
+        description: 连接地址和端口
+        type: string
+      is_open_heartbeat:
+        description: 是否打开心跳机制 (0=关闭)
+        type: integer
+      is_send_rtd:
+        description: 是否上报实时数据
+        type: integer
+      mn:
+        description: MN 编号
+        type: string
+      over_time:
+        description: 发送超时(秒)
+        type: integer
+      pw:
+        description: password
+        type: string
+      resend_times:
+        description: 发送失败重试次数
+        type: integer
+  dataprocess.TUser:
+    type: object
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+  dataprocess.WTUser:
+    type: object
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+      level:
+        type: integer
+securityDefinitions:
+  ApiKeyAuth:
+    type: apiKey
+    name: Authorization
+    in: header
