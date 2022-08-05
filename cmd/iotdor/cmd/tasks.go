@@ -20,7 +20,6 @@ import (
 
 //go:embed config.yml
 var configYml embed.FS
-
 var dataSrc datasrc.DSrcer
 var dbClient *ent.Client
 var redisClient *redis.Client
@@ -136,6 +135,13 @@ func mkDBDns(param map[string]string) (dns string) {
 			param["host"],
 			param["port"],
 			param["dbname"])
+	case "postgresql":
+		dns = fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s",
+			param["host"],
+			param["port"],
+			param["user"],
+			param["dbname"],
+			param["password"])
 	}
 	return
 }

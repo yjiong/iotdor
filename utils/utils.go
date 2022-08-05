@@ -9,7 +9,6 @@ import (
 	"os"
 	"runtime"
 	"strings"
-	"time"
 )
 
 // UpdateSystemTime set system time
@@ -20,21 +19,12 @@ func UpdateSystemTime(dt string) (err error) {
 		{
 			if _, err = RunCmd(`date ` + strings.Split(dt, " ")[0]); err == nil {
 				_, err = RunCmd(`time ` + strings.Split(dt, " ")[1])
-				go func() {
-					time.After(time.Second * 3)
-					RunCmd(`sc stop hj212 && sc start hj212`)
-				}()
 			}
 		}
 	case "linux":
 		{
 			if _, err = RunCmd(`date -s "` + dt + `"`); err == nil {
 				_, err = RunCmd(`hwclock -w -u`)
-				//校时间后cron job 失效
-				go func() {
-					time.After(time.Second * 3)
-					RunCmd(`systemctl restart lchj212`)
-				}()
 			}
 		}
 	case "darwin":

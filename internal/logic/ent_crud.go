@@ -21,7 +21,7 @@ import (
 //"postgres","host=<host> port=<port> user=<user> dbname=<database> password=<pass>"
 //"sqlite3", "file:ent?mode=memory&cache=shared&_fk=1"
 //"gremlin", "http://localhost:8182"
-//"postgres", "host=mqtt.yaojiong.top port=5432 user=iotd dbname=iotd password=yaojiong"
+
 func OpenMigrate(driveName, dns string) *ent.Client {
 	client, err := ent.Open(driveName, dns)
 	if err != nil {
