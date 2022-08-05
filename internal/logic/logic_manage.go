@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/go-redis/redis/v8"
+	"github.com/robfig/cron/v3"
 	log "github.com/sirupsen/logrus"
 	"github.com/yjiong/iotdor/ent"
 	"github.com/yjiong/iotdor/internal/datasrc"
@@ -20,6 +21,8 @@ type Manage struct {
 	entC     *ent.Client
 	redisC   *redis.Client
 	iotdName string
+	ids      []cron.EntryID
+	*cron.Cron
 }
 
 // MsgHandle ....
@@ -67,6 +70,8 @@ func NewManage(ctx context.Context, dsrc datasrc.DSrcer, entc *ent.Client, redis
 		entC:     entc,
 		redisC:   redisc,
 		iotdName: iname,
+		ids:      []cron.EntryID{},
+		Cron:     cron.New(cron.WithSeconds()),
 	}
 }
 
@@ -91,4 +96,35 @@ func getRawMap(md map[string]interface{}, tstamp string) map[string]interface{} 
 		delete(md, "error")
 	}
 	return md
+}
+
+func (m *Manage) runCron() {
+	//var rtdStr string
+	//irtd := 30
+	//min := irtd / 60
+	//sec := irtd % 60
+	//if min > 0 {
+	//rtdStr = fmt.Sprintf("38 */%d * * * *", min)
+	//} else {
+	//if sec == 0 {
+	//sec = 38
+	//}
+	//rtdStr = fmt.Sprintf("*/%d * * * * *", sec)
+	//}
+	//EID1, _ := m.Cron.AddFunc(
+	//rtdStr,
+	//m.rtdIntervalFunc)
+	//EID2, _ := m.Cron.AddFunc(
+	//fmt.Sprintf("10 */%d * * * *", m.dcmInfo.IntervalMinute),
+	//m.minuteDataIntervalFunc)
+	//m.ids = []cron.EntryID{EID1, EID2}
+	//m.Cron.Start()
+}
+
+func (m *Manage) cronStop() {
+	for _, eid := range m.ids {
+		m.Remove(eid)
+	}
+	m.ids = m.ids[0:0]
+	log.Infoln("cron schedule removed")
 }
