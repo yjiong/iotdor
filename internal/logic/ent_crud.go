@@ -14,6 +14,8 @@ import (
 
 	// postgres driver
 	_ "github.com/lib/pq"
+	// mysql driver
+	_ "github.com/go-sql-driver/mysql"
 )
 
 // OpenMigrate ....
