@@ -86,13 +86,7 @@ func initDataSrcAndDB() error {
 	dataSrc = datasrc.NewMQTTDSrcer(b)
 	d := configViper.GetStringMapString("database")
 	log.Debugln(d)
-	dns := fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s",
-		d["host"],
-		d["port"],
-		d["user"],
-		d["dbname"],
-		d["password"])
-	dbClient = logic.OpenMigrate(d["type"], dns)
+	dbClient = logic.OpenMigrate(d["type"], mkDBDns(d))
 	r := configViper.GetStringMapString("redis")
 	redisClient = redis.NewClient(&redis.Options{
 		Addr:     fmt.Sprintf("%s:%s", r["host"], r["port"]),
