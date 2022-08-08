@@ -129,7 +129,7 @@ func mkDBDns(param map[string]string) (dns string) {
 			param["host"],
 			param["port"],
 			param["dbname"])
-	case "postgresql":
+	case "postgres":
 		dns = fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s",
 			param["host"],
 			param["port"],

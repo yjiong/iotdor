@@ -12,6 +12,7 @@ import (
 
 	simplejson "github.com/bitly/go-simplejson"
 	mqtt "github.com/eclipse/paho.mqtt.golang"
+	"github.com/yjiong/iotdor/utils"
 
 	//"github.com/eclipse/paho.mqtt.golang/packets"
 	log "github.com/sirupsen/logrus"
@@ -57,7 +58,8 @@ func NewMQTTDSrcer(conm map[string]string) DSrcer {
 	h.sqos = byte(sqos)
 	h.retain, _ = strconv.ParseBool(conm["retain"])
 	opts.SetKeepAlive(time.Duration(kplv) * time.Second)
-	opts.SetClientID(h.Iotdname)
+	rand := utils.GetSnowflakeID()
+	opts.SetClientID(fmt.Sprintf("%s-%s", h.Iotdname, rand))
 	optserver := "tcp://" + server
 	if conm["cafile"] != "" {
 		tlsconfig, err := newTLSConfig(conm)

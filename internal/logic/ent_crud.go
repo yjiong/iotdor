@@ -29,8 +29,8 @@ func OpenMigrate(driveName, dns string) *ent.Client {
 	if err != nil {
 		log.Fatal(err)
 	}
-	if client.Schema.Create(context.Background(), migrate.WithDropColumn(true), migrate.WithDropIndex(true)) != nil {
-		log.Fatal()
+	if scerr := client.Schema.Create(context.Background(), migrate.WithDropColumn(true), migrate.WithDropIndex(true)); scerr != nil {
+		log.Fatal(scerr)
 	}
 	log.Infof("%s client init ok", driveName)
 	return client
@@ -110,6 +110,10 @@ func queryGatewayByGWID(ctx context.Context, c *ent.Client, gwid string) (*ent.G
 	return c.Gateway.Query().Where(gateway.Gwid(gwid)).Only(ctx)
 }
 
+func getDevicesByGWID(ctx context.Context, c *ent.Client, gwid string) ([]*ent.Device, error) {
+	return c.Gateway.Query().Where(gateway.Gwid(gwid)).QueryDevices().All(ctx)
+}
+
 func delGatewayByGWID(ctx context.Context, c *ent.Client, gwid string) error {
 	_, err := c.Gateway.Delete().Where((gateway.Gwid(gwid))).
 		Exec(ctx)
@@ -146,6 +150,10 @@ func queryDevices(ctx context.Context, c *ent.Client) ([]*ent.Device, error) {
 
 func queryDeviceByDevID(ctx context.Context, c *ent.Client, devid string) (*ent.Device, error) {
 	return c.Device.Query().Where(device.DevID(devid)).Only(ctx)
+}
+
+func getGatewayByDevID(ctx context.Context, c *ent.Client, devid string) (*ent.Gateway, error) {
+	return c.Device.Query().Where(device.DevID(devid)).QueryGateway().Only(ctx)
 }
 
 func updateDevice(ctx context.Context, d *ent.Device,
