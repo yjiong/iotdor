@@ -18,7 +18,7 @@ var (
 		{Name: "dev_addr", Type: field.TypeString},
 		{Name: "conn", Type: field.TypeString},
 		{Name: "name", Type: field.TypeString, Nullable: true},
-		{Name: "id_delete", Type: field.TypeBool, Nullable: true},
+		{Name: "delete_flag", Type: field.TypeBool, Nullable: true},
 		{Name: "gateway_devices", Type: field.TypeInt, Nullable: true},
 	}
 	// DevicesTable holds the schema information for the "devices" table.
@@ -52,7 +52,7 @@ var (
 		{Name: "broker", Type: field.TypeString},
 		{Name: "installation_location", Type: field.TypeString, Nullable: true},
 		{Name: "online", Type: field.TypeBool, Nullable: true},
-		{Name: "id_delete", Type: field.TypeBool, Nullable: true},
+		{Name: "delete_flag", Type: field.TypeBool, Nullable: true},
 		{Name: "up_interval", Type: field.TypeInt, Default: 60},
 		{Name: "group_gateways", Type: field.TypeInt, Nullable: true},
 	}

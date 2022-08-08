@@ -25,8 +25,8 @@ const (
 	FieldInstallationLocation = "installation_location"
 	// FieldOnline holds the string denoting the online field in the database.
 	FieldOnline = "online"
-	// FieldIdDelete holds the string denoting the iddelete field in the database.
-	FieldIdDelete = "id_delete"
+	// FieldDeleteFlag holds the string denoting the deleteflag field in the database.
+	FieldDeleteFlag = "delete_flag"
 	// FieldUpInterval holds the string denoting the upinterval field in the database.
 	FieldUpInterval = "up_interval"
 	// EdgeDevices holds the string denoting the devices edge name in mutations.
@@ -61,7 +61,7 @@ var Columns = []string{
 	FieldBroker,
 	FieldInstallationLocation,
 	FieldOnline,
-	FieldIdDelete,
+	FieldDeleteFlag,
 	FieldUpInterval,
 }
 

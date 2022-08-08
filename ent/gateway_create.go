@@ -96,16 +96,16 @@ func (gc *GatewayCreate) SetNillableOnline(b *bool) *GatewayCreate {
 	return gc
 }
 
-// SetIdDelete sets the "idDelete" field.
-func (gc *GatewayCreate) SetIdDelete(b bool) *GatewayCreate {
-	gc.mutation.SetIdDelete(b)
+// SetDeleteFlag sets the "DeleteFlag" field.
+func (gc *GatewayCreate) SetDeleteFlag(b bool) *GatewayCreate {
+	gc.mutation.SetDeleteFlag(b)
 	return gc
 }
 
-// SetNillableIdDelete sets the "idDelete" field if the given value is not nil.
-func (gc *GatewayCreate) SetNillableIdDelete(b *bool) *GatewayCreate {
+// SetNillableDeleteFlag sets the "DeleteFlag" field if the given value is not nil.
+func (gc *GatewayCreate) SetNillableDeleteFlag(b *bool) *GatewayCreate {
 	if b != nil {
-		gc.SetIdDelete(*b)
+		gc.SetDeleteFlag(*b)
 	}
 	return gc
 }
@@ -346,13 +346,13 @@ func (gc *GatewayCreate) createSpec() (*Gateway, *sqlgraph.CreateSpec) {
 		})
 		_node.Online = value
 	}
-	if value, ok := gc.mutation.IdDelete(); ok {
+	if value, ok := gc.mutation.DeleteFlag(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeBool,
 			Value:  value,
-			Column: gateway.FieldIdDelete,
+			Column: gateway.FieldDeleteFlag,
 		})
-		_node.IdDelete = value
+		_node.DeleteFlag = value
 	}
 	if value, ok := gc.mutation.UpInterval(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{

@@ -110,6 +110,27 @@ func queryGatewayByGWID(ctx context.Context, c *ent.Client, gwid string) (*ent.G
 	return c.Gateway.Query().Where(gateway.Gwid(gwid)).Only(ctx)
 }
 
+func updateGateway(ctx context.Context,
+	g *ent.Gateway,
+	gwid, svrid, broker, installAt string,
+	upInterval int) error {
+	return g.Update().
+		SetGwid(gwid).
+		SetSvrid(svrid).
+		SetBroker(broker).
+		SetInstallationLocation(installAt).
+		SetUpInterval(upInterval).
+		Exec(ctx)
+}
+
+func setGatewayDelFlag(ctx context.Context,
+	g *ent.Gateway,
+	flag bool) error {
+	return g.Update().
+		SetDeleteFlag(flag).
+		Exec(ctx)
+}
+
 func getDevicesByGWID(ctx context.Context, c *ent.Client, gwid string) ([]*ent.Device, error) {
 	return c.Gateway.Query().Where(gateway.Gwid(gwid)).QueryDevices().All(ctx)
 }
@@ -132,8 +153,7 @@ func setGwGroup(ctx context.Context, gw *ent.Gateway, g *ent.Group) error {
 func addDevice(ctx context.Context,
 	c *ent.Client,
 	did, dtype, daddr, conn, name string,
-	gw *ent.Gateway,
-	isDelete bool) (*ent.Device, error) {
+	gw *ent.Gateway) (*ent.Device, error) {
 	return c.Device.Create().
 		SetDevID(did).
 		SetDevType(dtype).
@@ -158,8 +178,7 @@ func getGatewayByDevID(ctx context.Context, c *ent.Client, devid string) (*ent.G
 
 func updateDevice(ctx context.Context, d *ent.Device,
 	did, dtype, daddr, conn, name string,
-	gw *ent.Gateway,
-	isDelete bool) error {
+	gw *ent.Gateway) error {
 	return d.Update().
 		SetDevID(did).
 		SetDevType(dtype).
@@ -167,6 +186,12 @@ func updateDevice(ctx context.Context, d *ent.Device,
 		SetConn(conn).
 		SetName(name).
 		SetGateway(gw).
+		Exec(ctx)
+}
+
+func setDeviceDelFlag(ctx context.Context, d *ent.Device, flag bool) error {
+	return d.Update().
+		SetDeleteFlag(flag).
 		Exec(ctx)
 }
 

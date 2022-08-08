@@ -31,8 +31,8 @@ type Gateway struct {
 	InstallationLocation string `json:"installationLocation,omitempty"`
 	// Online holds the value of the "online" field.
 	Online bool `json:"online,omitempty"`
-	// IdDelete holds the value of the "idDelete" field.
-	IdDelete bool `json:"idDelete,omitempty"`
+	// DeleteFlag holds the value of the "DeleteFlag" field.
+	DeleteFlag bool `json:"DeleteFlag,omitempty"`
 	// UpInterval holds the value of the "upInterval" field.
 	UpInterval int `json:"upInterval,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -80,7 +80,7 @@ func (*Gateway) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case gateway.FieldOnline, gateway.FieldIdDelete:
+		case gateway.FieldOnline, gateway.FieldDeleteFlag:
 			values[i] = new(sql.NullBool)
 		case gateway.FieldID, gateway.FieldUpInterval:
 			values[i] = new(sql.NullInt64)
@@ -153,11 +153,11 @@ func (ga *Gateway) assignValues(columns []string, values []interface{}) error {
 			} else if value.Valid {
 				ga.Online = value.Bool
 			}
-		case gateway.FieldIdDelete:
+		case gateway.FieldDeleteFlag:
 			if value, ok := values[i].(*sql.NullBool); !ok {
-				return fmt.Errorf("unexpected type %T for field idDelete", values[i])
+				return fmt.Errorf("unexpected type %T for field DeleteFlag", values[i])
 			} else if value.Valid {
-				ga.IdDelete = value.Bool
+				ga.DeleteFlag = value.Bool
 			}
 		case gateway.FieldUpInterval:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -224,8 +224,8 @@ func (ga *Gateway) String() string {
 	builder.WriteString(ga.InstallationLocation)
 	builder.WriteString(", online=")
 	builder.WriteString(fmt.Sprintf("%v", ga.Online))
-	builder.WriteString(", idDelete=")
-	builder.WriteString(fmt.Sprintf("%v", ga.IdDelete))
+	builder.WriteString(", DeleteFlag=")
+	builder.WriteString(fmt.Sprintf("%v", ga.DeleteFlag))
 	builder.WriteString(", upInterval=")
 	builder.WriteString(fmt.Sprintf("%v", ga.UpInterval))
 	builder.WriteByte(')')

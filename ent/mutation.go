@@ -45,7 +45,7 @@ type DeviceMutation struct {
 	devAddr        *string
 	conn           *string
 	name           *string
-	idDelete       *bool
+	_DeleteFlag    *bool
 	clearedFields  map[string]struct{}
 	gateway        *int
 	clearedgateway bool
@@ -398,53 +398,53 @@ func (m *DeviceMutation) ResetName() {
 	delete(m.clearedFields, device.FieldName)
 }
 
-// SetIdDelete sets the "idDelete" field.
-func (m *DeviceMutation) SetIdDelete(b bool) {
-	m.idDelete = &b
+// SetDeleteFlag sets the "DeleteFlag" field.
+func (m *DeviceMutation) SetDeleteFlag(b bool) {
+	m._DeleteFlag = &b
 }
 
-// IdDelete returns the value of the "idDelete" field in the mutation.
-func (m *DeviceMutation) IdDelete() (r bool, exists bool) {
-	v := m.idDelete
+// DeleteFlag returns the value of the "DeleteFlag" field in the mutation.
+func (m *DeviceMutation) DeleteFlag() (r bool, exists bool) {
+	v := m._DeleteFlag
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldIdDelete returns the old "idDelete" field's value of the Device entity.
+// OldDeleteFlag returns the old "DeleteFlag" field's value of the Device entity.
 // If the Device object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *DeviceMutation) OldIdDelete(ctx context.Context) (v bool, err error) {
+func (m *DeviceMutation) OldDeleteFlag(ctx context.Context) (v bool, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldIdDelete is only allowed on UpdateOne operations")
+		return v, fmt.Errorf("OldDeleteFlag is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldIdDelete requires an ID field in the mutation")
+		return v, fmt.Errorf("OldDeleteFlag requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldIdDelete: %w", err)
+		return v, fmt.Errorf("querying old value for OldDeleteFlag: %w", err)
 	}
-	return oldValue.IdDelete, nil
+	return oldValue.DeleteFlag, nil
 }
 
-// ClearIdDelete clears the value of the "idDelete" field.
-func (m *DeviceMutation) ClearIdDelete() {
-	m.idDelete = nil
-	m.clearedFields[device.FieldIdDelete] = struct{}{}
+// ClearDeleteFlag clears the value of the "DeleteFlag" field.
+func (m *DeviceMutation) ClearDeleteFlag() {
+	m._DeleteFlag = nil
+	m.clearedFields[device.FieldDeleteFlag] = struct{}{}
 }
 
-// IdDeleteCleared returns if the "idDelete" field was cleared in this mutation.
-func (m *DeviceMutation) IdDeleteCleared() bool {
-	_, ok := m.clearedFields[device.FieldIdDelete]
+// DeleteFlagCleared returns if the "DeleteFlag" field was cleared in this mutation.
+func (m *DeviceMutation) DeleteFlagCleared() bool {
+	_, ok := m.clearedFields[device.FieldDeleteFlag]
 	return ok
 }
 
-// ResetIdDelete resets all changes to the "idDelete" field.
-func (m *DeviceMutation) ResetIdDelete() {
-	m.idDelete = nil
-	delete(m.clearedFields, device.FieldIdDelete)
+// ResetDeleteFlag resets all changes to the "DeleteFlag" field.
+func (m *DeviceMutation) ResetDeleteFlag() {
+	m._DeleteFlag = nil
+	delete(m.clearedFields, device.FieldDeleteFlag)
 }
 
 // SetGatewayID sets the "gateway" edge to the Gateway entity by id.
@@ -527,8 +527,8 @@ func (m *DeviceMutation) Fields() []string {
 	if m.name != nil {
 		fields = append(fields, device.FieldName)
 	}
-	if m.idDelete != nil {
-		fields = append(fields, device.FieldIdDelete)
+	if m._DeleteFlag != nil {
+		fields = append(fields, device.FieldDeleteFlag)
 	}
 	return fields
 }
@@ -552,8 +552,8 @@ func (m *DeviceMutation) Field(name string) (ent.Value, bool) {
 		return m.Conn()
 	case device.FieldName:
 		return m.Name()
-	case device.FieldIdDelete:
-		return m.IdDelete()
+	case device.FieldDeleteFlag:
+		return m.DeleteFlag()
 	}
 	return nil, false
 }
@@ -577,8 +577,8 @@ func (m *DeviceMutation) OldField(ctx context.Context, name string) (ent.Value, 
 		return m.OldConn(ctx)
 	case device.FieldName:
 		return m.OldName(ctx)
-	case device.FieldIdDelete:
-		return m.OldIdDelete(ctx)
+	case device.FieldDeleteFlag:
+		return m.OldDeleteFlag(ctx)
 	}
 	return nil, fmt.Errorf("unknown Device field %s", name)
 }
@@ -637,12 +637,12 @@ func (m *DeviceMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetName(v)
 		return nil
-	case device.FieldIdDelete:
+	case device.FieldDeleteFlag:
 		v, ok := value.(bool)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetIdDelete(v)
+		m.SetDeleteFlag(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Device field %s", name)
@@ -677,8 +677,8 @@ func (m *DeviceMutation) ClearedFields() []string {
 	if m.FieldCleared(device.FieldName) {
 		fields = append(fields, device.FieldName)
 	}
-	if m.FieldCleared(device.FieldIdDelete) {
-		fields = append(fields, device.FieldIdDelete)
+	if m.FieldCleared(device.FieldDeleteFlag) {
+		fields = append(fields, device.FieldDeleteFlag)
 	}
 	return fields
 }
@@ -697,8 +697,8 @@ func (m *DeviceMutation) ClearField(name string) error {
 	case device.FieldName:
 		m.ClearName()
 		return nil
-	case device.FieldIdDelete:
-		m.ClearIdDelete()
+	case device.FieldDeleteFlag:
+		m.ClearDeleteFlag()
 		return nil
 	}
 	return fmt.Errorf("unknown Device nullable field %s", name)
@@ -729,8 +729,8 @@ func (m *DeviceMutation) ResetField(name string) error {
 	case device.FieldName:
 		m.ResetName()
 		return nil
-	case device.FieldIdDelete:
-		m.ResetIdDelete()
+	case device.FieldDeleteFlag:
+		m.ResetDeleteFlag()
 		return nil
 	}
 	return fmt.Errorf("unknown Device field %s", name)
@@ -825,7 +825,7 @@ type GatewayMutation struct {
 	broker               *string
 	installationLocation *string
 	online               *bool
-	idDelete             *bool
+	_DeleteFlag          *bool
 	upInterval           *int
 	addupInterval        *int
 	clearedFields        map[string]struct{}
@@ -1196,53 +1196,53 @@ func (m *GatewayMutation) ResetOnline() {
 	delete(m.clearedFields, gateway.FieldOnline)
 }
 
-// SetIdDelete sets the "idDelete" field.
-func (m *GatewayMutation) SetIdDelete(b bool) {
-	m.idDelete = &b
+// SetDeleteFlag sets the "DeleteFlag" field.
+func (m *GatewayMutation) SetDeleteFlag(b bool) {
+	m._DeleteFlag = &b
 }
 
-// IdDelete returns the value of the "idDelete" field in the mutation.
-func (m *GatewayMutation) IdDelete() (r bool, exists bool) {
-	v := m.idDelete
+// DeleteFlag returns the value of the "DeleteFlag" field in the mutation.
+func (m *GatewayMutation) DeleteFlag() (r bool, exists bool) {
+	v := m._DeleteFlag
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldIdDelete returns the old "idDelete" field's value of the Gateway entity.
+// OldDeleteFlag returns the old "DeleteFlag" field's value of the Gateway entity.
 // If the Gateway object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *GatewayMutation) OldIdDelete(ctx context.Context) (v bool, err error) {
+func (m *GatewayMutation) OldDeleteFlag(ctx context.Context) (v bool, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldIdDelete is only allowed on UpdateOne operations")
+		return v, fmt.Errorf("OldDeleteFlag is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldIdDelete requires an ID field in the mutation")
+		return v, fmt.Errorf("OldDeleteFlag requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldIdDelete: %w", err)
+		return v, fmt.Errorf("querying old value for OldDeleteFlag: %w", err)
 	}
-	return oldValue.IdDelete, nil
+	return oldValue.DeleteFlag, nil
 }
 
-// ClearIdDelete clears the value of the "idDelete" field.
-func (m *GatewayMutation) ClearIdDelete() {
-	m.idDelete = nil
-	m.clearedFields[gateway.FieldIdDelete] = struct{}{}
+// ClearDeleteFlag clears the value of the "DeleteFlag" field.
+func (m *GatewayMutation) ClearDeleteFlag() {
+	m._DeleteFlag = nil
+	m.clearedFields[gateway.FieldDeleteFlag] = struct{}{}
 }
 
-// IdDeleteCleared returns if the "idDelete" field was cleared in this mutation.
-func (m *GatewayMutation) IdDeleteCleared() bool {
-	_, ok := m.clearedFields[gateway.FieldIdDelete]
+// DeleteFlagCleared returns if the "DeleteFlag" field was cleared in this mutation.
+func (m *GatewayMutation) DeleteFlagCleared() bool {
+	_, ok := m.clearedFields[gateway.FieldDeleteFlag]
 	return ok
 }
 
-// ResetIdDelete resets all changes to the "idDelete" field.
-func (m *GatewayMutation) ResetIdDelete() {
-	m.idDelete = nil
-	delete(m.clearedFields, gateway.FieldIdDelete)
+// ResetDeleteFlag resets all changes to the "DeleteFlag" field.
+func (m *GatewayMutation) ResetDeleteFlag() {
+	m._DeleteFlag = nil
+	delete(m.clearedFields, gateway.FieldDeleteFlag)
 }
 
 // SetUpInterval sets the "upInterval" field.
@@ -1435,8 +1435,8 @@ func (m *GatewayMutation) Fields() []string {
 	if m.online != nil {
 		fields = append(fields, gateway.FieldOnline)
 	}
-	if m.idDelete != nil {
-		fields = append(fields, gateway.FieldIdDelete)
+	if m._DeleteFlag != nil {
+		fields = append(fields, gateway.FieldDeleteFlag)
 	}
 	if m.upInterval != nil {
 		fields = append(fields, gateway.FieldUpInterval)
@@ -1463,8 +1463,8 @@ func (m *GatewayMutation) Field(name string) (ent.Value, bool) {
 		return m.InstallationLocation()
 	case gateway.FieldOnline:
 		return m.Online()
-	case gateway.FieldIdDelete:
-		return m.IdDelete()
+	case gateway.FieldDeleteFlag:
+		return m.DeleteFlag()
 	case gateway.FieldUpInterval:
 		return m.UpInterval()
 	}
@@ -1490,8 +1490,8 @@ func (m *GatewayMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldInstallationLocation(ctx)
 	case gateway.FieldOnline:
 		return m.OldOnline(ctx)
-	case gateway.FieldIdDelete:
-		return m.OldIdDelete(ctx)
+	case gateway.FieldDeleteFlag:
+		return m.OldDeleteFlag(ctx)
 	case gateway.FieldUpInterval:
 		return m.OldUpInterval(ctx)
 	}
@@ -1552,12 +1552,12 @@ func (m *GatewayMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetOnline(v)
 		return nil
-	case gateway.FieldIdDelete:
+	case gateway.FieldDeleteFlag:
 		v, ok := value.(bool)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetIdDelete(v)
+		m.SetDeleteFlag(v)
 		return nil
 	case gateway.FieldUpInterval:
 		v, ok := value.(int)
@@ -1617,8 +1617,8 @@ func (m *GatewayMutation) ClearedFields() []string {
 	if m.FieldCleared(gateway.FieldOnline) {
 		fields = append(fields, gateway.FieldOnline)
 	}
-	if m.FieldCleared(gateway.FieldIdDelete) {
-		fields = append(fields, gateway.FieldIdDelete)
+	if m.FieldCleared(gateway.FieldDeleteFlag) {
+		fields = append(fields, gateway.FieldDeleteFlag)
 	}
 	return fields
 }
@@ -1640,8 +1640,8 @@ func (m *GatewayMutation) ClearField(name string) error {
 	case gateway.FieldOnline:
 		m.ClearOnline()
 		return nil
-	case gateway.FieldIdDelete:
-		m.ClearIdDelete()
+	case gateway.FieldDeleteFlag:
+		m.ClearDeleteFlag()
 		return nil
 	}
 	return fmt.Errorf("unknown Gateway nullable field %s", name)
@@ -1672,8 +1672,8 @@ func (m *GatewayMutation) ResetField(name string) error {
 	case gateway.FieldOnline:
 		m.ResetOnline()
 		return nil
-	case gateway.FieldIdDelete:
-		m.ResetIdDelete()
+	case gateway.FieldDeleteFlag:
+		m.ResetDeleteFlag()
 		return nil
 	case gateway.FieldUpInterval:
 		m.ResetUpInterval()

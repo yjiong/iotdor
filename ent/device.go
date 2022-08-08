@@ -31,8 +31,8 @@ type Device struct {
 	Conn string `json:"conn,omitempty"`
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
-	// IdDelete holds the value of the "idDelete" field.
-	IdDelete bool `json:"idDelete,omitempty"`
+	// DeleteFlag holds the value of the "DeleteFlag" field.
+	DeleteFlag bool `json:"DeleteFlag,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the DeviceQuery when eager-loading is set.
 	Edges           DeviceEdges `json:"edges"`
@@ -67,7 +67,7 @@ func (*Device) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case device.FieldIdDelete:
+		case device.FieldDeleteFlag:
 			values[i] = new(sql.NullBool)
 		case device.FieldID:
 			values[i] = new(sql.NullInt64)
@@ -140,11 +140,11 @@ func (d *Device) assignValues(columns []string, values []interface{}) error {
 			} else if value.Valid {
 				d.Name = value.String
 			}
-		case device.FieldIdDelete:
+		case device.FieldDeleteFlag:
 			if value, ok := values[i].(*sql.NullBool); !ok {
-				return fmt.Errorf("unexpected type %T for field idDelete", values[i])
+				return fmt.Errorf("unexpected type %T for field DeleteFlag", values[i])
 			} else if value.Valid {
-				d.IdDelete = value.Bool
+				d.DeleteFlag = value.Bool
 			}
 		case device.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -200,8 +200,8 @@ func (d *Device) String() string {
 	builder.WriteString(d.Conn)
 	builder.WriteString(", name=")
 	builder.WriteString(d.Name)
-	builder.WriteString(", idDelete=")
-	builder.WriteString(fmt.Sprintf("%v", d.IdDelete))
+	builder.WriteString(", DeleteFlag=")
+	builder.WriteString(fmt.Sprintf("%v", d.DeleteFlag))
 	builder.WriteByte(')')
 	return builder.String()
 }

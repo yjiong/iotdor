@@ -87,16 +87,16 @@ func (dc *DeviceCreate) SetNillableName(s *string) *DeviceCreate {
 	return dc
 }
 
-// SetIdDelete sets the "idDelete" field.
-func (dc *DeviceCreate) SetIdDelete(b bool) *DeviceCreate {
-	dc.mutation.SetIdDelete(b)
+// SetDeleteFlag sets the "DeleteFlag" field.
+func (dc *DeviceCreate) SetDeleteFlag(b bool) *DeviceCreate {
+	dc.mutation.SetDeleteFlag(b)
 	return dc
 }
 
-// SetNillableIdDelete sets the "idDelete" field if the given value is not nil.
-func (dc *DeviceCreate) SetNillableIdDelete(b *bool) *DeviceCreate {
+// SetNillableDeleteFlag sets the "DeleteFlag" field if the given value is not nil.
+func (dc *DeviceCreate) SetNillableDeleteFlag(b *bool) *DeviceCreate {
 	if b != nil {
-		dc.SetIdDelete(*b)
+		dc.SetDeleteFlag(*b)
 	}
 	return dc
 }
@@ -304,13 +304,13 @@ func (dc *DeviceCreate) createSpec() (*Device, *sqlgraph.CreateSpec) {
 		})
 		_node.Name = value
 	}
-	if value, ok := dc.mutation.IdDelete(); ok {
+	if value, ok := dc.mutation.DeleteFlag(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeBool,
 			Value:  value,
-			Column: device.FieldIdDelete,
+			Column: device.FieldDeleteFlag,
 		})
-		_node.IdDelete = value
+		_node.DeleteFlag = value
 	}
 	if nodes := dc.mutation.GatewayIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

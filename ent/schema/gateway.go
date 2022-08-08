@@ -24,7 +24,7 @@ func (Gateway) Fields() []ent.Field {
 			Optional(),
 		field.Bool("online").
 			Optional(),
-		field.Bool("idDelete").
+		field.Bool("DeleteFlag").
 			Optional(),
 		field.Int("upInterval").
 			Default(60),

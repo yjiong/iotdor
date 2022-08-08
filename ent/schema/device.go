@@ -23,7 +23,7 @@ func (Device) Fields() []ent.Field {
 		field.String("conn"),
 		field.String("name").
 			Optional(),
-		field.Bool("idDelete").
+		field.Bool("DeleteFlag").
 			Optional(),
 	}
 }

@@ -71,23 +71,23 @@ func (du *DeviceUpdate) ClearName() *DeviceUpdate {
 	return du
 }
 
-// SetIdDelete sets the "idDelete" field.
-func (du *DeviceUpdate) SetIdDelete(b bool) *DeviceUpdate {
-	du.mutation.SetIdDelete(b)
+// SetDeleteFlag sets the "DeleteFlag" field.
+func (du *DeviceUpdate) SetDeleteFlag(b bool) *DeviceUpdate {
+	du.mutation.SetDeleteFlag(b)
 	return du
 }
 
-// SetNillableIdDelete sets the "idDelete" field if the given value is not nil.
-func (du *DeviceUpdate) SetNillableIdDelete(b *bool) *DeviceUpdate {
+// SetNillableDeleteFlag sets the "DeleteFlag" field if the given value is not nil.
+func (du *DeviceUpdate) SetNillableDeleteFlag(b *bool) *DeviceUpdate {
 	if b != nil {
-		du.SetIdDelete(*b)
+		du.SetDeleteFlag(*b)
 	}
 	return du
 }
 
-// ClearIdDelete clears the value of the "idDelete" field.
-func (du *DeviceUpdate) ClearIdDelete() *DeviceUpdate {
-	du.mutation.ClearIdDelete()
+// ClearDeleteFlag clears the value of the "DeleteFlag" field.
+func (du *DeviceUpdate) ClearDeleteFlag() *DeviceUpdate {
+	du.mutation.ClearDeleteFlag()
 	return du
 }
 
@@ -250,17 +250,17 @@ func (du *DeviceUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: device.FieldName,
 		})
 	}
-	if value, ok := du.mutation.IdDelete(); ok {
+	if value, ok := du.mutation.DeleteFlag(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeBool,
 			Value:  value,
-			Column: device.FieldIdDelete,
+			Column: device.FieldDeleteFlag,
 		})
 	}
-	if du.mutation.IdDeleteCleared() {
+	if du.mutation.DeleteFlagCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeBool,
-			Column: device.FieldIdDelete,
+			Column: device.FieldDeleteFlag,
 		})
 	}
 	if du.mutation.GatewayCleared() {
@@ -361,23 +361,23 @@ func (duo *DeviceUpdateOne) ClearName() *DeviceUpdateOne {
 	return duo
 }
 
-// SetIdDelete sets the "idDelete" field.
-func (duo *DeviceUpdateOne) SetIdDelete(b bool) *DeviceUpdateOne {
-	duo.mutation.SetIdDelete(b)
+// SetDeleteFlag sets the "DeleteFlag" field.
+func (duo *DeviceUpdateOne) SetDeleteFlag(b bool) *DeviceUpdateOne {
+	duo.mutation.SetDeleteFlag(b)
 	return duo
 }
 
-// SetNillableIdDelete sets the "idDelete" field if the given value is not nil.
-func (duo *DeviceUpdateOne) SetNillableIdDelete(b *bool) *DeviceUpdateOne {
+// SetNillableDeleteFlag sets the "DeleteFlag" field if the given value is not nil.
+func (duo *DeviceUpdateOne) SetNillableDeleteFlag(b *bool) *DeviceUpdateOne {
 	if b != nil {
-		duo.SetIdDelete(*b)
+		duo.SetDeleteFlag(*b)
 	}
 	return duo
 }
 
-// ClearIdDelete clears the value of the "idDelete" field.
-func (duo *DeviceUpdateOne) ClearIdDelete() *DeviceUpdateOne {
-	duo.mutation.ClearIdDelete()
+// ClearDeleteFlag clears the value of the "DeleteFlag" field.
+func (duo *DeviceUpdateOne) ClearDeleteFlag() *DeviceUpdateOne {
+	duo.mutation.ClearDeleteFlag()
 	return duo
 }
 
@@ -564,17 +564,17 @@ func (duo *DeviceUpdateOne) sqlSave(ctx context.Context) (_node *Device, err err
 			Column: device.FieldName,
 		})
 	}
-	if value, ok := duo.mutation.IdDelete(); ok {
+	if value, ok := duo.mutation.DeleteFlag(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeBool,
 			Value:  value,
-			Column: device.FieldIdDelete,
+			Column: device.FieldDeleteFlag,
 		})
 	}
-	if duo.mutation.IdDeleteCleared() {
+	if duo.mutation.DeleteFlagCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeBool,
-			Column: device.FieldIdDelete,
+			Column: device.FieldDeleteFlag,
 		})
 	}
 	if duo.mutation.GatewayCleared() {

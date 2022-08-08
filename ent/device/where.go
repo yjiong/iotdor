@@ -142,10 +142,10 @@ func Name(v string) predicate.Device {
 	})
 }
 
-// IdDelete applies equality check predicate on the "idDelete" field. It's identical to IdDeleteEQ.
-func IdDelete(v bool) predicate.Device {
+// DeleteFlag applies equality check predicate on the "DeleteFlag" field. It's identical to DeleteFlagEQ.
+func DeleteFlag(v bool) predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldIdDelete), v))
+		s.Where(sql.EQ(s.C(FieldDeleteFlag), v))
 	})
 }
 
@@ -870,31 +870,31 @@ func NameContainsFold(v string) predicate.Device {
 	})
 }
 
-// IdDeleteEQ applies the EQ predicate on the "idDelete" field.
-func IdDeleteEQ(v bool) predicate.Device {
+// DeleteFlagEQ applies the EQ predicate on the "DeleteFlag" field.
+func DeleteFlagEQ(v bool) predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldIdDelete), v))
+		s.Where(sql.EQ(s.C(FieldDeleteFlag), v))
 	})
 }
 
-// IdDeleteNEQ applies the NEQ predicate on the "idDelete" field.
-func IdDeleteNEQ(v bool) predicate.Device {
+// DeleteFlagNEQ applies the NEQ predicate on the "DeleteFlag" field.
+func DeleteFlagNEQ(v bool) predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldIdDelete), v))
+		s.Where(sql.NEQ(s.C(FieldDeleteFlag), v))
 	})
 }
 
-// IdDeleteIsNil applies the IsNil predicate on the "idDelete" field.
-func IdDeleteIsNil() predicate.Device {
+// DeleteFlagIsNil applies the IsNil predicate on the "DeleteFlag" field.
+func DeleteFlagIsNil() predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldIdDelete)))
+		s.Where(sql.IsNull(s.C(FieldDeleteFlag)))
 	})
 }
 
-// IdDeleteNotNil applies the NotNil predicate on the "idDelete" field.
-func IdDeleteNotNil() predicate.Device {
+// DeleteFlagNotNil applies the NotNil predicate on the "DeleteFlag" field.
+func DeleteFlagNotNil() predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldIdDelete)))
+		s.Where(sql.NotNull(s.C(FieldDeleteFlag)))
 	})
 }
 
