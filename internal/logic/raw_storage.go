@@ -255,15 +255,15 @@ func InsertMap(db *sql.DB, tbname string, m map[string]string) (err error) {
 	value.WriteString("VALUES (")
 	nl := len(m)
 	i := 1
-	//format := "%s, "
-	formatv := "'%s', "
+	format := "%s,"
+	formatv := "'%s',"
 	for k, v := range m {
 		if i == nl {
-			//format = "%s"
+			format = "%s"
 			formatv = "'%s'"
 		}
 		i++
-		column.WriteString(fmt.Sprintf(formatv, k))
+		column.WriteString(fmt.Sprintf(format, k))
 		value.WriteString(fmt.Sprintf(formatv, v))
 	}
 	column.WriteString(")")
@@ -280,6 +280,6 @@ func InsertMap(db *sql.DB, tbname string, m map[string]string) (err error) {
 	if err != nil {
 		return errors.Wrap(err, "get stmt error")
 	}
-	_, err = stmt.Exec(time.Now(), strinsert)
+	_, err = stmt.Exec()
 	return
 }

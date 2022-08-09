@@ -40,6 +40,7 @@ func OpenMigrate(driverName, dns string) *ent.Client {
 	if drive, err := esql.Open(driverName, dns); err == nil {
 		if m, err := schema.NewMigrate(drive, migrate.WithDropColumn(true), migrate.WithDropIndex(true)); err == nil {
 			m.Create(context.Background(), myTables...)
+			log.Infoln("create myTables ok !")
 		}
 		drive.Close()
 	}
