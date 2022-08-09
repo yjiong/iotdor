@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+	"database/sql"
 
 	"github.com/yjiong/iotdor/ent"
 	"github.com/yjiong/iotdor/ent/device"
@@ -18,12 +19,20 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
+// OpenRawDB ,
+func OpenRawDB(driveName, dns string) *sql.DB {
+	rawdb, err := sql.Open(driveName, dns)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return rawdb
+}
+
 // OpenMigrate ....
 //"mysql", "root:pass@tcp(localhost:3306)/test"
 //"postgres","host=<host> port=<port> user=<user> dbname=<database> password=<pass>"
 //"sqlite3", "file:ent?mode=memory&cache=shared&_fk=1"
 //"gremlin", "http://localhost:8182"
-
 func OpenMigrate(driveName, dns string) *ent.Client {
 	client, err := ent.Open(driveName, dns)
 	if err != nil {
@@ -142,9 +151,7 @@ func delGatewayByGWID(ctx context.Context, c *ent.Client, gwid string) error {
 }
 
 func setGwGroup(ctx context.Context, gw *ent.Gateway, g *ent.Group) error {
-	_, err := gw.Update().SetGroup(g).Save(ctx)
-	//_, err := c.Gateway.UpdateOneID(gw.ID).SetGroup(g).Save(ctx)
-	return err
+	return gw.Update().SetGroup(g).Exec(ctx)
 }
 
 /************************** crud gateway *********************/
