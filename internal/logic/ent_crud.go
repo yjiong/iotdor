@@ -4,6 +4,8 @@ import (
 	"context"
 	"database/sql"
 
+	esql "entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/schema"
 	"github.com/yjiong/iotdor/ent"
 	"github.com/yjiong/iotdor/ent/device"
 	"github.com/yjiong/iotdor/ent/gateway"
@@ -34,6 +36,14 @@ func OpenRawDB(driveName, dns string) *sql.DB {
 //"sqlite3", "file:ent?mode=memory&cache=shared&_fk=1"
 //"gremlin", "http://localhost:8182"
 func OpenMigrate(driveName, dns string) *ent.Client {
+	// migrate mytables
+	if drive, err := esql.Open(driveName, dns); err == nil {
+		if m, err := schema.NewMigrate(drive, migrate.WithDropColumn(true), migrate.WithDropIndex(true)); err == nil {
+			m.Create(context.Background(), AmmtersTable)
+		}
+		drive.Close()
+	}
+
 	client, err := ent.Open(driveName, dns)
 	if err != nil {
 		log.Fatal(err)
@@ -42,6 +52,7 @@ func OpenMigrate(driveName, dns string) *ent.Client {
 		log.Fatal(scerr)
 	}
 	log.Infof("%s client init ok", driveName)
+
 	return client
 }
 
