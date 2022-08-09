@@ -1,6 +1,7 @@
 package logic
 
 import (
+	"bytes"
 	"database/sql"
 	"encoding/json"
 	"fmt"
@@ -240,4 +241,45 @@ func logQuery(query string, duration time.Duration, args ...interface{}) {
 		"args":     args,
 		"duration": duration,
 	}).Debug("sql query executed")
+}
+
+// InsertMap ....
+func InsertMap(db *sql.DB, tbname string, m map[string]string) (err error) {
+	err = errors.New("database not init")
+	if db == nil {
+		return
+	}
+	column := new(bytes.Buffer)
+	value := new(bytes.Buffer)
+	column.WriteString("(")
+	value.WriteString("VALUES (")
+	nl := len(m)
+	i := 1
+	//format := "%s, "
+	formatv := "'%s', "
+	for k, v := range m {
+		if i == nl {
+			//format = "%s"
+			formatv = "'%s'"
+		}
+		i++
+		column.WriteString(fmt.Sprintf(formatv, k))
+		value.WriteString(fmt.Sprintf(formatv, v))
+	}
+	column.WriteString(")")
+	value.WriteString(")")
+	strinsert := `INSERT INTO ` +
+		tbname +
+		" " +
+		column.String() +
+		" " +
+		value.String() + ";"
+	fmt.Println(strinsert)
+	stmt, err := db.Prepare(strinsert)
+	defer stmt.Close()
+	if err != nil {
+		return errors.Wrap(err, "get stmt error")
+	}
+	_, err = stmt.Exec(time.Now(), strinsert)
+	return
 }

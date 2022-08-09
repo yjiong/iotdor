@@ -35,24 +35,22 @@ func OpenRawDB(driveName, dns string) *sql.DB {
 //"postgres","host=<host> port=<port> user=<user> dbname=<database> password=<pass>"
 //"sqlite3", "file:ent?mode=memory&cache=shared&_fk=1"
 //"gremlin", "http://localhost:8182"
-func OpenMigrate(driveName, dns string) *ent.Client {
+func OpenMigrate(driverName, dns string) *ent.Client {
 	// migrate mytables
-	if drive, err := esql.Open(driveName, dns); err == nil {
+	if drive, err := esql.Open(driverName, dns); err == nil {
 		if m, err := schema.NewMigrate(drive, migrate.WithDropColumn(true), migrate.WithDropIndex(true)); err == nil {
-			m.Create(context.Background(), AmmtersTable)
+			m.Create(context.Background(), myTables...)
 		}
 		drive.Close()
 	}
-
-	client, err := ent.Open(driveName, dns)
+	client, err := ent.Open(driverName, dns)
 	if err != nil {
 		log.Fatal(err)
 	}
 	if scerr := client.Schema.Create(context.Background(), migrate.WithDropColumn(true), migrate.WithDropIndex(true)); scerr != nil {
 		log.Fatal(scerr)
 	}
-	log.Infof("%s client init ok", driveName)
-
+	log.Infof("%s client init ok", driverName)
 	return client
 }
 

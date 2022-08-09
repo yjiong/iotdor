@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"database/sql"
 	"embed"
 	"fmt"
 	"io"
@@ -20,6 +21,7 @@ import (
 
 //go:embed config.yml
 var configYml embed.FS
+var rawDB *sql.DB
 var dataSrc datasrc.DSrcer
 var dbClient *ent.Client
 var redisClient *redis.Client
@@ -86,6 +88,7 @@ func initDataSrcAndDB() error {
 	dataSrc = datasrc.NewMQTTDSrcer(b)
 	d := configViper.GetStringMapString("database")
 	log.Debugln(d)
+	rawDB = logic.OpenRawDB(d["type"], mkDBDns(d))
 	dbClient = logic.OpenMigrate(d["type"], mkDBDns(d))
 	r := configViper.GetStringMapString("redis")
 	redisClient = redis.NewClient(&redis.Options{
@@ -99,6 +102,7 @@ func initDataSrcAndDB() error {
 
 func runLogicMsgHandle() error {
 	lm := logic.NewManage(ctx,
+		rawDB,
 		dataSrc,
 		dbClient,
 		redisClient,

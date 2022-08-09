@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"database/sql"
 	"github.com/go-redis/redis/v8"
 	"github.com/robfig/cron/v3"
 	log "github.com/sirupsen/logrus"
@@ -18,6 +19,7 @@ import (
 type Manage struct {
 	ctx context.Context
 	datasrc.DSrcer
+	*sql.DB
 	entC     *ent.Client
 	redisC   *redis.Client
 	iotdName string
@@ -31,7 +33,8 @@ func (m *Manage) MsgHandle() {
 	for {
 		select {
 		case <-m.ctx.Done():
-			m.Close()
+			m.DB.Close()
+			m.DSrcer.Close()
 			m.entC.Close()
 			m.redisC.Close()
 			return
@@ -63,9 +66,10 @@ func (m *Manage) MsgHandle() {
 }
 
 // NewManage ....
-func NewManage(ctx context.Context, dsrc datasrc.DSrcer, entc *ent.Client, redisc *redis.Client, iname string) *Manage {
+func NewManage(ctx context.Context, db *sql.DB, dsrc datasrc.DSrcer, entc *ent.Client, redisc *redis.Client, iname string) *Manage {
 	return &Manage{
 		ctx:      ctx,
+		DB:       db,
 		DSrcer:   dsrc,
 		entC:     entc,
 		redisC:   redisc,
