@@ -106,7 +106,8 @@ func runLogicMsgHandle() error {
 		dataSrc,
 		dbClient,
 		redisClient,
-		configViper.GetString("broker.iotdname"))
+		configViper.GetString("broker.iotdname"),
+		configViper.GetInt64("database.storage_interval"))
 	go lm.MsgHandle()
 	return nil
 }

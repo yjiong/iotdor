@@ -9,7 +9,7 @@ var (
 	//AmmtersColumns .....
 	AmmtersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "devid", Type: field.TypeString},
+		{Name: "devid", Type: field.TypeString, Unique: false},
 		{Name: "status", Type: field.TypeString},
 		{Name: "devname", Type: field.TypeString},
 		{Name: "timestamp", Type: field.TypeString, Unique: true},

@@ -109,11 +109,10 @@ func (db *MYDB) InsertDevJdoc(tbname, cmdtype string, value interface{}) (err er
 	return
 }
 
-func (db *MYDB) QueryDevJdoc(tbname, cmdtype, since, until string) (ret []map[string]interface{}, err error) {
+func (db *MYDB) QueryDevJdoc(tbname, devid, since, until string) (ret []map[string]interface{}, err error) {
 	if db == nil {
 		return nil, errors.New("mysql is not connect or connect error")
 	}
-	tbname = filterbyte(tbname)
 	defer func() {
 		if Err := recover(); Err != nil {
 			log.Errorf("panic  error : (%s)", Err)
@@ -126,10 +125,8 @@ func (db *MYDB) QueryDevJdoc(tbname, cmdtype, since, until string) (ret []map[st
 		` +08:00:00' and timestamp < '` +
 		until +
 		` +08:00:00'` +
-		`and cmdtype LIKE '` +
-		`%` +
-		cmdtype +
-		`%` +
+		`and devid =` +
+		devid +
 		`'`
 	strquery = `SELECT timestamp AT TIME ZONE 'Asia/Shanghai',cmdtype,jdoc FROM ` +
 		tbname + condition + `;`

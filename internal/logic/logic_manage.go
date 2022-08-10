@@ -8,7 +8,9 @@ import (
 	"time"
 
 	"database/sql"
+
 	"github.com/go-redis/redis/v8"
+	"github.com/pkg/errors"
 	"github.com/robfig/cron/v3"
 	log "github.com/sirupsen/logrus"
 	"github.com/yjiong/iotdor/ent"
@@ -25,11 +27,13 @@ type Manage struct {
 	iotdName string
 	ids      []cron.EntryID
 	*cron.Cron
+	storageInterval int64
 }
 
 // MsgHandle ....
 func (m *Manage) MsgHandle() {
 	log.Infoln("start logic message handle")
+	m.runCron()
 	for {
 		select {
 		case <-m.ctx.Done():
@@ -66,16 +70,23 @@ func (m *Manage) MsgHandle() {
 }
 
 // NewManage ....
-func NewManage(ctx context.Context, db *sql.DB, dsrc datasrc.DSrcer, entc *ent.Client, redisc *redis.Client, iname string) *Manage {
+func NewManage(ctx context.Context,
+	db *sql.DB,
+	dsrc datasrc.DSrcer,
+	entc *ent.Client,
+	redisc *redis.Client,
+	iname string,
+	interval int64) *Manage {
 	return &Manage{
-		ctx:      ctx,
-		DB:       db,
-		DSrcer:   dsrc,
-		entC:     entc,
-		redisC:   redisc,
-		iotdName: iname,
-		ids:      []cron.EntryID{},
-		Cron:     cron.New(cron.WithSeconds()),
+		ctx:             ctx,
+		DB:              db,
+		DSrcer:          dsrc,
+		entC:            entc,
+		redisC:          redisc,
+		iotdName:        iname,
+		ids:             []cron.EntryID{},
+		Cron:            cron.New(cron.WithSeconds()),
+		storageInterval: interval,
 	}
 }
 
@@ -103,26 +114,12 @@ func getRawMap(md map[string]interface{}, tstamp string) map[string]interface{} 
 }
 
 func (m *Manage) runCron() {
-	//var rtdStr string
-	//irtd := 30
-	//min := irtd / 60
-	//sec := irtd % 60
-	//if min > 0 {
-	//rtdStr = fmt.Sprintf("38 */%d * * * *", min)
-	//} else {
-	//if sec == 0 {
-	//sec = 38
-	//}
-	//rtdStr = fmt.Sprintf("*/%d * * * * *", sec)
-	//}
-	//EID1, _ := m.Cron.AddFunc(
-	//rtdStr,
-	//m.rtdIntervalFunc)
-	//EID2, _ := m.Cron.AddFunc(
-	//fmt.Sprintf("10 */%d * * * *", m.dcmInfo.IntervalMinute),
-	//m.minuteDataIntervalFunc)
-	//m.ids = []cron.EntryID{EID1, EID2}
-	//m.Cron.Start()
+	cStr := fmt.Sprintf("10 */%d * * * *", m.storageInterval)
+	EID1, _ := m.Cron.AddFunc(
+		cStr,
+		m.storateDeviceValue)
+	m.ids = []cron.EntryID{EID1}
+	m.Cron.Start()
 }
 
 func (m *Manage) cronStop() {
@@ -131,4 +128,15 @@ func (m *Manage) cronStop() {
 	}
 	m.ids = m.ids[0:0]
 	log.Infoln("cron schedule removed")
+}
+
+func (m *Manage) storateDeviceValue() {
+	keys, err := m.redisC.Keys(m.ctx, "*:DEVICE_VALUE").Result()
+	if err != nil {
+		log.Error(errors.Wrap(err, "get DEVICE_VALUE faild"))
+	}
+	for _, k := range keys {
+		vs, _ := m.redisC.HGetAll(m.ctx, k).Result()
+		go InsertMap(m.DB, "ammeters", vs)
+	}
 }

@@ -36,14 +36,6 @@ func OpenRawDB(driveName, dns string) *sql.DB {
 //"sqlite3", "file:ent?mode=memory&cache=shared&_fk=1"
 //"gremlin", "http://localhost:8182"
 func OpenMigrate(driverName, dns string) *ent.Client {
-	// migrate mytables
-	if drive, err := esql.Open(driverName, dns); err == nil {
-		if m, err := schema.NewMigrate(drive, migrate.WithDropColumn(true), migrate.WithDropIndex(true)); err == nil {
-			m.Create(context.Background(), myTables...)
-			log.Infoln("create myTables ok !")
-		}
-		drive.Close()
-	}
 	client, err := ent.Open(driverName, dns)
 	if err != nil {
 		log.Fatal(err)
@@ -52,6 +44,14 @@ func OpenMigrate(driverName, dns string) *ent.Client {
 		log.Fatal(scerr)
 	}
 	log.Infof("%s client init ok", driverName)
+	// migrate mytables
+	if drive, err := esql.Open(driverName, dns); err == nil {
+		if m, err := schema.NewMigrate(drive, migrate.WithDropColumn(true), migrate.WithDropIndex(true)); err == nil {
+			m.Create(context.Background(), myTables...)
+			log.Infoln("create myTables ok !")
+		}
+		drive.Close()
+	}
 	return client
 }
 

@@ -19,6 +19,8 @@ database:
   user: iotd
   dbname: iotd
   password: yaojiong
+  #interval x minutes storage 
+  storage_interval: 5
 redis:
   host: mqtt.yaojiong.top
   port: 46379
