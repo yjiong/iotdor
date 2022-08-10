@@ -26,5 +26,4 @@ RUN { \
     && chmod +x /bin/startup
 
 EXPOSE 6379
-USER nobody:nogroup
 ENTRYPOINT ["startup"]

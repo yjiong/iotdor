@@ -16,12 +16,12 @@ ENV USER=yj
 ENV PASSWORD=yj12345
 
 ADD mosquitto.tgz /etc/mosquitto
+RUN mosquitto_passwd -c -b /etc/mosquitto/pwfile ${USER} ${PASSWORD}
 
 RUN { \
         echo '#!/bin/sh'; \
         echo 'set -e'; \
         echo; \
-        echo 'mosquitto_passwd -c -b /etc/mosquitto/pwfile ${USER} ${PASSWORD}'; \
         echo 'mosquitto'; \
      } > /bin/startup \
     && chmod +x /bin/startup
