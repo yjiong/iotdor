@@ -1,0 +1,79 @@
+#!/bin/bash
+#########################################################################
+# File Name: install.sh
+# Author: yjiong
+# mail: 4418229@qq.com
+# Created Time: 2021-01-18 23:47:59
+#########################################################################
+set -e
+if [ $(id -u) -ne 0 ]; then
+	echo "please running script under root"
+	exit 1
+fi
+
+test -e /usr/bin/docker \
+    || apt install -y --no-install-recommends docker-ce \
+    || yum install -y docker-ce \
+    || wget -O- https://get.docker.com | sh - \
+    || curl -SL https://get.docker.com | sh 
+test -e /usr/bin/docker-compose \
+    || apt install -y --no-install-recommends docker-compose \
+    || yum install -y docker-compose \
+    || (wget -O /usr/bin/docker-compose https://github.com/docker/compose/releases/download/1.27.4/docker-compose-Linux-x86_64 && chmod +x /usr/bin/docker-compose) \
+    || (curl -SL /usr/bin/docker-compose https://github.com/docker/compose/releases/download/1.27.4/docker-compose-Linux-x86_64 && chmod +x /usr/bin/docker-compose)
+echo "DOCKER_OPTS=\"--registry-mirrors=https://docker.mirrors.ustc.edu.cn\"" > /etc/default/docker
+
+#(( $#<2 )) && (echo Userge:"${0#*/}" -u mqtt_user -p mqtt_passwd && exit 1)
+if (( $#<2 ))then
+    docker-compose -f docker-compose.yml up
+    exit 0
+fi
+
+PWD=$(cd $(dirname $0);pwd)
+TEMP=$(getopt -o 'u:p:' --long 'mqtt_user:,mqtt_passwd:' -n 'my.bash' -- "$@")
+MUSER=
+MPASSWD=
+if [ $? -ne 0 ]; then
+	echo 'Terminating...' >&2
+	exit 1
+fi
+
+eval set -- "$TEMP"
+unset TEMP
+
+while true; do
+	case "$1" in
+		'-u'|'--mqtt_user')
+            MUSER="$2"
+			echo -n "mqtt_user:'$2' "
+			shift 2
+			continue
+		;;
+		'-p'|'--mqtt_passwd')
+            MPASSWD="$2"
+			echo "mqtt_passwd:'$2'"
+			shift 2
+			continue
+		;;
+		'--')
+			shift
+			break
+		;;
+		*)
+			echo 'Internal error!' >&2
+			exit 1
+		;;
+	esac
+done
+
+if [ -f "${PWD}/docker-compose.yml" ];then
+    sed -i "s/\( BROKER_USER: \).*/\\1${MUSER}/" "${PWD}/docker-compose.yml"
+    sed -i "s/\( USER: \).*/\\1${MUSER}/" "${PWD}/docker-compose.yml"
+    sed -i "s/\( BROKER_PASSWORD: \).*/\\1${MPASSWD}/" "${PWD}/docker-compose.yml"
+    sed -i "s/\( PASSWORD: \).*/\\1${MPASSWD}/" "${PWD}/docker-compose.yml"
+fi
+
+docker-compose -f docker-compose.yml up
+exit 0
+
+

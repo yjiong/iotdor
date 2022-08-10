@@ -1,0 +1,30 @@
+FROM alpine
+MAINTAINER yjiong@msn.com
+
+RUN echo "http://mirrors.aliyun.com/alpine/latest-stable/main/" > /etc/apk/repositories && \
+    echo "http://mirrors.aliyun.com/alpine/latest-stable/community/" >> /etc/apk/repositories
+
+RUN apk update && \
+    apk add --no-cache ca-certificates && \
+    apk add --no-cache curl bash tree tzdata && \
+    apk add --no-cache redis && \
+    rm -rf /etc/apk/repositories && \
+    cp -rf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+
+ENV LANG=C.UTF-8
+ENV PASSWORD=yaojiong
+
+ADD redis.conf /etc/redis/redis.conf
+
+RUN { \
+        echo '#!/bin/sh'; \
+        echo 'set -e'; \
+        echo; \
+        echo 'redis-server /etc/redis/redis.conf'; \
+        echo 'tail -f /dev/null'; \
+     } > /bin/startup \
+    && chmod +x /bin/startup
+
+EXPOSE 6379
+USER nobody:nogroup
+ENTRYPOINT ["startup"]

@@ -1,0 +1,23 @@
+FROM alpine
+MAINTAINER yjiong@msn.com
+
+VOLUME /var/lib/mysql /run/mysqld
+RUN echo "http://mirrors.aliyun.com/alpine/latest-stable/main/" > /etc/apk/repositories && \
+    echo "http://mirrors.aliyun.com/alpine/latest-stable/community/" >> /etc/apk/repositories
+
+RUN apk update && \
+    apk add --no-cache mysql mysql-client tzdata && \
+    rm -rf /var/cache/apk/* \
+    rm -rf /etc/apk/repositories && \
+    cp -rf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+
+ADD mysqlup.sh /mysqlup
+ADD my.cnf /etc
+RUN chmod 755 /mysqlup
+
+ENV MYSQL_DATABASE=iotd
+ENV MYSQL_PASSWORD=yaojiong
+
+EXPOSE 3306
+USER nobody:nogroup
+ENTRYPOINT ["/mysqlup"]

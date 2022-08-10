@@ -1,0 +1,71 @@
+version: '3'
+services:
+  iotdor:
+    build:
+      context: ./
+      dockerfile: ./iotdorDockerfile
+    restart: always
+    image: iotdor
+    container_name: iotdor
+    depends_on:
+      - mosquitto
+      - mysql
+      - redis
+    links:
+      - mosquitto
+      - mysql
+      - redis
+    environment:
+      BROKER_USER: myj
+      BROKER_PASSWORD: myj12345
+      MYSQL_USER: root
+      MYSQL_PASSWORD: yaojiong
+      SERVER_PORT: 8899
+    ports:
+      - "8899:8899"
+
+  mosquitto:
+    build:
+      context: ./
+      dockerfile: ./mqttDockerfile
+    restart: always
+    image: mosquittoiot
+    container_name: mosquittoiot
+    ports:
+        - "1883:1883"
+    environment:
+      USER: myj
+      PASSWORD: myj12345
+      TZ: Asia/Shanghai
+
+  mysql:
+    build:
+      context: ./
+      dockerfile: ./mysqlDockerfile
+    restart: always
+    image: mysqliot
+    container_name: mysqliot
+    ports:
+      - "3306:3306"
+    environment:
+      TZ: Asia/Shanghai
+      MYSQL_PASSWORD: yaojiong
+    volumes:
+      - "/var/lib/mysql/:/var/lib/mysql"
+      - "/var/run/mysqld:/run/mysqld"
+
+  redis:
+    build:
+      context: ./
+      dockerfile: ./redisDockerfile
+    restart: always
+    image: redisiot
+    container_name: redisiot
+    ports:
+      - "6379:6379"
+    environment:
+      TZ: Asia/Shanghai
+      REDIS_PASSWORD: yaojiong
+    volumes:
+      - "/var/lib/redis/:/var/lib/redis"
+

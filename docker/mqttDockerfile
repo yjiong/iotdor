@@ -1,0 +1,31 @@
+FROM alpine
+MAINTAINER yjiong@msn.com
+
+RUN echo "http://mirrors.aliyun.com/alpine/latest-stable/main/" > /etc/apk/repositories && \
+    echo "http://mirrors.aliyun.com/alpine/latest-stable/community/" >> /etc/apk/repositories
+
+RUN apk update && \
+    apk add --no-cache ca-certificates && \
+    apk add --no-cache curl bash tree tzdata && \
+    apk add --no-cache mosquitto && \
+    rm -rf /etc/apk/repositories && \
+    cp -rf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+
+ENV LANG=C.UTF-8
+ENV USER=yj
+ENV PASSWORD=yj12345
+
+ADD mosquitto.tgz /etc/mosquitto
+
+RUN { \
+        echo '#!/bin/sh'; \
+        echo 'set -e'; \
+        echo; \
+        echo 'mosquitto_passwd -c -b /etc/mosquitto/pwfile ${USER} ${PASSWORD}'; \
+        echo 'mosquitto'; \
+     } > /bin/startup \
+    && chmod +x /bin/startup
+
+EXPOSE 1883
+USER nobody:nogroup
+ENTRYPOINT ["startup"]

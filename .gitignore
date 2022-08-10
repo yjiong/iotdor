@@ -12,5 +12,6 @@ dist/
 build/*
 docs/public/
 debpackage/opt/*
+docker/iotdor.tgz
 *.deb            
 test/

@@ -1,0 +1,26 @@
+FROM alpine
+MAINTAINER yjiong@msn.com
+
+RUN echo "http://mirrors.aliyun.com/alpine/latest-stable/main/" > /etc/apk/repositories && \
+    echo "http://mirrors.aliyun.com/alpine/latest-stable/community/" >> /etc/apk/repositories
+
+RUN apk update && \
+    apk add --no-cache ca-certificates && \
+    apk add --no-cache wget curl bash tree tzdata && \
+    cp -rf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+RUN mkdir /iot
+
+ENV BROKER_USER yj
+ENV BROKER_PASSWORD yj12345
+ENV MYSQL_USER root
+ENV MYSQL_PASSWORD yaojiong
+ENV SERVER_PORT 8899
+
+ADD iotdor.tgz /iot
+ADD entryDelay.sh /bin/entryDelay
+RUN chmod 755 /bin/entryDelay
+RUN chmod 755 /iot/iotdor
+WORKDIR /iot
+EXPOSE $SERVER_PORT
+
+ENTRYPOINT ["/bin/entryDelay","-d","mosquitto:1883,mysql:3306,redis:6379","-c","/iot/iotdor"]
