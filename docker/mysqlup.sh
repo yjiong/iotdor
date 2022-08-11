@@ -30,20 +30,21 @@ if [ ! -d /var/lib/mysql/${MYSQL_DATABASE} ]; then
 # UPDATE user set authentication_string=password("$MYSQL_ROOT_PASSWORD"),plugin='mysql_native_password' where user='root';
   cat << EOF > $tfile
 USE mysql;
-GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY "$MYSQL_ROOT_PASSWORD" WITH GRANT OPTION;
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY '$MYSQL_ROOT_PASSWORD' WITH GRANT OPTION;
 GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' WITH GRANT OPTION;
-ALTER USER 'root'@'localhost' IDENTIFIED BY "$MYSQL_ROOT_PASSWORD";
+ALTER USER 'root'@'localhost' IDENTIFIED BY '$MYSQL_ROOT_PASSWORD';
 UPDATE user set plugin='mysql_native_password' where user='root' and host='localhost';
 FLUSH PRIVILEGES;
 
 EOF
 
   if [ "$MYSQL_DATABASE" != "" ]; then
-    echo "CREATE DATABASE IF NOT EXISTS \`$MYSQL_DATABASE\` CHARACTER SET utf8 COLLATE utf8_general_ci;" >> $tfile
-    echo "USE \`$MYSQL_DATABASE\`;" >> $tfile
+    echo "CREATE DATABASE IF NOT EXISTS $MYSQL_DATABASE CHARACTER SET utf8 COLLATE utf8_general_ci;" >> $tfile
+    echo "[i] Creating database: $MYSQL_DATABASE"
+    echo "USE $MYSQL_DATABASE;" >> $tfile
     if [ "$MYSQL_USER" != "" ]; then
       echo "[i] Creating user: $MYSQL_USER with password $MYSQL_PASSWORD"
-      echo "GRANT ALL ON \`$MYSQL_DATABASE\`.* to '$MYSQL_USER'@'%' IDENTIFIED BY '$MYSQL_PASSWORD';" >> $tfile
+      echo "GRANT ALL ON '$MYSQL_DATABASE'.* to '$MYSQL_USER'@'%' IDENTIFIED BY '$MYSQL_PASSWORD';" >> $tfile
     fi
   fi
   /usr/bin/mysqld --user=root --bootstrap --verbose=0 < $tfile

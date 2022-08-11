@@ -1,5 +1,10 @@
 version: '3'
 services:
+  #base:
+    #build:
+      #context: ./
+      #dockerfile: ./baseDockerfile
+    #image: base
   iotdor:
     build:
       context: ./
@@ -16,8 +21,8 @@ services:
       - mysql
       - redis
     environment:
-      BROKER_USER: myj
-      BROKER_PASSWORD: myj12345
+      BROKER_USER: yj
+      BROKER_PASSWORD: yj12345
       MYSQL_USER: root
       MYSQL_PASSWORD: yaojiong
       SERVER_PORT: 8899
@@ -34,8 +39,8 @@ services:
     ports:
         - "1883:1883"
     environment:
-      USER: myj
-      PASSWORD: myj12345
+      USER: yj
+      PASSWORD: yj12345
       TZ: Asia/Shanghai
 
   mysql:
@@ -49,6 +54,8 @@ services:
       - "3306:3306"
     environment:
       TZ: Asia/Shanghai
+      MYSQL_DATABASE: iotd
+      MYSQL_USER: root
       MYSQL_PASSWORD: yaojiong
     volumes:
       - "/var/lib/mysql/:/var/lib/mysql"
