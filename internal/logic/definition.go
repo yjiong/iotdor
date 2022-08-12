@@ -20,4 +20,5 @@ const (
 	ListSysSchedule = "list /sys/schedule"
 	SetSysExternal  = "set /sys/external"
 	AutoUpdata      = "push /dev/vars"
+	DeviceValue     = "DEVICE_VALUE"
 )

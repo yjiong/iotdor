@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"strings"
+	"sync"
 	"time"
 
 	"database/sql"
@@ -28,6 +29,7 @@ type Manage struct {
 	ids      []cron.EntryID
 	*cron.Cron
 	storageInterval int64
+	spool           sync.Pool
 }
 
 // MsgHandle ....
@@ -59,7 +61,7 @@ func (m *Manage) MsgHandle() {
 							md["status"] = e
 							delete(md, "error")
 						}
-						if err = m.redisC.HSet(m.ctx, m.mkKeyPrefix(gwID, devID, "DEVICE_VALUE"), md).Err(); err != nil {
+						if err = m.redisC.HSet(m.ctx, m.mkKeyPrefix(gwID, devID, DeviceValue), md).Err(); err != nil {
 							log.Error(err)
 						}
 					}
@@ -87,6 +89,9 @@ func NewManage(ctx context.Context,
 		ids:             []cron.EntryID{},
 		Cron:            cron.New(cron.WithSeconds()),
 		storageInterval: interval,
+		spool: sync.Pool{
+			New: func() interface{} { m := make(map[string]string); return m },
+		},
 	}
 }
 
@@ -131,12 +136,14 @@ func (m *Manage) cronStop() {
 }
 
 func (m *Manage) storateDeviceValue() {
-	keys, err := m.redisC.Keys(m.ctx, "*:DEVICE_VALUE").Result()
+	keys, err := m.redisC.Keys(m.ctx, fmt.Sprintf("*:%s", DeviceValue)).Result()
 	if err != nil {
 		log.Error(errors.Wrap(err, "get DEVICE_VALUE faild"))
 	}
 	for _, k := range keys {
-		vs, _ := m.redisC.HGetAll(m.ctx, k).Result()
+		vs := m.spool.Get().(map[string]string)
+		vs, _ = m.redisC.HGetAll(m.ctx, k).Result()
 		go InsertMap(m.DB, "ammeters", vs)
+		m.spool.Put(vs)
 	}
 }
