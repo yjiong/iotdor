@@ -31,8 +31,10 @@ paths:
           description: login failed
           schema:
             type: object
-  /gateways/list:
+  /gateway/list:
     post:
+      security:
+        - ApiKeyAuth: []
       consumes:
         - application/json
       produces:

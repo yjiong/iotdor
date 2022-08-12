@@ -28,6 +28,7 @@ import (
 )
 
 var subServerPort = "8888"
+var jwts = []byte("IOTDOR-yjiong@msn.com")
 
 // APIserver ....
 func APIserver(port string) {
@@ -40,28 +41,14 @@ func APIserver(port string) {
 	dtr := NewIotdorTran(subServerPort)
 	router := mux.NewRouter()
 	router.PathPrefix("/api/login").HandlerFunc(dtr.rawlogin)
-	router.PathPrefix("/api/ws/transport").HandlerFunc(dtr.tranSport)
-	router.PathPrefix("/{gatewaysn}/gateway/{any}").HandlerFunc(dtr.request).Methods("GET", "PUT", "POST", "DELETE")
-	router.PathPrefix("/gateways/list").HandlerFunc(dtr.iotdorList)
+	//router.PathPrefix("/api/ws/transport").HandlerFunc(dtr.tranSport)
+	rsub := router.PathPrefix("/gateway").Subrouter()
+	rsub.Use(validateToken)
+	rsub.PathPrefix("/list").HandlerFunc(dtr.iotdorList)
 	PprofGroup(router)
 	router.PathPrefix("/").Handler(http.FileServer(wus))
 	log.Infof("iotdor start apt server at port:%s", port)
 	http.ListenAndServe(fmt.Sprintf(":%s", port), router)
-	/*
-		gin.SetMode(gin.ReleaseMode)
-		router := gin.New()
-		//ginpprof.Wrapper(router)
-		//router.GET("/", gin.WrapH(http.FileServer(wus)))
-			router.StaticFS("/broker", wus)
-			dtr := NewIotdorTran(subServerPort)
-			router.POST("/api/login", dtr.login)
-			webAPI(router, dtr)
-			err := router.Run(serverPort)
-			if err != nil {
-				fmt.Println("HTTP server failed ", err)
-				os.Exit(1)
-			}
-	*/
 }
 
 // IotdorTran data colloect meter Transport
@@ -176,12 +163,6 @@ func (dtr *IotdorTran) RequestGin(c *gin.Context) {
 	c.Status(http.StatusInternalServerError)
 }
 
-func webAPI(router *gin.Engine, dtr *IotdorTran) {
-	//router.GET("/:Iotdorsn/Iotdor/*any", dtr.Request)
-	//router.POST("/:Iotdorsn/Iotdor/*any", dtr.Request)
-	//router.PUT("/:Iotdorsn/Iotdor/*any", dtr.Request)
-}
-
 func (dtr *IotdorTran) tranSport(w http.ResponseWriter, r *http.Request) {
 	sn := r.Header.Get("sn")
 	if sn == "" {
@@ -236,36 +217,32 @@ var wus = &webui{
 type TUser struct {
 	Username string `db:"username" json:"username"`
 	Password string `db:"password" json:"password"`
-	//IsAdmin  bool   `db:"is_admin" json:"is_admin"`
+	Phone    string `db:"phone" json:"phone"`
 }
 
 func (dtr *IotdorTran) login(c *gin.Context) {
 	dtr.rawlogin(c.Writer, c.Request)
 }
 
-//func validateToken(c *gin.Context) {
-//validate(c.Writer, c.Request, func(w http.ResponseWriter, r *http.Request) { c.Next() })
-//return
-//}
-
-func validate(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
-	if token, err := request.ParseFromRequest(r, request.AuthorizationHeaderExtractor,
-		func(token *jwt.Token) (interface{}, error) {
-			return jwts, nil
-		}); err == nil {
-		if token.Valid {
-			next(w, r)
-			return
+func validateToken(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if token, err := request.ParseFromRequest(r, request.AuthorizationHeaderExtractor,
+			func(token *jwt.Token) (interface{}, error) {
+				return jwts, nil
+			}); err == nil {
+			if token.Valid {
+				next.ServeHTTP(w, r)
+				return
+			}
 		}
-	}
-	header := w.Header()
-	if val := header["Content-Type"]; len(val) == 0 {
-		header["Content-Type"] = []string{"application/json; charset=utf-8"}
-	}
-	w.WriteHeader(http.StatusUnauthorized)
-	je, _ := json.Marshal(map[string]string{"error": "登录失败，或session timeout"})
-	w.Write(je)
-	return
+		header := w.Header()
+		if val := header["Content-Type"]; len(val) == 0 {
+			header["Content-Type"] = []string{"application/json; charset=utf-8"}
+		}
+		w.WriteHeader(http.StatusUnauthorized)
+		w.Write([]byte(`{"error":"登录失败，或session timeout"}`))
+		return
+	})
 }
 
 func (dtr *IotdorTran) rawlogin(w http.ResponseWriter, req *http.Request) {
@@ -280,11 +257,10 @@ func (dtr *IotdorTran) rawlogin(w http.ResponseWriter, req *http.Request) {
 		w.Write(je)
 		return
 	}
-	if !(loginUser.Username == "admin" && loginUser.Password == "lcIotdor") {
+	if !(loginUser.Username == "admin" && loginUser.Password == "iotdor") {
 		err = errors.Errorf("username not exist or password error")
 		w.WriteHeader(http.StatusNotAcceptable)
-		je, _ := json.Marshal(map[string]string{"error": "username not exist or password error"})
-		w.Write(je)
+		w.Write([]byte(`{"error": "username not exist or password error"}`))
 		return
 	}
 	token := jwt.New(jwt.SigningMethodHS256)
