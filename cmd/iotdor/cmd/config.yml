@@ -23,7 +23,7 @@ database:
   storage_interval: 5
 redis:
   host: mqtt.yaojiong.top
-  port: 46379
+  port: 56379
   password: yaojiong
 http_server:
   port: 8888

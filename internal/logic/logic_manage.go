@@ -44,8 +44,7 @@ func (m *Manage) MsgHandle() {
 			m.entC.Close()
 			m.redisC.Close()
 			return
-		default:
-			msg := <-m.DataDownChan()
+		case msg := <-m.DataDownChan():
 			if cmd, err := msg.Get("cmd").String(); err == nil {
 				log.Debugf("receive mqtt data cmd=%s", cmd)
 				gwID := msg.Get("sender").MustString()
