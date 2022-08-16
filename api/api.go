@@ -279,6 +279,7 @@ func (dtr *IotdorTran) rawlogin(w http.ResponseWriter, req *http.Request) {
 	claims := make(jwt.MapClaims)
 	claims["exp"] = float64(time.Now().Add(time.Hour * time.Duration(360)).Unix())
 	claims["iat"] = float64(1)
+	claims["uname"] = loginUser.Username
 	token.Claims = claims
 	if tokenstr, err := token.SignedString(jwts); err == nil {
 		jr, _ := json.Marshal(map[string]string{"Token": tokenstr})

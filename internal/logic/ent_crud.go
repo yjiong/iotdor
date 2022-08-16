@@ -71,6 +71,13 @@ func queryGroupByName(ctx context.Context, c *ent.Client, gname string) (*ent.Gr
 	return c.Group.Query().Where(group.Name(gname)).Only(ctx)
 }
 
+func addGroupIfNotExist(ctx context.Context, c *ent.Client, gname string) (g *ent.Group, e error) {
+	if g, e = queryGroupByName(ctx, c, gname); g == nil || e != nil {
+		return addGroup(ctx, c, gname)
+	}
+	return
+}
+
 func delGroupByID(ctx context.Context, c *ent.Client, id int) error {
 	return c.Group.DeleteOneID(id).
 		Exec(ctx)
@@ -106,6 +113,10 @@ func updateUser(ctx context.Context,
 
 func queryUsers(ctx context.Context, c *ent.Client) ([]*ent.User, error) {
 	return c.User.Query().All(ctx)
+}
+
+func getUserGroup(ctx context.Context, c *ent.User) []*ent.Group {
+	return c.Edges.Groups
 }
 
 func queryUserByName(ctx context.Context, c *ent.Client, name string) (*ent.User, error) {
