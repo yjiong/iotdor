@@ -15,7 +15,7 @@ func TestWS(t *testing.T) {
 	r := rand.Intn(0xFFFFFFFFFFFFFF)
 	Convey("==================gorilla websocket=====================\n", t, func() {
 		log.SetLevel(log.DebugLevel)
-		ws := InitWSClint(fmt.Sprintf("2021%012X", r), "ws://124.71.156.219:61104/api/ws/remoteConfig")
+		ws := InitWSClint(fmt.Sprintf("2021%012X", r), "ws://xxxxxxxx/api/ws/transport")
 		t.Log(ws)
 		//ws.SendMessage(TranData{
 		//UUID:            "xxxxxxxxxx",

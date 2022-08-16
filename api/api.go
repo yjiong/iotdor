@@ -257,6 +257,18 @@ func (dtr *IotdorTran) rawlogin(w http.ResponseWriter, req *http.Request) {
 		w.Write(je)
 		return
 	}
+	//ruser := ct.UserInfo(loginUser.Username)
+	//if len(ruser) == 0 || loginUser.Username != "admin" && ruser[0].Username == "" {
+	//err = errors.Errorf("username not exist or password error")
+	//c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+	//return
+	//}
+	//dpw, _ := hex.DecodeString(ruser[0].Password)
+	//if err := bcrypt.CompareHashAndPassword(dpw, []byte(loginUser.Password)); err != nil {
+	//err = errors.Errorf("username not exist or password error")
+	//c.JSON(http.StatusNotAcceptable, gin.H{"error": err.Error()})
+	//return
+	//}
 	if !(loginUser.Username == "admin" && loginUser.Password == "iotdor") {
 		err = errors.Errorf("username not exist or password error")
 		w.WriteHeader(http.StatusNotAcceptable)
