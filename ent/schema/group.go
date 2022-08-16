@@ -34,8 +34,7 @@ func (Group) Fields() []ent.Field {
 func (Group) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("users", User.Type),
-		edge.To("admin", User.Type).
-			Unique(),
+		edge.To("admins", User.Type),
 		edge.To("gateways", Gateway.Type),
 	}
 }

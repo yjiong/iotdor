@@ -92,12 +92,24 @@ func addUser(ctx context.Context,
 	return tuc.AddGroups(group).Save(ctx)
 }
 
+func updateUser(ctx context.Context,
+	c *ent.Client,
+	name, passwd string,
+	group *ent.Group,
+	isAdmin bool) error {
+	tuc := c.User.Update().Where(user.Name(name)).SetPasswd(passwd)
+	if isAdmin {
+		return tuc.AddManage(group).Exec(ctx)
+	}
+	return tuc.ClearManage().Exec(ctx)
+}
+
 func queryUsers(ctx context.Context, c *ent.Client) ([]*ent.User, error) {
 	return c.User.Query().All(ctx)
 }
 
-func queryUserByName(ctx context.Context, c *ent.Client, name string) ([]*ent.User, error) {
-	return c.User.Query().Where(user.Name(name)).All(ctx)
+func queryUserByName(ctx context.Context, c *ent.Client, name string) (*ent.User, error) {
+	return c.User.Query().Where(user.Name(name)).Only(ctx)
 }
 
 func delUserByID(ctx context.Context, c *ent.Client, id int) error {

@@ -67,7 +67,7 @@ func (t Type) Valid() bool {
 	return t > TypeInvalid && t < endTypes
 }
 
-// ConstName returns the constant name of a info type.
+// ConstName returns the constant name of an info type.
 // It's used by entc for printing the constant name in templates.
 func (t Type) ConstName() string {
 	switch {
@@ -85,8 +85,9 @@ func (t Type) ConstName() string {
 type TypeInfo struct {
 	Type     Type
 	Ident    string
-	PkgPath  string
-	Nillable bool // slices or pointers.
+	PkgPath  string // import path.
+	PkgName  string // local package name.
+	Nillable bool   // slices or pointers.
 	RType    *RType
 }
 
@@ -119,12 +120,12 @@ func (t TypeInfo) ConstName() string {
 
 // ValueScanner indicates if this type implements the ValueScanner interface.
 func (t TypeInfo) ValueScanner() bool {
-	return t.RType.implements(valueScannerType)
+	return t.RType.Implements(valueScannerType)
 }
 
-// ValueScanner indicates if this type implements the driver.Valuer interface.
+// Valuer indicates if this type implements the driver.Valuer interface.
 func (t TypeInfo) Valuer() bool {
-	return t.RType.implements(valuerType)
+	return t.RType.Implements(valuerType)
 }
 
 // Comparable reports whether values of this type are comparable.
@@ -146,7 +147,7 @@ var stringerType = reflect.TypeOf((*fmt.Stringer)(nil)).Elem()
 
 // Stringer indicates if this type implements the Stringer interface.
 func (t TypeInfo) Stringer() bool {
-	return t.RType.implements(stringerType)
+	return t.RType.Implements(stringerType)
 }
 
 var (
@@ -214,7 +215,8 @@ func (r *RType) IsPtr() bool {
 	return r != nil && r.Kind == reflect.Ptr
 }
 
-func (r *RType) implements(typ reflect.Type) bool {
+// Implements reports whether the RType ~implements the given interface type.
+func (r *RType) Implements(typ reflect.Type) bool {
 	if r == nil {
 		return false
 	}

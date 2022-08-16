@@ -14,6 +14,10 @@ import (
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/schema/field"
+
+	"ariga.io/atlas/sql/migrate"
+	"ariga.io/atlas/sql/postgres"
+	"ariga.io/atlas/sql/schema"
 )
 
 // Postgres is a postgres migration driver.
@@ -25,7 +29,7 @@ type Postgres struct {
 
 // init loads the Postgres version from the database for later use in the migration process.
 // It returns an error if the server version is lower than v10.
-func (d *Postgres) init(ctx context.Context, tx dialect.Tx) error {
+func (d *Postgres) init(ctx context.Context, tx dialect.ExecQuerier) error {
 	rows := &sql.Rows{}
 	if err := tx.Query(ctx, "SHOW server_version_num", []interface{}{}, rows); err != nil {
 		return fmt.Errorf("querying server version %w", err)
@@ -52,14 +56,14 @@ func (d *Postgres) init(ctx context.Context, tx dialect.Tx) error {
 }
 
 // tableExist checks if a table exists in the database and current schema.
-func (d *Postgres) tableExist(ctx context.Context, tx dialect.Tx, name string) (bool, error) {
+func (d *Postgres) tableExist(ctx context.Context, conn dialect.ExecQuerier, name string) (bool, error) {
 	query, args := sql.Dialect(dialect.Postgres).
 		Select(sql.Count("*")).From(sql.Table("tables").Schema("information_schema")).
 		Where(sql.And(
 			d.matchSchema(),
 			sql.EQ("table_name", name),
 		)).Query()
-	return exist(ctx, tx, query, args...)
+	return exist(ctx, conn, query, args...)
 }
 
 // tableExist checks if a foreign-key exists in the current schema.
@@ -75,7 +79,7 @@ func (d *Postgres) fkExist(ctx context.Context, tx dialect.Tx, name string) (boo
 }
 
 // setRange sets restart the identity column to the given offset. Used by the universal-id option.
-func (d *Postgres) setRange(ctx context.Context, tx dialect.Tx, t *Table, value int) error {
+func (d *Postgres) setRange(ctx context.Context, conn dialect.ExecQuerier, t *Table, value int64) error {
 	if value == 0 {
 		value = 1 // RESTART value cannot be < 1.
 	}
@@ -83,7 +87,7 @@ func (d *Postgres) setRange(ctx context.Context, tx dialect.Tx, t *Table, value 
 	if len(t.PrimaryKey) == 1 {
 		pk = t.PrimaryKey[0].Name
 	}
-	return tx.Exec(ctx, fmt.Sprintf("ALTER TABLE %s ALTER COLUMN %s RESTART WITH %d", t.Name, pk, value), []interface{}{}, nil)
+	return conn.Exec(ctx, fmt.Sprintf("ALTER TABLE %q ALTER COLUMN %q RESTART WITH %d", t.Name, pk, value), []interface{}{}, nil)
 }
 
 // table loads the current table description from the database.
@@ -92,7 +96,7 @@ func (d *Postgres) table(ctx context.Context, tx dialect.Tx, name string) (*Tabl
 	query, args := sql.Dialect(dialect.Postgres).
 		Select(
 			"column_name", "data_type", "is_nullable", "column_default", "udt_name",
-			"numeric_precision", "numeric_scale",
+			"numeric_precision", "numeric_scale", "character_maximum_length",
 		).
 		From(sql.Table("columns").Schema("information_schema")).
 		Where(sql.And(
@@ -229,13 +233,14 @@ const maxCharSize = 10 << 20
 // scanColumn scans the information a column from column description.
 func (d *Postgres) scanColumn(c *Column, rows *sql.Rows) error {
 	var (
-		nullable         sql.NullString
-		defaults         sql.NullString
-		udt              sql.NullString
-		numericPrecision sql.NullInt64
-		numericScale     sql.NullInt64
+		nullable            sql.NullString
+		defaults            sql.NullString
+		udt                 sql.NullString
+		numericPrecision    sql.NullInt64
+		numericScale        sql.NullInt64
+		characterMaximumLen sql.NullInt64
 	)
-	if err := rows.Scan(&c.Name, &c.typ, &nullable, &defaults, &udt, &numericPrecision, &numericScale); err != nil {
+	if err := rows.Scan(&c.Name, &c.typ, &nullable, &defaults, &udt, &numericPrecision, &numericScale, &characterMaximumLen); err != nil {
 		return fmt.Errorf("scanning column description: %w", err)
 	}
 	if nullable.Valid {
@@ -266,7 +271,12 @@ func (d *Postgres) scanColumn(c *Column, rows *sql.Rows) error {
 		c.Size = maxCharSize + 1
 	case "character", "character varying":
 		c.Type = field.TypeString
-	case "date", "time", "timestamp", "timestamp with time zone", "timestamp without time zone":
+		// If character maximum length is specified then we should take that into account.
+		if characterMaximumLen.Valid {
+			schemaType := fmt.Sprintf("varchar(%d)", characterMaximumLen.Int64)
+			c.SchemaType = map[string]string{dialect.Postgres: schemaType}
+		}
+	case "date", "time with time zone", "time without time zone", "timestamp with time zone", "timestamp without time zone":
 		c.Type = field.TypeTime
 	case "bytea":
 		c.Type = field.TypeBytes
@@ -275,6 +285,8 @@ func (d *Postgres) scanColumn(c *Column, rows *sql.Rows) error {
 	case "uuid":
 		c.Type = field.TypeUUID
 	case "cidr", "inet", "macaddr", "macaddr8":
+		c.Type = field.TypeOther
+	case "point", "line", "lseg", "box", "path", "polygon", "circle":
 		c.Type = field.TypeOther
 	case "ARRAY":
 		c.Type = field.TypeOther
@@ -287,7 +299,7 @@ func (d *Postgres) scanColumn(c *Column, rows *sql.Rows) error {
 		// database ignores any size or multi-dimensions constraints.
 		c.SchemaType = map[string]string{dialect.Postgres: "ARRAY"}
 		c.typ = udt.String
-	case "USER-DEFINED":
+	case "USER-DEFINED", "tstzrange", "interval":
 		c.Type = field.TypeOther
 		if !udt.Valid {
 			return fmt.Errorf("missing user defined type for column %q", c.Name)
@@ -295,7 +307,7 @@ func (d *Postgres) scanColumn(c *Column, rows *sql.Rows) error {
 		c.SchemaType = map[string]string{dialect.Postgres: udt.String}
 	}
 	switch {
-	case !defaults.Valid || c.Type == field.TypeTime || seqfunc(defaults.String):
+	case !defaults.Valid || c.Type == field.TypeTime || callExpr(defaults.String):
 		return nil
 	case strings.Contains(defaults.String, "::"):
 		parts := strings.Split(defaults.String, "::")
@@ -374,11 +386,30 @@ func (d *Postgres) addColumn(c *Column) *sql.ColumnBuilder {
 		b.Attr("GENERATED BY DEFAULT AS IDENTITY")
 	}
 	c.nullable(b)
-	c.defaultValue(b)
+	d.writeDefault(b, c, "DEFAULT")
 	if c.Collation != "" {
 		b.Attr("COLLATE " + strconv.Quote(c.Collation))
 	}
 	return b
+}
+
+// writeDefault writes the `DEFAULT` clause to column builder
+// if exists and supported by the driver.
+func (d *Postgres) writeDefault(b *sql.ColumnBuilder, c *Column, clause string) {
+	if c.Default == nil || !c.supportDefault() {
+		return
+	}
+	attr := fmt.Sprint(c.Default)
+	switch v := c.Default.(type) {
+	case bool:
+		attr = strconv.FormatBool(v)
+	case string:
+		if t := c.Type; t != field.TypeUUID && t != field.TypeTime && !t.Numeric() {
+			// Escape single quote by replacing each with 2.
+			attr = fmt.Sprintf("'%s'", strings.ReplaceAll(v, "'", "''"))
+		}
+	}
+	b.Attr(clause + " " + attr)
 }
 
 // alterColumn returns list of ColumnBuilder for applying in order to alter a column.
@@ -390,16 +421,21 @@ func (d *Postgres) alterColumn(c *Column) (ops []*sql.ColumnBuilder) {
 	} else {
 		ops = append(ops, b.Column(c.Name).Attr("SET NOT NULL"))
 	}
+	if c.Default != nil && c.supportDefault() {
+		ops = append(ops, d.writeSetDefault(b.Column(c.Name), c))
+	}
 	return ops
+}
+
+func (d *Postgres) writeSetDefault(b *sql.ColumnBuilder, c *Column) *sql.ColumnBuilder {
+	d.writeDefault(b, c, "SET DEFAULT")
+	return b
 }
 
 // hasUniqueName reports if the index has a unique name in the schema.
 func hasUniqueName(i *Index) bool {
-	name := i.Name
-	// The "_key" suffix is added by Postgres for implicit indexes.
-	if strings.HasSuffix(name, "_key") {
-		name = strings.TrimSuffix(name, "_key")
-	}
+	// Trim the "_key" suffix if it was added by Postgres for implicit indexes.
+	name := strings.TrimSuffix(i.Name, "_key")
 	suffix := strings.Join(i.columnNames(), "_")
 	if !strings.HasSuffix(name, suffix) {
 		return true // Assume it has a custom storage-key.
@@ -522,14 +558,25 @@ func (d *Postgres) needsConversion(old, new *Column) bool {
 	return oldT != newT && (oldT != "ARRAY" || !arrayType(newT))
 }
 
-// seqfunc reports if the given string is a sequence function.
-func seqfunc(defaults string) bool {
-	for _, fn := range [...]string{"currval", "lastval", "setval", "nextval"} {
-		if strings.HasPrefix(defaults, fn+"(") && strings.HasSuffix(defaults, ")") {
-			return true
+// callExpr reports if the given string ~looks like a function call expression.
+func callExpr(s string) bool {
+	if parts := strings.Split(s, "::"); !strings.HasSuffix(s, ")") && strings.HasSuffix(parts[0], ")") {
+		s = parts[0]
+	}
+	i, j := strings.IndexByte(s, '('), strings.LastIndexByte(s, ')')
+	if i == -1 || i > j || j != len(s)-1 {
+		return false
+	}
+	for i, r := range s[:i] {
+		if !isAlpha(r, i > 0) {
+			return false
 		}
 	}
-	return false
+	return true
+}
+
+func isAlpha(r rune, digit bool) bool {
+	return 'a' <= r && r <= 'z' || 'A' <= r && r <= 'Z' || r == '_' || digit && '0' <= r && r <= '9'
 }
 
 // arrayType reports if the given string is an array type (e.g. int[], text[2]).
@@ -623,3 +670,127 @@ WHERE tc.constraint_type = 'FOREIGN KEY'
   AND tc.table_name = '%s'
 order by constraint_name, kcu.ordinal_position;
 `
+
+// Atlas integration.
+
+func (d *Postgres) atOpen(conn dialect.ExecQuerier) (migrate.Driver, error) {
+	return postgres.Open(&db{ExecQuerier: conn})
+}
+
+func (d *Postgres) atTable(t1 *Table, t2 *schema.Table) {
+	if t1.Annotation != nil {
+		setAtChecks(t1, t2)
+	}
+}
+
+func (d *Postgres) atTypeC(c1 *Column, c2 *schema.Column) error {
+	if c1.SchemaType != nil && c1.SchemaType[dialect.Postgres] != "" {
+		t, err := postgres.ParseType(strings.ToLower(c1.SchemaType[dialect.Postgres]))
+		if err != nil {
+			return err
+		}
+		c2.Type.Type = t
+		return nil
+	}
+	var t schema.Type
+	switch c1.Type {
+	case field.TypeBool:
+		t = &schema.BoolType{T: postgres.TypeBoolean}
+	case field.TypeUint8, field.TypeInt8, field.TypeInt16, field.TypeUint16:
+		t = &schema.IntegerType{T: postgres.TypeSmallInt}
+	case field.TypeInt32, field.TypeUint32:
+		t = &schema.IntegerType{T: postgres.TypeInt}
+	case field.TypeInt, field.TypeUint, field.TypeInt64, field.TypeUint64:
+		t = &schema.IntegerType{T: postgres.TypeBigInt}
+	case field.TypeFloat32:
+		t = &schema.FloatType{T: c1.scanTypeOr(postgres.TypeReal)}
+	case field.TypeFloat64:
+		t = &schema.FloatType{T: c1.scanTypeOr(postgres.TypeDouble)}
+	case field.TypeBytes:
+		t = &schema.BinaryType{T: postgres.TypeBytea}
+	case field.TypeUUID:
+		t = &postgres.UUIDType{T: postgres.TypeUUID}
+	case field.TypeJSON:
+		t = &schema.JSONType{T: postgres.TypeJSONB}
+	case field.TypeString:
+		t = &schema.StringType{T: postgres.TypeVarChar}
+		if c1.Size > maxCharSize {
+			t = &schema.StringType{T: postgres.TypeText}
+		}
+	case field.TypeTime:
+		t = &schema.TimeType{T: c1.scanTypeOr(postgres.TypeTimestampWTZ)}
+	case field.TypeEnum:
+		// Although atlas supports enum types, we keep backwards compatibility
+		// with previous versions of ent and use varchar (see cType).
+		t = &schema.StringType{T: postgres.TypeVarChar}
+	case field.TypeOther:
+		t = &schema.UnsupportedType{T: c1.typ}
+	default:
+		t, err := postgres.ParseType(strings.ToLower(c1.typ))
+		if err != nil {
+			return err
+		}
+		c2.Type.Type = t
+	}
+	c2.Type.Type = t
+	return nil
+}
+
+func (d *Postgres) atUniqueC(t1 *Table, c1 *Column, t2 *schema.Table, c2 *schema.Column) {
+	// For UNIQUE columns, PostgreSQL creates an implicit index named
+	// "<table>_<column>_key<i>".
+	for _, idx := range t1.Indexes {
+		// Index also defined explicitly, and will be added in atIndexes.
+		if idx.Unique && d.atImplicitIndexName(idx, t1, c1) {
+			return
+		}
+	}
+	t2.AddIndexes(schema.NewUniqueIndex(fmt.Sprintf("%s_%s_key", t1.Name, c1.Name)).AddColumns(c2))
+}
+
+func (d *Postgres) atImplicitIndexName(idx *Index, t1 *Table, c1 *Column) bool {
+	p := fmt.Sprintf("%s_%s_key", t1.Name, c1.Name)
+	if idx.Name == p {
+		return true
+	}
+	i, err := strconv.ParseInt(strings.TrimPrefix(idx.Name, p), 10, 64)
+	return err == nil && i > 0
+}
+
+func (d *Postgres) atIncrementC(t *schema.Table, c *schema.Column) {
+	if _, ok := c.Type.Type.(*postgres.SerialType); ok {
+		return
+	}
+	id := &postgres.Identity{}
+	for _, a := range t.Attrs {
+		if a, ok := a.(*postgres.Identity); ok {
+			id = a
+		}
+	}
+	c.AddAttrs(id)
+}
+
+func (d *Postgres) atIncrementT(t *schema.Table, v int64) {
+	t.AddAttrs(&postgres.Identity{Sequence: &postgres.Sequence{Start: v}})
+}
+
+func (d *Postgres) atIndex(idx1 *Index, t2 *schema.Table, idx2 *schema.Index) error {
+	for _, c1 := range idx1.Columns {
+		c2, ok := t2.Column(c1.Name)
+		if !ok {
+			return fmt.Errorf("unexpected index %q column: %q", idx1.Name, c1.Name)
+		}
+		idx2.AddParts(&schema.IndexPart{C: c2})
+	}
+	if t, ok := indexType(idx1, dialect.Postgres); ok {
+		idx2.AddAttrs(&postgres.IndexType{T: t})
+	}
+	return nil
+}
+
+func (Postgres) atTypeRangeSQL(ts ...string) string {
+	for i := range ts {
+		ts[i] = fmt.Sprintf("('%s')", ts[i])
+	}
+	return fmt.Sprintf(`INSERT INTO "%s" ("type") VALUES %s`, TypeTable, strings.Join(ts, ", "))
+}

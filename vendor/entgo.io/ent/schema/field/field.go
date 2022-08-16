@@ -12,6 +12,7 @@ import (
 	"math"
 	"reflect"
 	"regexp"
+	"strings"
 	"time"
 
 	"entgo.io/ent/schema"
@@ -26,7 +27,7 @@ func String(name string) *stringBuilder {
 }
 
 // Text returns a new string field without limitation on the size.
-// In MySQL, it is the "longtext" type, but in SQLite and Gremlin it has not effect.
+// In MySQL, it is the "longtext" type, but in SQLite and Gremlin it has no effect.
 func Text(name string) *stringBuilder {
 	return &stringBuilder{&Descriptor{
 		Name: name,
@@ -71,15 +72,19 @@ func Time(name string) *timeBuilder {
 //		Optional()
 //
 func JSON(name string, typ interface{}) *jsonBuilder {
-	t := reflect.TypeOf(typ)
 	b := &jsonBuilder{&Descriptor{
 		Name: name,
 		Info: &TypeInfo{
-			Type:    TypeJSON,
-			Ident:   t.String(),
-			PkgPath: t.PkgPath(),
+			Type: TypeJSON,
 		},
 	}}
+	t := reflect.TypeOf(typ)
+	if t == nil {
+		b.desc.Err = errors.New("expect a Go value as JSON type, but got nil")
+		return b
+	}
+	b.desc.Info.Ident = t.String()
+	b.desc.Info.PkgPath = t.PkgPath()
 	b.desc.goType(typ, t)
 	switch t.Kind() {
 	case reflect.Slice, reflect.Array, reflect.Ptr, reflect.Map:
@@ -129,10 +134,9 @@ func UUID(name string, typ driver.Valuer) *uuidBuilder {
 	b := &uuidBuilder{&Descriptor{
 		Name: name,
 		Info: &TypeInfo{
-			Type:     TypeUUID,
-			Nillable: true,
-			Ident:    rt.String(),
-			PkgPath:  indirect(rt).PkgPath(),
+			Type:    TypeUUID,
+			Ident:   rt.String(),
+			PkgPath: indirect(rt).PkgPath(),
 		},
 	}}
 	b.desc.goType(typ, valueScannerType)
@@ -345,7 +349,8 @@ func (b *timeBuilder) Optional() *timeBuilder {
 	return b
 }
 
-// Immutable indicates that this field cannot be updated.
+// Immutable fields are fields that can be set only in the creation of the entity.
+// i.e., no setters will be generated for the entity updaters (one and many).
 func (b *timeBuilder) Immutable() *timeBuilder {
 	b.desc.Immutable = true
 	return b
@@ -369,8 +374,8 @@ func (b *timeBuilder) StructTag(s string) *timeBuilder {
 //	field.Time("created_at").
 //		Default(time.Now)
 //
-func (b *timeBuilder) Default(f func() time.Time) *timeBuilder {
-	b.desc.Default = f
+func (b *timeBuilder) Default(fn interface{}) *timeBuilder {
+	b.desc.Default = fn
 	return b
 }
 
@@ -381,8 +386,13 @@ func (b *timeBuilder) Default(f func() time.Time) *timeBuilder {
 //		Default(time.Now).
 //		UpdateDefault(time.Now),
 //
-func (b *timeBuilder) UpdateDefault(f func() time.Time) *timeBuilder {
-	b.desc.UpdateDefault = f
+//	field.Time("deleted_at").
+//		Optional().
+//		GoType(&sql.NullTime{}).
+//		UpdateDefault(NewNullTime),
+//
+func (b *timeBuilder) UpdateDefault(fn interface{}) *timeBuilder {
+	b.desc.UpdateDefault = fn
 	return b
 }
 
@@ -418,6 +428,9 @@ func (b *timeBuilder) Annotations(annotations ...schema.Annotation) *timeBuilder
 
 // Descriptor implements the ent.Field interface by returning its descriptor.
 func (b *timeBuilder) Descriptor() *Descriptor {
+	if b.desc.Default != nil {
+		b.desc.checkDefaultFunc(timeType)
+	}
 	return b.desc
 }
 
@@ -549,6 +562,12 @@ func (b *bytesBuilder) Optional() *bytesBuilder {
 	return b
 }
 
+// Sensitive fields not printable and not serializable.
+func (b *bytesBuilder) Sensitive() *bytesBuilder {
+	b.desc.Sensitive = true
+	return b
+}
+
 // Unique makes the field unique within all vertices of this type.
 // Only supported in PostgreSQL.
 func (b *bytesBuilder) Unique() *bytesBuilder {
@@ -579,7 +598,31 @@ func (b *bytesBuilder) StructTag(s string) *bytesBuilder {
 // In SQLite, it does not have any effect on the type size, which is default to 1B bytes.
 func (b *bytesBuilder) MaxLen(i int) *bytesBuilder {
 	b.desc.Size = i
+	b.desc.Validators = append(b.desc.Validators, func(buf []byte) error {
+		if len(buf) > i {
+			return errors.New("value is greater than the required length")
+		}
+		return nil
+	})
 	return b
+}
+
+// MinLen adds a length validator for this field.
+// Operation fails if the length of the buffer is less than the given value.
+func (b *bytesBuilder) MinLen(i int) *bytesBuilder {
+	b.desc.Validators = append(b.desc.Validators, func(b []byte) error {
+		if len(b) < i {
+			return errors.New("value is less than the required length")
+		}
+		return nil
+	})
+	return b
+}
+
+// NotEmpty adds a length validator for this field.
+// Operation fails if the length of the buffer is zero.
+func (b *bytesBuilder) NotEmpty() *bytesBuilder {
+	return b.MinLen(1)
 }
 
 // Validate adds a validator for this field. Operation fails if the validation fails.
@@ -674,6 +717,12 @@ func (b *jsonBuilder) Comment(c string) *jsonBuilder {
 	return b
 }
 
+// Sensitive fields not printable and not serializable.
+func (b *jsonBuilder) Sensitive() *jsonBuilder {
+	b.desc.Sensitive = true
+	return b
+}
+
 // StructTag sets the struct tag of the field.
 func (b *jsonBuilder) StructTag(s string) *jsonBuilder {
 	b.desc.Tag = s
@@ -698,6 +747,28 @@ func (b *jsonBuilder) SchemaType(types map[string]string) *jsonBuilder {
 // codegen extensions.
 func (b *jsonBuilder) Annotations(annotations ...schema.Annotation) *jsonBuilder {
 	b.desc.Annotations = append(b.desc.Annotations, annotations...)
+	return b
+}
+
+// Default sets the default value of the field. For example:
+//
+//	field.JSON("dirs", []http.Dir{}).
+//		// A static default value.
+//		Default([]http.Dir{"/tmp"})
+//
+//	field.JSON("dirs", []http.Dir{}).
+//		// A function for generating the default value.
+//		Default(DefaultDirs)
+//
+func (b *jsonBuilder) Default(v interface{}) *jsonBuilder {
+	b.desc.Default = v
+	switch fieldT, defaultT := b.desc.Info.RType.rtype, reflect.TypeOf(v); {
+	case fieldT == defaultT:
+	case defaultT.Kind() == reflect.Func:
+		b.desc.checkDefaultFunc(b.desc.Info.RType.rtype)
+	default:
+		b.desc.Err = fmt.Errorf("expect type (func() %[1]s) or (%[1]s) for other default value", b.desc.Info)
+	}
 	return b
 }
 
@@ -832,7 +903,7 @@ func (b *enumBuilder) GoType(ev EnumValues) *enumBuilder {
 	b.Values(ev.Values()...)
 	b.desc.goType(ev, stringType)
 	// If an error already exists, let that be returned instead.
-	// Otherwise check that the underlying type is either a string
+	// Otherwise, check that the underlying type is either a string
 	// or implements Stringer.
 	if b.desc.Err == nil && b.desc.Info.RType.rtype.Kind() != reflect.String && !b.desc.Info.Stringer() {
 		b.desc.Err = errors.New("enum values which implement ValueScanner must also implement Stringer")
@@ -1096,6 +1167,7 @@ func (d *Descriptor) goType(typ interface{}, expectType reflect.Type) {
 		Type:    d.Info.Type,
 		Ident:   t.String(),
 		PkgPath: tv.PkgPath(),
+		PkgName: pkgName(tv.String()),
 		RType: &RType{
 			rtype:   t,
 			Kind:    t.Kind(),
@@ -1105,35 +1177,55 @@ func (d *Descriptor) goType(typ interface{}, expectType reflect.Type) {
 			Methods: make(map[string]struct{ In, Out []*RType }, t.NumMethod()),
 		},
 	}
+	methods(t, info.RType)
 	switch t.Kind() {
-	case reflect.Slice, reflect.Array, reflect.Ptr, reflect.Map:
+	case reflect.Slice, reflect.Ptr, reflect.Map:
 		info.Nillable = true
 	}
 	switch pt := reflect.PtrTo(t); {
-	case pt.Implements(valueScannerType):
-		t = pt
-		fallthrough
-	case t.Implements(valueScannerType):
-		n := t.NumMethod()
-		for i := 0; i < n; i++ {
-			m := t.Method(i)
-			in := make([]*RType, m.Type.NumIn()-1)
-			for j := range in {
-				arg := m.Type.In(j + 1)
-				in[j] = &RType{Name: arg.Name(), Ident: arg.String(), Kind: arg.Kind(), PkgPath: arg.PkgPath()}
-			}
-			out := make([]*RType, m.Type.NumOut())
-			for j := range out {
-				ret := m.Type.Out(j)
-				out[j] = &RType{Name: ret.Name(), Ident: ret.String(), Kind: ret.Kind(), PkgPath: ret.PkgPath()}
-			}
-			info.RType.Methods[m.Name] = struct{ In, Out []*RType }{in, out}
-		}
-	case t.Kind() == expectType.Kind() && t.ConvertibleTo(expectType):
+	case pt.Implements(valueScannerType), t.Implements(valueScannerType),
+		t.Kind() == expectType.Kind() && t.ConvertibleTo(expectType):
 	default:
 		d.Err = fmt.Errorf("GoType must be a %q type or ValueScanner", expectType)
 	}
 	d.Info = info
+}
+
+// pkgName returns the package name from a Go
+// identifier with a package qualifier.
+func pkgName(ident string) string {
+	i := strings.LastIndexByte(ident, '.')
+	if i == -1 {
+		return ""
+	}
+	s := ident[:i]
+	if i := strings.LastIndexAny(s, "]*"); i != -1 {
+		s = s[i+1:]
+	}
+	return s
+}
+
+func methods(t reflect.Type, rtype *RType) {
+	// For type T, add methods with
+	// pointer receiver as well (*T).
+	if t.Kind() != reflect.Ptr {
+		t = reflect.PtrTo(t)
+	}
+	n := t.NumMethod()
+	for i := 0; i < n; i++ {
+		m := t.Method(i)
+		in := make([]*RType, m.Type.NumIn()-1)
+		for j := range in {
+			arg := m.Type.In(j + 1)
+			in[j] = &RType{Name: arg.Name(), Ident: arg.String(), Kind: arg.Kind(), PkgPath: arg.PkgPath()}
+		}
+		out := make([]*RType, m.Type.NumOut())
+		for j := range out {
+			ret := m.Type.Out(j)
+			out[j] = &RType{Name: ret.Name(), Ident: ret.String(), Kind: ret.Kind(), PkgPath: ret.PkgPath()}
+		}
+		rtype.Methods[m.Name] = struct{ In, Out []*RType }{in, out}
+	}
 }
 
 func (d *Descriptor) checkDefaultFunc(expectType reflect.Type) {

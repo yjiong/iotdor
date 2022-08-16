@@ -17,7 +17,7 @@ type User struct {
 // Fields of the User.
 func (User) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("name"),
+		field.String("name").Unique(),
 		field.String("passwd").
 			Sensitive(),
 		field.String("phone").
@@ -31,7 +31,7 @@ func (User) Edges() []ent.Edge {
 		edge.From("groups", Group.Type).
 			Ref("users"),
 		edge.From("manage", Group.Type).
-			Ref("admin"),
+			Ref("admins"),
 	}
 }
 
