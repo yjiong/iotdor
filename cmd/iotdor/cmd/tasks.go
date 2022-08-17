@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"database/sql"
 	"embed"
 	"fmt"
 	"io"
@@ -14,17 +13,18 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"github.com/yjiong/iotdor/api"
-	"github.com/yjiong/iotdor/ent"
 	"github.com/yjiong/iotdor/internal/datasrc"
 	"github.com/yjiong/iotdor/internal/logic"
 )
 
 //go:embed config.yml
 var configYml embed.FS
-var rawDB *sql.DB
-var dataSrc datasrc.DSrcer
-var dbClient *ent.Client
-var redisClient *redis.Client
+var lm *logic.Manage
+
+//var rawDB *sql.DB
+//var dataSrc datasrc.DSrcer
+//var dbClient *ent.Client
+//var redisClient *redis.Client
 var configViper *viper.Viper
 
 func setLogLevel() error {
@@ -83,25 +83,27 @@ func initDataSrcAndDB() error {
 	configViper.SetConfigName("config.yml")
 	configViper.SetConfigType("yml")
 	err = configViper.ReadInConfig()
-	b := configViper.GetStringMapString("broker")
-	log.Debugln(b)
-	dataSrc = datasrc.NewMQTTDSrcer(b)
-	d := configViper.GetStringMapString("database")
-	log.Debugln(d)
-	rawDB = logic.OpenRawDB(d["type"], mkDBDns(d))
-	dbClient = logic.OpenMigrate(d["type"], mkDBDns(d))
-	r := configViper.GetStringMapString("redis")
-	redisClient = redis.NewClient(&redis.Options{
-		Addr:     fmt.Sprintf("%s:%s", r["host"], r["port"]),
-		Password: r["password"],
-		DB:       0, // use default DB
-	})
-	err = redisClient.Ping(ctx).Err()
 	return err
 }
 
 func runLogicMsgHandle() error {
-	lm := logic.NewManage(ctx,
+	b := configViper.GetStringMapString("broker")
+	log.Debugln(b)
+	dataSrc := datasrc.NewMQTTDSrcer(b)
+	d := configViper.GetStringMapString("database")
+	log.Debugln(d)
+	rawDB := logic.OpenRawDB(d["type"], mkDBDns(d))
+	dbClient := logic.OpenMigrate(d["type"], mkDBDns(d))
+	r := configViper.GetStringMapString("redis")
+	redisClient := redis.NewClient(&redis.Options{
+		Addr:     fmt.Sprintf("%s:%s", r["host"], r["port"]),
+		Password: r["password"],
+		DB:       0, // use default DB
+	})
+	if err := redisClient.Ping(ctx).Err(); err != nil {
+		return err
+	}
+	lm = logic.NewManage(ctx,
 		rawDB,
 		dataSrc,
 		dbClient,
@@ -115,7 +117,7 @@ func runLogicMsgHandle() error {
 func startAPI() error {
 	hs := configViper.GetStringMapString("http_server")
 	if configViper.GetBool("http_server.debug_flag") {
-		go api.APIserver(hs["port"])
+		go api.APIserver(lm, hs["port"])
 	}
 	return nil
 }

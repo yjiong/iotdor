@@ -21,7 +21,7 @@ paths:
           in: body
           required: true
           schema:
-            $ref: '#/definitions/dataprocess.TUser'
+            $ref: '#/definitions/iotdor.TUser'
       responses:
         '200':
           description: ok
@@ -180,7 +180,7 @@ paths:
           in: body
           required: true
           schema:
-            $ref: '#/definitions/dataprocess.TDevice'
+            $ref: '#/definitions/iotdor.TDevice'
       responses:
         '200':
           description: ok
@@ -251,7 +251,7 @@ paths:
           in: body
           required: true
           schema:
-            $ref: '#/definitions/dataprocess.QuerySection'
+            $ref: '#/definitions/iotdor.QuerySection'
       responses:
         '200':
           description: ok
@@ -304,7 +304,7 @@ paths:
           in: body
           required: true
           schema:
-            $ref: '#/definitions/dataprocess.TMnInfo'
+            $ref: '#/definitions/iotdor.TMnInfo'
       responses:
         '200':
           description: ok
@@ -394,7 +394,7 @@ paths:
           in: body
           required: true
           schema:
-            $ref: '#/definitions/dataprocess.SerialParams'
+            $ref: '#/definitions/iotdor.SerialParams'
       responses:
         '200':
           description: ok
@@ -581,7 +581,7 @@ paths:
           in: body
           required: true
           schema:
-            $ref: '#/definitions/dataprocess.WTUser'
+            $ref: '#/definitions/iotdor.WTUser'
       responses:
         '200':
           description: ok
@@ -628,7 +628,7 @@ paths:
           schema:
             type: object
 definitions:
-  dataprocess.QuerySection:
+  iotdor.QuerySection:
     type: object
     properties:
       page_size:
@@ -643,7 +643,7 @@ definitions:
       until:
         description: '终止时间 (比如 "2021-01-03 15:04:05")'
         type: string
-  dataprocess.SerialParams:
+  iotdor.SerialParams:
     type: object
     properties:
       baudrate:
@@ -670,7 +670,7 @@ definitions:
       time_out:
         description: 超时 e.g. 1
         type: integer
-  dataprocess.TDevice:
+  iotdor.TDevice:
     type: object
     properties:
       address:
@@ -706,7 +706,7 @@ definitions:
       stop_bit:
         description: 停止位
         type: string
-  dataprocess.TDeviceFactor:
+  iotdor.TDeviceFactor:
     type: object
     properties:
       alarm_lower:
@@ -757,7 +757,7 @@ definitions:
       doefficient:
         description: 计算系数
         type: number
-  dataprocess.TMnInfo:
+  iotdor.TMnInfo:
     type: object
     properties:
       id:
@@ -793,14 +793,14 @@ definitions:
       resend_times:
         description: 发送失败重试次数
         type: integer
-  dataprocess.TUser:
+  iotdor.TUser:
     type: object
     properties:
       password:
         type: string
       username:
         type: string
-  dataprocess.WTUser:
+  iotdor.WTUser:
     type: object
     properties:
       password:

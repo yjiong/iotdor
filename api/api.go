@@ -3,6 +3,7 @@ package api
 import (
 	"bytes"
 	"embed"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -21,6 +22,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/render"
 	"github.com/pkg/errors"
+	"golang.org/x/crypto/bcrypt"
 
 	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
@@ -31,14 +33,14 @@ var subServerPort = "8888"
 var jwts = []byte("IOTDOR-yjiong@msn.com")
 
 // APIserver ....
-func APIserver(port string) {
+func APIserver(ma ManageAPI, port string) {
 	//log.SetReportCaller(true)
 	//log.SetFormatter(&log.TextFormatter{
 	//ForceColors:     true,
 	//FullTimestamp:   true,
 	//TimestampFormat: "2006/01/02 15:04:05",
 	//})
-	dtr := NewIotdorTran(subServerPort)
+	dtr := NewIotdorTran(ma, subServerPort)
 	router := mux.NewRouter()
 	router.PathPrefix("/api/login").HandlerFunc(dtr.rawlogin)
 	//router.PathPrefix("/api/ws/transport").HandlerFunc(dtr.tranSport)
@@ -58,16 +60,18 @@ type IotdorTran struct {
 	Wsc            map[string]*websocket.Conn
 	clist          map[string]string
 	IotdorTrs      map[string]*http.Transport
+	ManageAPI
 }
 
 // NewIotdorTran ...
-func NewIotdorTran(p string) *IotdorTran {
+func NewIotdorTran(m ManageAPI, p string) *IotdorTran {
 	return &IotdorTran{
 		IotdorHTTPPort: p,
 		Mu:             new(sync.Mutex),
 		Wsc:            make(map[string]*websocket.Conn),
 		clist:          make(map[string]string),
 		IotdorTrs:      make(map[string]*http.Transport),
+		ManageAPI:      m,
 	}
 }
 
@@ -213,13 +217,6 @@ var wus = &webui{
 	path:    "static",
 }
 
-// TUser ...
-type TUser struct {
-	Username string `db:"username" json:"username"`
-	Password string `db:"password" json:"password"`
-	Phone    string `db:"phone" json:"phone"`
-}
-
 func (dtr *IotdorTran) login(c *gin.Context) {
 	dtr.rawlogin(c.Writer, c.Request)
 }
@@ -245,43 +242,50 @@ func validateToken(next http.Handler) http.Handler {
 	})
 }
 
+func respError(code int, w http.ResponseWriter, err error) {
+	w.WriteHeader(code)
+	w.Write([]byte(fmt.Sprintf("{%q: %q}", "error", err.Error())))
+}
+
+func respJSON(w http.ResponseWriter, obj interface{}) {
+	w.WriteHeader(http.StatusOK)
+	jb, _ := json.Marshal(obj)
+	w.Write(jb)
+}
+
 func (dtr *IotdorTran) rawlogin(w http.ResponseWriter, req *http.Request) {
-	var loginUser TUser
+	var loginUser map[string]string
 	err := decodeJSON(req, &loginUser)
 	header := w.Header()
 	if val := header["Content-Type"]; len(val) == 0 {
 		header["Content-Type"] = []string{"application/json; charset=utf-8"}
 	}
 	if err != nil {
-		je, _ := json.Marshal(map[string]string{"error": err.Error()})
-		w.Write(je)
+		respError(200, w, err)
 		return
 	}
-	//ruser := ct.UserInfo(loginUser.Username)
-	//if len(ruser) == 0 || loginUser.Username != "admin" && ruser[0].Username == "" {
-	//err = errors.Errorf("username not exist or password error")
-	//c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
-	//return
-	//}
-	//dpw, _ := hex.DecodeString(ruser[0].Password)
-	//if err := bcrypt.CompareHashAndPassword(dpw, []byte(loginUser.Password)); err != nil {
-	//err = errors.Errorf("username not exist or password error")
-	//c.JSON(http.StatusNotAcceptable, gin.H{"error": err.Error()})
-	//return
-	//}
-	if !(loginUser.Username == "admin" && loginUser.Password == "iotdor") {
-		err = errors.Errorf("username not exist or password error")
-		w.WriteHeader(http.StatusNotAcceptable)
-		w.Write([]byte(`{"error": "username not exist or password error"}`))
+	euser, uerr := dtr.UserInfo(loginUser["username"])
+	if uerr != nil || euser == nil {
+		err = uerr
+		if euser == nil {
+			err = fmt.Errorf("user:%s not exist", loginUser["username"])
+		}
+		respError(200, w, err)
+		return
+	}
+	dpw, _ := hex.DecodeString(euser.Passwd)
+	if derr := bcrypt.CompareHashAndPassword(dpw, []byte(loginUser["password"])); derr != nil {
+		respError(200, w, derr)
 		return
 	}
 	token := jwt.New(jwt.SigningMethodHS256)
 	claims := make(jwt.MapClaims)
 	claims["exp"] = float64(time.Now().Add(time.Hour * time.Duration(360)).Unix())
 	claims["iat"] = float64(1)
-	claims["uname"] = loginUser.Username
+	claims["uname"] = euser.Name
 	token.Claims = claims
-	if tokenstr, err := token.SignedString(jwts); err == nil {
+
+	if tokenstr, err := token.SignedString(dpw); err == nil {
 		jr, _ := json.Marshal(map[string]string{"Token": tokenstr})
 		w.Write(jr)
 	} else {

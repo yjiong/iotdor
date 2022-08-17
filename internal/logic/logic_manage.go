@@ -89,7 +89,7 @@ func NewManage(ctx context.Context,
 		Cron:            cron.New(cron.WithSeconds()),
 		storageInterval: interval,
 		spool: sync.Pool{
-			New: func() interface{} { m := make(map[string]string); return m },
+			New: func() any { return make(map[string]string) },
 		},
 	}
 }
@@ -145,4 +145,25 @@ func (m *Manage) storateDeviceValue() {
 		go InsertMap(m.DB, "ammeters", vs)
 		m.spool.Put(vs)
 	}
+}
+
+// UserInfo for api
+func (m *Manage) UserInfo(name string) (u *ent.User, e error) {
+	if us, err := queryUsers(m.ctx, m.entC); err != nil {
+		e = err
+	} else {
+		for _, eu := range us {
+			if eu.Name == name {
+				u = eu
+			}
+		}
+	}
+	return
+}
+
+// AddUser ...
+func (m *Manage) AddUser(name, passwd, group string, adminFlag bool) error {
+	eg, _ := queryGroupByName(m.ctx, m.entC, group)
+	_, err := addUser(m.ctx, m.entC, name, passwd, eg, adminFlag)
+	return err
 }
