@@ -78,7 +78,7 @@ func NewManage(ctx context.Context,
 	redisc *redis.Client,
 	iname string,
 	interval int64) *Manage {
-	return &Manage{
+	m := &Manage{
 		ctx:             ctx,
 		DB:              db,
 		DSrcer:          dsrc,
@@ -92,6 +92,12 @@ func NewManage(ctx context.Context,
 			New: func() any { return make(map[string]string) },
 		},
 	}
+	m.mInit()
+	return m
+}
+
+func (m *Manage) mInit() {
+	addGroupIfNotExist(m.ctx, m.entC, m.iotdName)
 }
 
 func (m *Manage) mkKeyPrefix(s ...string) (kp string) {
@@ -162,8 +168,15 @@ func (m *Manage) UserInfo(name string) (u *ent.User, e error) {
 }
 
 // AddUser ...
-func (m *Manage) AddUser(name, passwd, group string, adminFlag bool) error {
+func (m *Manage) AddUser(name, passwd, group string, adminFlag bool, phone ...string) error {
 	eg, _ := queryGroupByName(m.ctx, m.entC, group)
-	_, err := addUser(m.ctx, m.entC, name, passwd, eg, adminFlag)
+	_, err := addUser(m.ctx, m.entC, name, passwd, eg, adminFlag, phone...)
+	return err
+}
+
+// UpdateUser ...
+func (m *Manage) UpdateUser(name, passwd, group string, adminFlag bool, phone ...string) error {
+	eg, _ := queryGroupByName(m.ctx, m.entC, group)
+	err := updateUser(m.ctx, m.entC, name, passwd, eg, adminFlag, phone...)
 	return err
 }

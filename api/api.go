@@ -286,11 +286,13 @@ func (dtr *IotdorTran) rawlogin(w http.ResponseWriter, req *http.Request) {
 	token.Claims = claims
 
 	if tokenstr, err := token.SignedString(dpw); err == nil {
-		jr, _ := json.Marshal(map[string]string{"Token": tokenstr})
-		w.Write(jr)
+		tkm := (map[string]string{"Token": tokenstr})
+		if loginUser["password"] == "123456" {
+			tkm["message"] = "尽快修改您的密码"
+		}
+		respJSON(w, tkm)
 	} else {
-		je, _ := json.Marshal(map[string]string{"error": err.Error()})
-		w.Write(je)
+		respError(200, w, errors.New("用户名或密码错误"))
 	}
 }
 

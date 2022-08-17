@@ -3,6 +3,7 @@ package logic
 import (
 	"context"
 	"database/sql"
+	"encoding/hex"
 
 	esql "entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/schema"
@@ -12,6 +13,7 @@ import (
 	"github.com/yjiong/iotdor/ent/group"
 	"github.com/yjiong/iotdor/ent/migrate"
 	"github.com/yjiong/iotdor/ent/user"
+	"golang.org/x/crypto/bcrypt"
 
 	log "github.com/sirupsen/logrus"
 
@@ -73,9 +75,17 @@ func queryGroupByName(ctx context.Context, c *ent.Client, gname string) (*ent.Gr
 
 func addGroupIfNotExist(ctx context.Context, c *ent.Client, gname string) (g *ent.Group, e error) {
 	if g, e = queryGroupByName(ctx, c, gname); g == nil || e != nil {
-		return addGroup(ctx, c, gname)
+		g, e = addGroup(ctx, c, gname)
+		//add default user name=gname passwd=123456
+		addUser(ctx, c, gname, "243261243130243648436d4e6c786e78703655436e58704d4447627a2e5156716d2f537a486857494c564f76624a6e70774743314147795950736d75", g, true)
 	}
 	return
+}
+
+func generatePasswdString(p string) (string, error) {
+	gp, err := bcrypt.GenerateFromPassword([]byte(p), 0)
+	hps := hex.EncodeToString(gp)
+	return hps, err
 }
 
 func delGroupByID(ctx context.Context, c *ent.Client, id int) error {
@@ -91,8 +101,16 @@ func addUser(ctx context.Context,
 	c *ent.Client,
 	name, passwd string,
 	group *ent.Group,
-	isAdmin bool) (*ent.User, error) {
-	tuc := c.User.Create().SetName(name).SetPasswd(passwd)
+	isAdmin bool,
+	phone ...string) (*ent.User, error) {
+	gpw, err := generatePasswdString(passwd)
+	if err != nil {
+		return nil, err
+	}
+	tuc := c.User.Create().SetName(name).SetPasswd(gpw)
+	if len(phone) == 1 {
+		tuc.SetPhone(phone[0])
+	}
 	if isAdmin {
 		return tuc.AddManage(group).Save(ctx)
 	}
@@ -103,8 +121,16 @@ func updateUser(ctx context.Context,
 	c *ent.Client,
 	name, passwd string,
 	group *ent.Group,
-	isAdmin bool) error {
-	tuc := c.User.Update().Where(user.Name(name)).SetPasswd(passwd)
+	isAdmin bool,
+	phone ...string) error {
+	gpw, err := generatePasswdString(passwd)
+	if err != nil {
+		return err
+	}
+	tuc := c.User.Update().Where(user.Name(name)).SetPasswd(gpw)
+	if len(phone) == 1 {
+		tuc.SetPhone(phone[0])
+	}
 	if isAdmin {
 		return tuc.AddManage(group).Exec(ctx)
 	}
