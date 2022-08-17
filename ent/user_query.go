@@ -26,7 +26,7 @@ type UserQuery struct {
 	fields     []string
 	predicates []predicate.User
 	withGroups *GroupQuery
-	withManage *GroupQuery
+	withAdmins *GroupQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -85,8 +85,8 @@ func (uq *UserQuery) QueryGroups() *GroupQuery {
 	return query
 }
 
-// QueryManage chains the current query on the "manage" edge.
-func (uq *UserQuery) QueryManage() *GroupQuery {
+// QueryAdmins chains the current query on the "admins" edge.
+func (uq *UserQuery) QueryAdmins() *GroupQuery {
 	query := &GroupQuery{config: uq.config}
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := uq.prepareQuery(ctx); err != nil {
@@ -99,7 +99,7 @@ func (uq *UserQuery) QueryManage() *GroupQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(user.Table, user.FieldID, selector),
 			sqlgraph.To(group.Table, group.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, true, user.ManageTable, user.ManagePrimaryKey...),
+			sqlgraph.Edge(sqlgraph.M2M, true, user.AdminsTable, user.AdminsPrimaryKey...),
 		)
 		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
 		return fromU, nil
@@ -289,7 +289,7 @@ func (uq *UserQuery) Clone() *UserQuery {
 		order:      append([]OrderFunc{}, uq.order...),
 		predicates: append([]predicate.User{}, uq.predicates...),
 		withGroups: uq.withGroups.Clone(),
-		withManage: uq.withManage.Clone(),
+		withAdmins: uq.withAdmins.Clone(),
 		// clone intermediate query.
 		sql:    uq.sql.Clone(),
 		path:   uq.path,
@@ -308,14 +308,14 @@ func (uq *UserQuery) WithGroups(opts ...func(*GroupQuery)) *UserQuery {
 	return uq
 }
 
-// WithManage tells the query-builder to eager-load the nodes that are connected to
-// the "manage" edge. The optional arguments are used to configure the query builder of the edge.
-func (uq *UserQuery) WithManage(opts ...func(*GroupQuery)) *UserQuery {
+// WithAdmins tells the query-builder to eager-load the nodes that are connected to
+// the "admins" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithAdmins(opts ...func(*GroupQuery)) *UserQuery {
 	query := &GroupQuery{config: uq.config}
 	for _, opt := range opts {
 		opt(query)
 	}
-	uq.withManage = query
+	uq.withAdmins = query
 	return uq
 }
 
@@ -391,7 +391,7 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 		_spec       = uq.querySpec()
 		loadedTypes = [2]bool{
 			uq.withGroups != nil,
-			uq.withManage != nil,
+			uq.withAdmins != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]interface{}, error) {
@@ -419,10 +419,10 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 			return nil, err
 		}
 	}
-	if query := uq.withManage; query != nil {
-		if err := uq.loadManage(ctx, query, nodes,
-			func(n *User) { n.Edges.Manage = []*Group{} },
-			func(n *User, e *Group) { n.Edges.Manage = append(n.Edges.Manage, e) }); err != nil {
+	if query := uq.withAdmins; query != nil {
+		if err := uq.loadAdmins(ctx, query, nodes,
+			func(n *User) { n.Edges.Admins = []*Group{} },
+			func(n *User, e *Group) { n.Edges.Admins = append(n.Edges.Admins, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -487,7 +487,7 @@ func (uq *UserQuery) loadGroups(ctx context.Context, query *GroupQuery, nodes []
 	}
 	return nil
 }
-func (uq *UserQuery) loadManage(ctx context.Context, query *GroupQuery, nodes []*User, init func(*User), assign func(*User, *Group)) error {
+func (uq *UserQuery) loadAdmins(ctx context.Context, query *GroupQuery, nodes []*User, init func(*User), assign func(*User, *Group)) error {
 	edgeIDs := make([]driver.Value, len(nodes))
 	byID := make(map[int]*User)
 	nids := make(map[int]map[*User]struct{})
@@ -499,11 +499,11 @@ func (uq *UserQuery) loadManage(ctx context.Context, query *GroupQuery, nodes []
 		}
 	}
 	query.Where(func(s *sql.Selector) {
-		joinT := sql.Table(user.ManageTable)
-		s.Join(joinT).On(s.C(group.FieldID), joinT.C(user.ManagePrimaryKey[0]))
-		s.Where(sql.InValues(joinT.C(user.ManagePrimaryKey[1]), edgeIDs...))
+		joinT := sql.Table(user.AdminsTable)
+		s.Join(joinT).On(s.C(group.FieldID), joinT.C(user.AdminsPrimaryKey[0]))
+		s.Where(sql.InValues(joinT.C(user.AdminsPrimaryKey[1]), edgeIDs...))
 		columns := s.SelectedColumns()
-		s.Select(joinT.C(user.ManagePrimaryKey[1]))
+		s.Select(joinT.C(user.AdminsPrimaryKey[1]))
 		s.AppendSelect(columns...)
 		s.SetDistinct(false)
 	})
@@ -537,7 +537,7 @@ func (uq *UserQuery) loadManage(ctx context.Context, query *GroupQuery, nodes []
 	for _, n := range neighbors {
 		nodes, ok := nids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected "manage" node returned %v`, n.ID)
+			return fmt.Errorf(`unexpected "admins" node returned %v`, n.ID)
 		}
 		for kn := range nodes {
 			assign(kn, n)

@@ -112,7 +112,7 @@ func addUser(ctx context.Context,
 		tuc.SetPhone(phone[0])
 	}
 	if isAdmin {
-		return tuc.AddManage(group).Save(ctx)
+		return tuc.AddAdmins(group).Save(ctx)
 	}
 	return tuc.AddGroups(group).Save(ctx)
 }
@@ -132,9 +132,9 @@ func updateUser(ctx context.Context,
 		tuc.SetPhone(phone[0])
 	}
 	if isAdmin {
-		return tuc.AddManage(group).Exec(ctx)
+		return tuc.AddAdmins(group).Exec(ctx)
 	}
-	return tuc.ClearManage().Exec(ctx)
+	return tuc.ClearAdmins().Exec(ctx)
 }
 
 func queryUsers(ctx context.Context, c *ent.Client) ([]*ent.User, error) {

@@ -18,7 +18,6 @@ import (
 	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
-	"github.com/dgrijalva/jwt-go/request"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/render"
 	"github.com/pkg/errors"
@@ -45,7 +44,9 @@ func APIserver(ma ManageAPI, port string) {
 	router.PathPrefix("/api/login").HandlerFunc(dtr.rawlogin)
 	//router.PathPrefix("/api/ws/transport").HandlerFunc(dtr.tranSport)
 	rsub := router.PathPrefix("/gateway").Subrouter()
-	rsub.Use(validateToken)
+	rsubConf := router.PathPrefix("/config").Subrouter()
+	rsubConf.Use(dtr.validateToken, dtr.validateAdmin)
+	rsub.Use(dtr.validateToken)
 	rsub.PathPrefix("/list").HandlerFunc(dtr.iotdorList)
 	PprofGroup(router)
 	router.PathPrefix("/").Handler(http.FileServer(wus))
@@ -55,23 +56,25 @@ func APIserver(ma ManageAPI, port string) {
 
 // IotdorTran data colloect meter Transport
 type IotdorTran struct {
-	IotdorHTTPPort string
-	Mu             *sync.Mutex
-	Wsc            map[string]*websocket.Conn
-	clist          map[string]string
-	IotdorTrs      map[string]*http.Transport
+	IotdorHTTPPort   string
+	Mu               *sync.Mutex
+	Wsc              map[string]*websocket.Conn
+	clist            map[string]string
+	IotdorTrs        map[string]*http.Transport
+	loginFailedCount map[string]int
 	ManageAPI
 }
 
 // NewIotdorTran ...
 func NewIotdorTran(m ManageAPI, p string) *IotdorTran {
 	return &IotdorTran{
-		IotdorHTTPPort: p,
-		Mu:             new(sync.Mutex),
-		Wsc:            make(map[string]*websocket.Conn),
-		clist:          make(map[string]string),
-		IotdorTrs:      make(map[string]*http.Transport),
-		ManageAPI:      m,
+		IotdorHTTPPort:   p,
+		Mu:               new(sync.Mutex),
+		Wsc:              make(map[string]*websocket.Conn),
+		clist:            make(map[string]string),
+		loginFailedCount: make(map[string]int),
+		IotdorTrs:        make(map[string]*http.Transport),
+		ManageAPI:        m,
 	}
 }
 
@@ -221,27 +224,6 @@ func (dtr *IotdorTran) login(c *gin.Context) {
 	dtr.rawlogin(c.Writer, c.Request)
 }
 
-func validateToken(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if token, err := request.ParseFromRequest(r, request.AuthorizationHeaderExtractor,
-			func(token *jwt.Token) (interface{}, error) {
-				return jwts, nil
-			}); err == nil {
-			if token.Valid {
-				next.ServeHTTP(w, r)
-				return
-			}
-		}
-		header := w.Header()
-		if val := header["Content-Type"]; len(val) == 0 {
-			header["Content-Type"] = []string{"application/json; charset=utf-8"}
-		}
-		w.WriteHeader(http.StatusUnauthorized)
-		w.Write([]byte(`{"error":"登录失败，或session timeout"}`))
-		return
-	})
-}
-
 func respError(code int, w http.ResponseWriter, err error) {
 	w.WriteHeader(code)
 	w.Write([]byte(fmt.Sprintf("{%q: %q}", "error", err.Error())))
@@ -253,8 +235,17 @@ func respJSON(w http.ResponseWriter, obj interface{}) {
 	w.Write(jb)
 }
 
+func (dtr *IotdorTran) delayForLogin(host string) {
+	<-time.After(time.Minute * 3)
+	delete(dtr.loginFailedCount, host)
+}
+
 func (dtr *IotdorTran) rawlogin(w http.ResponseWriter, req *http.Request) {
 	var loginUser map[string]string
+	if dtr.loginFailedCount[req.Host] > 3 {
+		respError(200, w, errors.New("您错误登录太频繁了，休息一下吧"))
+		return
+	}
 	err := decodeJSON(req, &loginUser)
 	header := w.Header()
 	if val := header["Content-Type"]; len(val) == 0 {
@@ -275,7 +266,9 @@ func (dtr *IotdorTran) rawlogin(w http.ResponseWriter, req *http.Request) {
 	}
 	dpw, _ := hex.DecodeString(euser.Passwd)
 	if derr := bcrypt.CompareHashAndPassword(dpw, []byte(loginUser["password"])); derr != nil {
-		respError(200, w, derr)
+		respError(200, w, errors.New("用户名或密码错误"))
+		dtr.loginFailedCount[req.Host]++
+		go dtr.delayForLogin(req.Host)
 		return
 	}
 	token := jwt.New(jwt.SigningMethodHS256)
@@ -292,7 +285,7 @@ func (dtr *IotdorTran) rawlogin(w http.ResponseWriter, req *http.Request) {
 		}
 		respJSON(w, tkm)
 	} else {
-		respError(200, w, errors.New("用户名或密码错误"))
+		respError(200, w, err)
 	}
 }
 

@@ -2408,9 +2408,9 @@ type UserMutation struct {
 	groups        map[int]struct{}
 	removedgroups map[int]struct{}
 	clearedgroups bool
-	manage        map[int]struct{}
-	removedmanage map[int]struct{}
-	clearedmanage bool
+	admins        map[int]struct{}
+	removedadmins map[int]struct{}
+	clearedadmins bool
 	done          bool
 	oldValue      func(context.Context) (*User, error)
 	predicates    []predicate.User
@@ -2761,58 +2761,58 @@ func (m *UserMutation) ResetGroups() {
 	m.removedgroups = nil
 }
 
-// AddManageIDs adds the "manage" edge to the Group entity by ids.
-func (m *UserMutation) AddManageIDs(ids ...int) {
-	if m.manage == nil {
-		m.manage = make(map[int]struct{})
+// AddAdminIDs adds the "admins" edge to the Group entity by ids.
+func (m *UserMutation) AddAdminIDs(ids ...int) {
+	if m.admins == nil {
+		m.admins = make(map[int]struct{})
 	}
 	for i := range ids {
-		m.manage[ids[i]] = struct{}{}
+		m.admins[ids[i]] = struct{}{}
 	}
 }
 
-// ClearManage clears the "manage" edge to the Group entity.
-func (m *UserMutation) ClearManage() {
-	m.clearedmanage = true
+// ClearAdmins clears the "admins" edge to the Group entity.
+func (m *UserMutation) ClearAdmins() {
+	m.clearedadmins = true
 }
 
-// ManageCleared reports if the "manage" edge to the Group entity was cleared.
-func (m *UserMutation) ManageCleared() bool {
-	return m.clearedmanage
+// AdminsCleared reports if the "admins" edge to the Group entity was cleared.
+func (m *UserMutation) AdminsCleared() bool {
+	return m.clearedadmins
 }
 
-// RemoveManageIDs removes the "manage" edge to the Group entity by IDs.
-func (m *UserMutation) RemoveManageIDs(ids ...int) {
-	if m.removedmanage == nil {
-		m.removedmanage = make(map[int]struct{})
+// RemoveAdminIDs removes the "admins" edge to the Group entity by IDs.
+func (m *UserMutation) RemoveAdminIDs(ids ...int) {
+	if m.removedadmins == nil {
+		m.removedadmins = make(map[int]struct{})
 	}
 	for i := range ids {
-		delete(m.manage, ids[i])
-		m.removedmanage[ids[i]] = struct{}{}
+		delete(m.admins, ids[i])
+		m.removedadmins[ids[i]] = struct{}{}
 	}
 }
 
-// RemovedManage returns the removed IDs of the "manage" edge to the Group entity.
-func (m *UserMutation) RemovedManageIDs() (ids []int) {
-	for id := range m.removedmanage {
+// RemovedAdmins returns the removed IDs of the "admins" edge to the Group entity.
+func (m *UserMutation) RemovedAdminsIDs() (ids []int) {
+	for id := range m.removedadmins {
 		ids = append(ids, id)
 	}
 	return
 }
 
-// ManageIDs returns the "manage" edge IDs in the mutation.
-func (m *UserMutation) ManageIDs() (ids []int) {
-	for id := range m.manage {
+// AdminsIDs returns the "admins" edge IDs in the mutation.
+func (m *UserMutation) AdminsIDs() (ids []int) {
+	for id := range m.admins {
 		ids = append(ids, id)
 	}
 	return
 }
 
-// ResetManage resets all changes to the "manage" edge.
-func (m *UserMutation) ResetManage() {
-	m.manage = nil
-	m.clearedmanage = false
-	m.removedmanage = nil
+// ResetAdmins resets all changes to the "admins" edge.
+func (m *UserMutation) ResetAdmins() {
+	m.admins = nil
+	m.clearedadmins = false
+	m.removedadmins = nil
 }
 
 // Where appends a list predicates to the UserMutation builder.
@@ -3014,8 +3014,8 @@ func (m *UserMutation) AddedEdges() []string {
 	if m.groups != nil {
 		edges = append(edges, user.EdgeGroups)
 	}
-	if m.manage != nil {
-		edges = append(edges, user.EdgeManage)
+	if m.admins != nil {
+		edges = append(edges, user.EdgeAdmins)
 	}
 	return edges
 }
@@ -3030,9 +3030,9 @@ func (m *UserMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
-	case user.EdgeManage:
-		ids := make([]ent.Value, 0, len(m.manage))
-		for id := range m.manage {
+	case user.EdgeAdmins:
+		ids := make([]ent.Value, 0, len(m.admins))
+		for id := range m.admins {
 			ids = append(ids, id)
 		}
 		return ids
@@ -3046,8 +3046,8 @@ func (m *UserMutation) RemovedEdges() []string {
 	if m.removedgroups != nil {
 		edges = append(edges, user.EdgeGroups)
 	}
-	if m.removedmanage != nil {
-		edges = append(edges, user.EdgeManage)
+	if m.removedadmins != nil {
+		edges = append(edges, user.EdgeAdmins)
 	}
 	return edges
 }
@@ -3062,9 +3062,9 @@ func (m *UserMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
-	case user.EdgeManage:
-		ids := make([]ent.Value, 0, len(m.removedmanage))
-		for id := range m.removedmanage {
+	case user.EdgeAdmins:
+		ids := make([]ent.Value, 0, len(m.removedadmins))
+		for id := range m.removedadmins {
 			ids = append(ids, id)
 		}
 		return ids
@@ -3078,8 +3078,8 @@ func (m *UserMutation) ClearedEdges() []string {
 	if m.clearedgroups {
 		edges = append(edges, user.EdgeGroups)
 	}
-	if m.clearedmanage {
-		edges = append(edges, user.EdgeManage)
+	if m.clearedadmins {
+		edges = append(edges, user.EdgeAdmins)
 	}
 	return edges
 }
@@ -3090,8 +3090,8 @@ func (m *UserMutation) EdgeCleared(name string) bool {
 	switch name {
 	case user.EdgeGroups:
 		return m.clearedgroups
-	case user.EdgeManage:
-		return m.clearedmanage
+	case user.EdgeAdmins:
+		return m.clearedadmins
 	}
 	return false
 }
@@ -3111,8 +3111,8 @@ func (m *UserMutation) ResetEdge(name string) error {
 	case user.EdgeGroups:
 		m.ResetGroups()
 		return nil
-	case user.EdgeManage:
-		m.ResetManage()
+	case user.EdgeAdmins:
+		m.ResetAdmins()
 		return nil
 	}
 	return fmt.Errorf("unknown User edge %s", name)

@@ -90,19 +90,19 @@ func (uc *UserCreate) AddGroups(g ...*Group) *UserCreate {
 	return uc.AddGroupIDs(ids...)
 }
 
-// AddManageIDs adds the "manage" edge to the Group entity by IDs.
-func (uc *UserCreate) AddManageIDs(ids ...int) *UserCreate {
-	uc.mutation.AddManageIDs(ids...)
+// AddAdminIDs adds the "admins" edge to the Group entity by IDs.
+func (uc *UserCreate) AddAdminIDs(ids ...int) *UserCreate {
+	uc.mutation.AddAdminIDs(ids...)
 	return uc
 }
 
-// AddManage adds the "manage" edges to the Group entity.
-func (uc *UserCreate) AddManage(g ...*Group) *UserCreate {
+// AddAdmins adds the "admins" edges to the Group entity.
+func (uc *UserCreate) AddAdmins(g ...*Group) *UserCreate {
 	ids := make([]int, len(g))
 	for i := range g {
 		ids[i] = g[i].ID
 	}
-	return uc.AddManageIDs(ids...)
+	return uc.AddAdminIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -292,12 +292,12 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := uc.mutation.ManageIDs(); len(nodes) > 0 {
+	if nodes := uc.mutation.AdminsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: true,
-			Table:   user.ManageTable,
-			Columns: user.ManagePrimaryKey,
+			Table:   user.AdminsTable,
+			Columns: user.AdminsPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{

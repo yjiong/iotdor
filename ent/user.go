@@ -35,8 +35,8 @@ type User struct {
 type UserEdges struct {
 	// Groups holds the value of the groups edge.
 	Groups []*Group `json:"groups,omitempty"`
-	// Manage holds the value of the manage edge.
-	Manage []*Group `json:"manage,omitempty"`
+	// Admins holds the value of the admins edge.
+	Admins []*Group `json:"admins,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [2]bool
@@ -51,13 +51,13 @@ func (e UserEdges) GroupsOrErr() ([]*Group, error) {
 	return nil, &NotLoadedError{edge: "groups"}
 }
 
-// ManageOrErr returns the Manage value or an error if the edge
+// AdminsOrErr returns the Admins value or an error if the edge
 // was not loaded in eager-loading.
-func (e UserEdges) ManageOrErr() ([]*Group, error) {
+func (e UserEdges) AdminsOrErr() ([]*Group, error) {
 	if e.loadedTypes[1] {
-		return e.Manage, nil
+		return e.Admins, nil
 	}
-	return nil, &NotLoadedError{edge: "manage"}
+	return nil, &NotLoadedError{edge: "admins"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -132,9 +132,9 @@ func (u *User) QueryGroups() *GroupQuery {
 	return (&UserClient{config: u.config}).QueryGroups(u)
 }
 
-// QueryManage queries the "manage" edge of the User entity.
-func (u *User) QueryManage() *GroupQuery {
-	return (&UserClient{config: u.config}).QueryManage(u)
+// QueryAdmins queries the "admins" edge of the User entity.
+func (u *User) QueryAdmins() *GroupQuery {
+	return (&UserClient{config: u.config}).QueryAdmins(u)
 }
 
 // Update returns a builder for updating this User.

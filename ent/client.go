@@ -612,15 +612,15 @@ func (c *UserClient) QueryGroups(u *User) *GroupQuery {
 	return query
 }
 
-// QueryManage queries the manage edge of a User.
-func (c *UserClient) QueryManage(u *User) *GroupQuery {
+// QueryAdmins queries the admins edge of a User.
+func (c *UserClient) QueryAdmins(u *User) *GroupQuery {
 	query := &GroupQuery{config: c.config}
 	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
 		id := u.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(user.Table, user.FieldID, id),
 			sqlgraph.To(group.Table, group.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, true, user.ManageTable, user.ManagePrimaryKey...),
+			sqlgraph.Edge(sqlgraph.M2M, true, user.AdminsTable, user.AdminsPrimaryKey...),
 		)
 		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
 		return fromV, nil

@@ -30,7 +30,7 @@ func (User) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("groups", Group.Type).
 			Ref("users"),
-		edge.From("manage", Group.Type).
+		edge.From("admins", Group.Type).
 			Ref("admins"),
 	}
 }

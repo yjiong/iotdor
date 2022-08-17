@@ -583,25 +583,25 @@ func HasGroupsWith(preds ...predicate.Group) predicate.User {
 	})
 }
 
-// HasManage applies the HasEdge predicate on the "manage" edge.
-func HasManage() predicate.User {
+// HasAdmins applies the HasEdge predicate on the "admins" edge.
+func HasAdmins() predicate.User {
 	return predicate.User(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(ManageTable, FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, true, ManageTable, ManagePrimaryKey...),
+			sqlgraph.To(AdminsTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, AdminsTable, AdminsPrimaryKey...),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasManageWith applies the HasEdge predicate on the "manage" edge with a given conditions (other predicates).
-func HasManageWith(preds ...predicate.Group) predicate.User {
+// HasAdminsWith applies the HasEdge predicate on the "admins" edge with a given conditions (other predicates).
+func HasAdminsWith(preds ...predicate.Group) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(ManageInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, true, ManageTable, ManagePrimaryKey...),
+			sqlgraph.To(AdminsInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, AdminsTable, AdminsPrimaryKey...),
 		)
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {

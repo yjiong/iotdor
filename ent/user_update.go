@@ -82,19 +82,19 @@ func (uu *UserUpdate) AddGroups(g ...*Group) *UserUpdate {
 	return uu.AddGroupIDs(ids...)
 }
 
-// AddManageIDs adds the "manage" edge to the Group entity by IDs.
-func (uu *UserUpdate) AddManageIDs(ids ...int) *UserUpdate {
-	uu.mutation.AddManageIDs(ids...)
+// AddAdminIDs adds the "admins" edge to the Group entity by IDs.
+func (uu *UserUpdate) AddAdminIDs(ids ...int) *UserUpdate {
+	uu.mutation.AddAdminIDs(ids...)
 	return uu
 }
 
-// AddManage adds the "manage" edges to the Group entity.
-func (uu *UserUpdate) AddManage(g ...*Group) *UserUpdate {
+// AddAdmins adds the "admins" edges to the Group entity.
+func (uu *UserUpdate) AddAdmins(g ...*Group) *UserUpdate {
 	ids := make([]int, len(g))
 	for i := range g {
 		ids[i] = g[i].ID
 	}
-	return uu.AddManageIDs(ids...)
+	return uu.AddAdminIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -123,25 +123,25 @@ func (uu *UserUpdate) RemoveGroups(g ...*Group) *UserUpdate {
 	return uu.RemoveGroupIDs(ids...)
 }
 
-// ClearManage clears all "manage" edges to the Group entity.
-func (uu *UserUpdate) ClearManage() *UserUpdate {
-	uu.mutation.ClearManage()
+// ClearAdmins clears all "admins" edges to the Group entity.
+func (uu *UserUpdate) ClearAdmins() *UserUpdate {
+	uu.mutation.ClearAdmins()
 	return uu
 }
 
-// RemoveManageIDs removes the "manage" edge to Group entities by IDs.
-func (uu *UserUpdate) RemoveManageIDs(ids ...int) *UserUpdate {
-	uu.mutation.RemoveManageIDs(ids...)
+// RemoveAdminIDs removes the "admins" edge to Group entities by IDs.
+func (uu *UserUpdate) RemoveAdminIDs(ids ...int) *UserUpdate {
+	uu.mutation.RemoveAdminIDs(ids...)
 	return uu
 }
 
-// RemoveManage removes "manage" edges to Group entities.
-func (uu *UserUpdate) RemoveManage(g ...*Group) *UserUpdate {
+// RemoveAdmins removes "admins" edges to Group entities.
+func (uu *UserUpdate) RemoveAdmins(g ...*Group) *UserUpdate {
 	ids := make([]int, len(g))
 	for i := range g {
 		ids[i] = g[i].ID
 	}
-	return uu.RemoveManageIDs(ids...)
+	return uu.RemoveAdminIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -313,12 +313,12 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if uu.mutation.ManageCleared() {
+	if uu.mutation.AdminsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: true,
-			Table:   user.ManageTable,
-			Columns: user.ManagePrimaryKey,
+			Table:   user.AdminsTable,
+			Columns: user.AdminsPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -329,12 +329,12 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := uu.mutation.RemovedManageIDs(); len(nodes) > 0 && !uu.mutation.ManageCleared() {
+	if nodes := uu.mutation.RemovedAdminsIDs(); len(nodes) > 0 && !uu.mutation.AdminsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: true,
-			Table:   user.ManageTable,
-			Columns: user.ManagePrimaryKey,
+			Table:   user.AdminsTable,
+			Columns: user.AdminsPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -348,12 +348,12 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := uu.mutation.ManageIDs(); len(nodes) > 0 {
+	if nodes := uu.mutation.AdminsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: true,
-			Table:   user.ManageTable,
-			Columns: user.ManagePrimaryKey,
+			Table:   user.AdminsTable,
+			Columns: user.AdminsPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -439,19 +439,19 @@ func (uuo *UserUpdateOne) AddGroups(g ...*Group) *UserUpdateOne {
 	return uuo.AddGroupIDs(ids...)
 }
 
-// AddManageIDs adds the "manage" edge to the Group entity by IDs.
-func (uuo *UserUpdateOne) AddManageIDs(ids ...int) *UserUpdateOne {
-	uuo.mutation.AddManageIDs(ids...)
+// AddAdminIDs adds the "admins" edge to the Group entity by IDs.
+func (uuo *UserUpdateOne) AddAdminIDs(ids ...int) *UserUpdateOne {
+	uuo.mutation.AddAdminIDs(ids...)
 	return uuo
 }
 
-// AddManage adds the "manage" edges to the Group entity.
-func (uuo *UserUpdateOne) AddManage(g ...*Group) *UserUpdateOne {
+// AddAdmins adds the "admins" edges to the Group entity.
+func (uuo *UserUpdateOne) AddAdmins(g ...*Group) *UserUpdateOne {
 	ids := make([]int, len(g))
 	for i := range g {
 		ids[i] = g[i].ID
 	}
-	return uuo.AddManageIDs(ids...)
+	return uuo.AddAdminIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -480,25 +480,25 @@ func (uuo *UserUpdateOne) RemoveGroups(g ...*Group) *UserUpdateOne {
 	return uuo.RemoveGroupIDs(ids...)
 }
 
-// ClearManage clears all "manage" edges to the Group entity.
-func (uuo *UserUpdateOne) ClearManage() *UserUpdateOne {
-	uuo.mutation.ClearManage()
+// ClearAdmins clears all "admins" edges to the Group entity.
+func (uuo *UserUpdateOne) ClearAdmins() *UserUpdateOne {
+	uuo.mutation.ClearAdmins()
 	return uuo
 }
 
-// RemoveManageIDs removes the "manage" edge to Group entities by IDs.
-func (uuo *UserUpdateOne) RemoveManageIDs(ids ...int) *UserUpdateOne {
-	uuo.mutation.RemoveManageIDs(ids...)
+// RemoveAdminIDs removes the "admins" edge to Group entities by IDs.
+func (uuo *UserUpdateOne) RemoveAdminIDs(ids ...int) *UserUpdateOne {
+	uuo.mutation.RemoveAdminIDs(ids...)
 	return uuo
 }
 
-// RemoveManage removes "manage" edges to Group entities.
-func (uuo *UserUpdateOne) RemoveManage(g ...*Group) *UserUpdateOne {
+// RemoveAdmins removes "admins" edges to Group entities.
+func (uuo *UserUpdateOne) RemoveAdmins(g ...*Group) *UserUpdateOne {
 	ids := make([]int, len(g))
 	for i := range g {
 		ids[i] = g[i].ID
 	}
-	return uuo.RemoveManageIDs(ids...)
+	return uuo.RemoveAdminIDs(ids...)
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
@@ -700,12 +700,12 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if uuo.mutation.ManageCleared() {
+	if uuo.mutation.AdminsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: true,
-			Table:   user.ManageTable,
-			Columns: user.ManagePrimaryKey,
+			Table:   user.AdminsTable,
+			Columns: user.AdminsPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -716,12 +716,12 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := uuo.mutation.RemovedManageIDs(); len(nodes) > 0 && !uuo.mutation.ManageCleared() {
+	if nodes := uuo.mutation.RemovedAdminsIDs(); len(nodes) > 0 && !uuo.mutation.AdminsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: true,
-			Table:   user.ManageTable,
-			Columns: user.ManagePrimaryKey,
+			Table:   user.AdminsTable,
+			Columns: user.AdminsPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -735,12 +735,12 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := uuo.mutation.ManageIDs(); len(nodes) > 0 {
+	if nodes := uuo.mutation.AdminsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: true,
-			Table:   user.ManageTable,
-			Columns: user.ManagePrimaryKey,
+			Table:   user.AdminsTable,
+			Columns: user.AdminsPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{

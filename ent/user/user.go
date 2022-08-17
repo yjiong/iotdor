@@ -23,8 +23,8 @@ const (
 	FieldPhone = "phone"
 	// EdgeGroups holds the string denoting the groups edge name in mutations.
 	EdgeGroups = "groups"
-	// EdgeManage holds the string denoting the manage edge name in mutations.
-	EdgeManage = "manage"
+	// EdgeAdmins holds the string denoting the admins edge name in mutations.
+	EdgeAdmins = "admins"
 	// Table holds the table name of the user in the database.
 	Table = "users"
 	// GroupsTable is the table that holds the groups relation/edge. The primary key declared below.
@@ -32,11 +32,11 @@ const (
 	// GroupsInverseTable is the table name for the Group entity.
 	// It exists in this package in order to avoid circular dependency with the "group" package.
 	GroupsInverseTable = "groups"
-	// ManageTable is the table that holds the manage relation/edge. The primary key declared below.
-	ManageTable = "group_admins"
-	// ManageInverseTable is the table name for the Group entity.
+	// AdminsTable is the table that holds the admins relation/edge. The primary key declared below.
+	AdminsTable = "group_admins"
+	// AdminsInverseTable is the table name for the Group entity.
 	// It exists in this package in order to avoid circular dependency with the "group" package.
-	ManageInverseTable = "groups"
+	AdminsInverseTable = "groups"
 )
 
 // Columns holds all SQL columns for user fields.
@@ -53,9 +53,9 @@ var (
 	// GroupsPrimaryKey and GroupsColumn2 are the table columns denoting the
 	// primary key for the groups relation (M2M).
 	GroupsPrimaryKey = []string{"group_id", "user_id"}
-	// ManagePrimaryKey and ManageColumn2 are the table columns denoting the
-	// primary key for the manage relation (M2M).
-	ManagePrimaryKey = []string{"group_id", "user_id"}
+	// AdminsPrimaryKey and AdminsColumn2 are the table columns denoting the
+	// primary key for the admins relation (M2M).
+	AdminsPrimaryKey = []string{"group_id", "user_id"}
 )
 
 // ValidColumn reports if the column name is valid (part of the table columns).
