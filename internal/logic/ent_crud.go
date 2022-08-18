@@ -77,7 +77,7 @@ func addGroupIfNotExist(ctx context.Context, c *ent.Client, gname string) (g *en
 	if g, e = queryGroupByName(ctx, c, gname); g == nil || e != nil {
 		g, e = addGroup(ctx, c, gname)
 		//add default user name=gname passwd=123456
-		addUser(ctx, c, gname, "243261243130243648436d4e6c786e78703655436e58704d4447627a2e5156716d2f537a486857494c564f76624a6e70774743314147795950736d75", g, true)
+		addUser(ctx, c, gname, "123456", g, true)
 	}
 	return
 }

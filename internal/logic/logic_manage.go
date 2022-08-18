@@ -180,3 +180,9 @@ func (m *Manage) UpdateUser(name, passwd, group string, adminFlag bool, phone ..
 	err := updateUser(m.ctx, m.entC, name, passwd, eg, adminFlag, phone...)
 	return err
 }
+
+// UserAdminFlag ....
+func (m *Manage) UserAdminFlag(uname string) bool {
+	u, _ := queryUserByName(m.ctx, m.entC, uname)
+	return userAdminFlag(m.ctx, u, uname)
+}

@@ -51,7 +51,7 @@ paths:
           description: Can not query history data
           schema:
             type: object
-  '/{gatewaysn}/version':
+  /gateway/{gatewaysn}/version:
     get:
       consumes:
         - application/json
@@ -798,8 +798,10 @@ definitions:
     properties:
       password:
         type: string
+        default: "123456"
       username:
         type: string
+        default: "iotd-XXX"
   iotdor.WTUser:
     type: object
     properties:

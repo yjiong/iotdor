@@ -41,8 +41,7 @@ func (dtr *IotdorTran) validateToken(next http.Handler) http.Handler {
 func (dtr *IotdorTran) validateAdmin(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if eu, err := dtr.UserInfo(r.Header.Get("uname")); err == nil && eu != nil {
-			//eu.Edges.ManageOrErr()
-			if true {
+			if dtr.UserAdminFlag(r.Header.Get("uname")) {
 				next.ServeHTTP(w, r)
 				return
 			}

@@ -46,7 +46,7 @@ func APIserver(ma ManageAPI, port string) {
 	rsub := router.PathPrefix("/gateway").Subrouter()
 	rsubConf := router.PathPrefix("/config").Subrouter()
 	rsubConf.Use(dtr.validateToken, dtr.validateAdmin)
-	rsub.Use(dtr.validateToken)
+	rsub.Use(dtr.validateToken, dtr.validateAdmin)
 	rsub.PathPrefix("/list").HandlerFunc(dtr.iotdorList)
 	PprofGroup(router)
 	router.PathPrefix("/").Handler(http.FileServer(wus))
