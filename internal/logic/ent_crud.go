@@ -97,6 +97,16 @@ func delGroupByID(ctx context.Context, c *ent.Client, id int) error {
 
 /************************** crud user *********************/
 
+func userAdminFlag(ctx context.Context, u *ent.User, gname string) (f bool) {
+	gs, _ := u.QueryAdmins().All(ctx)
+	for _, g := range gs {
+		if f = g.Name == gname; f {
+			return
+		}
+	}
+	return
+}
+
 func addUser(ctx context.Context,
 	c *ent.Client,
 	name, passwd string,
@@ -107,7 +117,7 @@ func addUser(ctx context.Context,
 	if err != nil {
 		return nil, err
 	}
-	tuc := c.User.Create().SetName(name).SetPasswd(gpw)
+	tuc := c.User.Create().SetName(name).SetPasswd(gpw).AddGroups(group)
 	if len(phone) == 1 {
 		tuc.SetPhone(phone[0])
 	}
@@ -127,7 +137,7 @@ func updateUser(ctx context.Context,
 	if err != nil {
 		return err
 	}
-	tuc := c.User.Update().Where(user.Name(name)).SetPasswd(gpw)
+	tuc := c.User.Update().Where(user.Name(name)).SetPasswd(gpw).AddGroups(group)
 	if len(phone) == 1 {
 		tuc.SetPhone(phone[0])
 	}

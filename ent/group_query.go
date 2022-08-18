@@ -232,6 +232,7 @@ func (gq *GroupQuery) OnlyIDX(ctx context.Context) int {
 }
 
 // All executes the query and returns a list of Groups.
+
 func (gq *GroupQuery) All(ctx context.Context) ([]*Group, error) {
 	if err := gq.prepareQuery(ctx); err != nil {
 		return nil, err
