@@ -29,7 +29,6 @@ import (
 )
 
 var subServerPort = "8888"
-var jwts = []byte("IOTDOR-yjiong@msn.com")
 
 // APIserver ....
 func APIserver(ma ManageAPI, port string) {
@@ -43,11 +42,9 @@ func APIserver(ma ManageAPI, port string) {
 	router := mux.NewRouter()
 	router.PathPrefix("/api/login").HandlerFunc(dtr.rawlogin)
 	//router.PathPrefix("/api/ws/transport").HandlerFunc(dtr.tranSport)
-	rsub := router.PathPrefix("/gateway").Subrouter()
-	rsubConf := router.PathPrefix("/config").Subrouter()
-	rsubConf.Use(dtr.validateToken, dtr.validateAdmin)
-	rsub.Use(dtr.validateToken, dtr.validateAdmin)
-	rsub.PathPrefix("/list").HandlerFunc(dtr.iotdorList)
+	configRoute(router.PathPrefix("/config").Subrouter(), dtr)
+	gatewayRoute(router.PathPrefix("/gateway").Subrouter(), dtr)
+	deviceRoute(router.PathPrefix("/device").Subrouter(), dtr)
 	PprofGroup(router)
 	router.PathPrefix("/").Handler(http.FileServer(wus))
 	log.Infof("iotdor start apt server at port:%s", port)
@@ -225,6 +222,10 @@ func (dtr *IotdorTran) login(c *gin.Context) {
 }
 
 func respError(code int, w http.ResponseWriter, err error) {
+	header := w.Header()
+	if val := header["Content-Type"]; len(val) == 0 {
+		header["Content-Type"] = []string{"application/json; charset=utf-8"}
+	}
 	w.WriteHeader(code)
 	w.Write([]byte(fmt.Sprintf("{%q: %q}", "error", err.Error())))
 }

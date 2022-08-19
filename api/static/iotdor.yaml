@@ -41,7 +41,7 @@ paths:
         - application/json
       tags:
         - 网关列表
-      summary: 网关列表(格式为序列号和最近一次与middle broker的连接时间)
+      summary: 网关列表
       responses:
         '200':
           description: ok
@@ -51,13 +51,13 @@ paths:
           description: Can not query history data
           schema:
             type: object
-  /gateway/{gatewaysn}/version:
+  /gateway/{gatewaysn}/info:
     get:
       consumes:
         - application/json
       tags:
         - 配置信息
-      summary: 获取主程序和驱动程序的版本和当前网关的SN(需1.2.0以上版本支持)
+      summary: 获取网关信息
       parameters:
         - type: string
           description: gatewaysn 网关序列号
@@ -73,7 +73,7 @@ paths:
           description: get version string error
           schema:
             type: object
-  '/{gatewaysn}/cmdline':
+  '/gateway/{gatewaysn}/cmdline':
     post:
       security:
         - ApiKeyAuth: []
@@ -81,7 +81,7 @@ paths:
         - application/json
       tags:
         - 系统命令
-      summary: 执行shell命令
+      summary: 在网关上执行shell命令
       parameters:
         - type: string
           description: gatewaysn 网关序列号
@@ -106,40 +106,7 @@ paths:
           description: Can not alibration time
           schema:
             type: object
-  '/{gatewaysn}/set_sn':
-    post:
-      security:
-        - ApiKeyAuth: []
-      consumes:
-        - application/json
-      tags:
-        - 系统命令
-      summary: 修改SN（需1.2.0版本以上)
-      parameters:
-        - type: string
-          description: gatewaysn 网关序列号
-          name: gatewaysn
-          in: path
-          required: true
-        - type: string
-          description: sn 更改后的序列号
-          name: sn 
-          in: query
-          required: true
-      responses:
-        '200':
-          description: ok
-          schema:
-            type: string
-        '401':
-          description: access denided
-          schema:
-            type: object
-        '404':
-          description: Can not set the SN
-          schema:
-            type: object
-  '/{gatewaysn}/device':
+  '/gateway/{gatewaysn}/devices':
     get:
       consumes:
         - application/json
@@ -226,155 +193,7 @@ paths:
           description: Can not delete MNinfo
           schema:
             type: object
-  '/{gatewaysn}/history/realtime_data':
-    post:
-      consumes:
-        - application/json
-      produces:
-        - application/json
-      tags:
-        - 历史数据
-      summary: 查询历史实时数据
-      parameters:
-        - type: string
-          description: gatewaysn 网关序列号
-          name: gatewaysn
-          in: path
-          required: true
-        - type: string
-          description: 因子编码
-          name: factor_code
-          in: query
-          required: true
-        - description: 查询格式
-          name: query_section
-          in: body
-          required: true
-          schema:
-            $ref: '#/definitions/iotdor.QuerySection'
-      responses:
-        '200':
-          description: ok
-          schema:
-            type: object
-        '404':
-          description: Can not query history data
-          schema:
-            type: object
-  '/{gatewaysn}/mqtt_info':
-    get:
-      consumes:
-        - application/json
-      produces:
-        - application/json
-      tags:
-        - 配置信息
-      summary: 获取平台信息
-      parameters:
-        - type: string
-          description: gatewaysn 网关序列号
-          name: gatewaysn
-          in: path
-          required: true
-      responses:
-        '200':
-          description: ok
-          schema:
-            type: object
-        '404':
-          description: Can not get MNinfo
-          schema:
-            type: object
-    put:
-      security:
-        - ApiKeyAuth: []
-      consumes:
-        - application/json
-      tags:
-        - 配置信息
-      summary: 添加或更新上报平台
-      parameters:
-        - type: string
-          description: gatewaysn 网关序列号
-          name: gatewaysn
-          in: path
-          required: true
-        - description: 平台信息(若ip_addr_port已经存在，则为更新，否则为新添加)
-          name: t_mn_info
-          in: body
-          required: true
-          schema:
-            $ref: '#/definitions/iotdor.TMnInfo'
-      responses:
-        '200':
-          description: ok
-          schema:
-            type: object
-        '401':
-          description: access denided
-          schema:
-            type: object
-        '404':
-          description: Can not insert MNinfo
-          schema:
-            type: object
-    delete:
-      security:
-        - ApiKeyAuth: []
-      consumes:
-        - application/json
-      tags:
-        - 配置信息
-      summary: 删除上报平台
-      parameters:
-        - type: string
-          description: gatewaysn 网关序列号
-          name: gatewaysn
-          in: path
-          required: true
-        - type: string
-          description: 平台地址
-          name: ip_addr_port
-          in: query
-          required: true
-      responses:
-        '200':
-          description: ok
-          schema:
-            type: object
-        '401':
-          description: access denided
-          schema:
-            type: object
-        '404':
-          description: Can not delete MNinfo
-          schema:
-            type: object
-  '/{gatewaysn}/realtime_data':
-    get:
-      consumes:
-        - application/json
-      produces:
-        - application/json
-      tags:
-        - 当前数据
-      summary: 获取实时数据
-      parameters:
-        - type: string
-          description: gatewaysn 网关序列号
-          name: gatewaysn
-          in: path
-          required: true
-      responses:
-        '200':
-          description: ok
-          schema:
-            type: object
-        '404':
-          description: Can not get realtime data
-          schema:
-            type: object
-  '/{gatewaysn}/serial_debug':
+  '/gateway/{gatewaysn}/serial_debug':
     post:
       security:
         - ApiKeyAuth: []
@@ -408,40 +227,7 @@ paths:
           description: Can not debug serial port
           schema:
             type: object
-  '/{gatewaysn}/set_time':
-    post:
-      consumes:
-        - application/json
-      tags:
-        - 系统命令
-      summary: 校准系统时间
-      security:
-        - ApiKeyAuth: []
-      parameters:
-        - type: string
-          description: gatewaysn 网关序列号
-          name: gatewaysn
-          in: path
-          required: true
-        - type: string
-          description: '时间格式:2021-01-02 03:04:05'
-          name: time
-          in: query
-          required: true
-      responses:
-        '200':
-          description: ok
-          schema:
-            type: object
-        '401':
-          description: access denided
-          schema:
-            type: object
-        '404':
-          description: Can not alibration time
-          schema:
-            type: object
-  '/{gatewaysn}/suport_device':
+  'gateway/{gatewaysn}/suport_device':
     get:
       consumes:
         - application/json
@@ -463,7 +249,7 @@ paths:
           description: please check gatewaydrive program is running
           schema:
             type: object
-  '/{gatewaysn}/update_devdrive':
+  'gateway/{gatewaysn}/update_devdrive':
     post:
       security:
         - ApiKeyAuth: []
@@ -496,7 +282,7 @@ paths:
           description: update gatewaydrive failed
           schema:
             type: object
-  '/{gatewaysn}/update_gateway':
+  '/gateway/{gatewaysn}/update_gateway':
     post:
       security:
         - ApiKeyAuth: []
@@ -532,21 +318,19 @@ paths:
           description: update gateway failed
           schema:
             type: object
-  '/{gatewaysn}/user':
+  '/device/{devID}/realtime_data':
     get:
-      security:
-        - ApiKeyAuth: []
       consumes:
         - application/json
       produces:
         - application/json
       tags:
-        - 配置信息
-      summary: 获取用户信息
+        - 当前数据
+      summary: 获取设备实时数据
       parameters:
         - type: string
-          description: gatewaysn 网关序列号
-          name: gatewaysn
+          description: devID 设备ID
+          name: devID
           in: path
           required: true
       responses:
@@ -554,77 +338,8 @@ paths:
           description: ok
           schema:
             type: object
-        '401':
-          description: access denided
-          schema:
-            type: object
         '404':
-          description: Can not get user
-          schema:
-            type: object
-    put:
-      security:
-        - ApiKeyAuth: []
-      consumes:
-        - application/json
-      tags:
-        - 配置信息
-      summary: 添加或更新用户信息
-      parameters:
-        - type: string
-          description: gatewaysn 网关序列号
-          name: gatewaysn
-          in: path
-          required: true
-        - description: 用户信息
-          name: user_info
-          in: body
-          required: true
-          schema:
-            $ref: '#/definitions/iotdor.WTUser'
-      responses:
-        '200':
-          description: ok
-          schema:
-            type: object
-        '401':
-          description: access denided
-          schema:
-            type: object
-        '404':
-          description: Can not insert User
-          schema:
-            type: object
-    delete:
-      security:
-        - ApiKeyAuth: []
-      consumes:
-        - application/json
-      tags:
-        - 配置信息
-      summary: 删除用户
-      parameters:
-        - type: string
-          description: gatewaysn 网关序列号
-          name: gatewaysn
-          in: path
-          required: true
-        - type: string
-          description: 用户
-          name: username
-          in: query
-          required: true
-      responses:
-        '200':
-          description: ok
-          schema:
-            type: object
-        '401':
-          description: access denided
-          schema:
-            type: object
-        '404':
-          description: Can not delete User
+          description: Can not get realtime data
           schema:
             type: object
 definitions:
@@ -706,93 +421,6 @@ definitions:
       stop_bit:
         description: 停止位
         type: string
-  iotdor.TDeviceFactor:
-    type: object
-    properties:
-      alarm_lower:
-        description: 报警下限值(不是必须)
-        type: number
-      alarm_upper:
-        description: 报警上限值(不是必须)
-        type: number
-      calc_type:
-        description: 因子数值类型 1：数字，2：字符
-        type: integer
-      decimals:
-        description: 保留几位小数
-        type: integer
-      device_id:
-        description: device_id
-        type: string
-      factor_alias:
-        description: 因子别名(也可以是寄存器地址编号)
-        type: string
-      factor_code:
-        description: 因子编码
-        type: string
-      id:
-        description: factor_id 随便填不空即可，会自动生成新的
-        type: string
-      is_change_send_msg:
-        description: 是否数据一发生变化就上传
-        type: integer
-      is_change_send_msg_store:
-        description: 是否数据一发生变化就存储(若变化频率高，建议不存储，比如1秒就变化了)
-        type: integer
-      is_continuous_alarm_over_standard:
-        description: 超标是否连续报警(不是必须)
-        type: integer
-      st:
-        description: 系统编码
-        type: string
-      is_manual_flag:
-        description: 是否使用手动FLAG 1:是, 0:否
-        type: integer
-      manual_flag:
-        description: 要使用的手动FLAG标记
-        type: string
-      tag_id:
-        description: 标签id，不同设备下如果有相同的因子，则需要该字段来区分
-        type: string
-      doefficient:
-        description: 计算系数
-        type: number
-  iotdor.TMnInfo:
-    type: object
-    properties:
-      id:
-        description: just ID 随便填不空即可，会自动生成新的
-        type: string
-      interval_heartbeat:
-        description: 心跳间隔(秒)推荐值(60-300)
-        type: integer
-      interval_minute_data_upload:
-        description: 分钟数据间隔(分)
-        type: integer
-      interval_upload:
-        description: 上报间隔(秒)
-        type: integer
-      ip_addr_port:
-        description: 连接地址和端口
-        type: string
-      is_open_heartbeat:
-        description: 是否打开心跳机制 (0=关闭)
-        type: integer
-      is_send_rtd:
-        description: 是否上报实时数据
-        type: integer
-      mn:
-        description: MN 编号
-        type: string
-      over_time:
-        description: 发送超时(秒)
-        type: integer
-      pw:
-        description: password
-        type: string
-      resend_times:
-        description: 发送失败重试次数
-        type: integer
   iotdor.TUser:
     type: object
     properties:
@@ -802,15 +430,6 @@ definitions:
       username:
         type: string
         default: "iotd-XXX"
-  iotdor.WTUser:
-    type: object
-    properties:
-      password:
-        type: string
-      username:
-        type: string
-      level:
-        type: integer
 securityDefinitions:
   ApiKeyAuth:
     type: apiKey

@@ -29,10 +29,6 @@ func (dtr *IotdorTran) validateToken(next http.Handler) http.Handler {
 				return
 			}
 		}
-		header := w.Header()
-		if val := header["Content-Type"]; len(val) == 0 {
-			header["Content-Type"] = []string{"application/json; charset=utf-8"}
-		}
 		respError(http.StatusUnauthorized, w, errors.New("登录失败，或session timeout"))
 		return
 	})
@@ -45,10 +41,6 @@ func (dtr *IotdorTran) validateAdmin(next http.Handler) http.Handler {
 				next.ServeHTTP(w, r)
 				return
 			}
-		}
-		header := w.Header()
-		if val := header["Content-Type"]; len(val) == 0 {
-			header["Content-Type"] = []string{"application/json; charset=utf-8"}
 		}
 		respError(http.StatusUnauthorized, w, errors.New("您不是管理员，木有权限"))
 		return
