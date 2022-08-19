@@ -153,6 +153,25 @@ func (m *Manage) storateDeviceValue() {
 	}
 }
 
+// AllDevices ....
+func (m *Manage) AllDevices() (ids []string) {
+	keys, _ := m.redisC.Keys(m.ctx, fmt.Sprintf("*:%s", DeviceValue)).Result()
+	for _, key := range keys {
+		kids := strings.Split(key, ":")
+		if len(kids) > 3 {
+			ids = append(ids, kids[2])
+		}
+	}
+	return
+}
+
+// DeviceRealTimeValue ....
+func (m *Manage) DeviceRealTimeValue(devid string) map[string]string {
+	keys, _ := m.redisC.Keys(m.ctx, fmt.Sprintf("*:%s:*", devid)).Result()
+	vs, _ := m.redisC.HGetAll(m.ctx, keys[0]).Result()
+	return vs
+}
+
 // UserInfo for api
 func (m *Manage) UserInfo(name string) (u *ent.User, e error) {
 	if us, err := queryUsers(m.ctx, m.entC); err != nil {

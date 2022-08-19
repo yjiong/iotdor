@@ -33,7 +33,7 @@ func OpenRawDB(driveName, dns string) *sql.DB {
 }
 
 // OpenMigrate ....
-//"mysql", "root:pass@tcp(localhost:3306)/test"
+//"mysql", "root:pass@tcp(localhost:3306)/test?charset=utf8&parseTime=True"
 //"postgres","host=<host> port=<port> user=<user> dbname=<database> password=<pass>"
 //"sqlite3", "file:ent?mode=memory&cache=shared&_fk=1"
 //"gremlin", "http://localhost:8182"

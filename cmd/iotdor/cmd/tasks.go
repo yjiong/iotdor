@@ -130,7 +130,7 @@ func mkDBDns(param map[string]string) (dns string) {
 	//"postgres", "host=mqtt.yaojiong.top port=5432 user=iotd dbname=iotd password=yaojiong"
 	switch param["type"] {
 	case "mysql":
-		dns = fmt.Sprintf("%s:%s@tcp(%s:%s)/%s",
+		dns = fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True",
 			param["user"],
 			param["password"],
 			param["host"],
