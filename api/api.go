@@ -222,15 +222,13 @@ func (dtr *IotdorTran) login(c *gin.Context) {
 }
 
 func respError(code int, w http.ResponseWriter, err error) {
-	header := w.Header()
-	if val := header["Content-Type"]; len(val) == 0 {
-		header["Content-Type"] = []string{"application/json; charset=utf-8"}
-	}
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(code)
 	w.Write([]byte(fmt.Sprintf("{%q: %q}", "error", err.Error())))
 }
 
 func respJSON(w http.ResponseWriter, obj interface{}) {
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
 	jb, _ := json.Marshal(obj)
 	w.Write(jb)

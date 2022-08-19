@@ -227,7 +227,7 @@ paths:
           description: Can not debug serial port
           schema:
             type: object
-  'gateway/{gatewaysn}/suport_device':
+  '/gateway/{gatewaysn}/suport_device':
     get:
       consumes:
         - application/json
@@ -249,7 +249,7 @@ paths:
           description: please check gatewaydrive program is running
           schema:
             type: object
-  'gateway/{gatewaysn}/update_devdrive':
+  '/gateway/{gatewaysn}/update_devdrive':
     post:
       security:
         - ApiKeyAuth: []
@@ -318,8 +318,30 @@ paths:
           description: update gateway failed
           schema:
             type: object
-  '/device/{devID}/realtime_data':
+  '/device/get_all_device_id':
     get:
+      security:
+        - ApiKeyAuth: []
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      tags:
+        - 当前数据
+      summary: 获取所有设备ID
+      responses:
+        '200':
+          description: ok
+          schema:
+            type: object
+        '404':
+          description: Can not get realtime data
+          schema:
+            type: object
+  '/device/realtime_data/{devid}':
+    get:
+      security:
+        - ApiKeyAuth: []
       consumes:
         - application/json
       produces:
@@ -329,8 +351,8 @@ paths:
       summary: 获取设备实时数据
       parameters:
         - type: string
-          description: devID 设备ID
-          name: devID
+          description: devid 设备ID
+          name: devid
           in: path
           required: true
       responses:
@@ -429,7 +451,7 @@ definitions:
         default: "123456"
       username:
         type: string
-        default: "iotd-XXX"
+        default: "iotd-AMMETER"
 securityDefinitions:
   ApiKeyAuth:
     type: apiKey
