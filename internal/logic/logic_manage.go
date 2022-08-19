@@ -172,6 +172,16 @@ func (m *Manage) DeviceRealTimeValue(devid string) map[string]string {
 	return vs
 }
 
+// UsersInfo for api
+func (m *Manage) UsersInfo() (us []*ent.User, e error) {
+	if eg, err := queryGroupByName(m.ctx, m.entC, m.iotdName); err != nil {
+		e = err
+	} else {
+		us, _ = eg.QueryUsers().All(m.ctx)
+	}
+	return
+}
+
 // UserInfo for api
 func (m *Manage) UserInfo(name string) (u *ent.User, e error) {
 	if us, err := queryUsers(m.ctx, m.entC); err != nil {
@@ -187,8 +197,8 @@ func (m *Manage) UserInfo(name string) (u *ent.User, e error) {
 }
 
 // AddUser ...
-func (m *Manage) AddUser(name, passwd, group string, adminFlag bool, phone ...string) error {
-	eg, _ := queryGroupByName(m.ctx, m.entC, group)
+func (m *Manage) AddUser(name, passwd string, adminFlag bool, phone ...string) error {
+	eg, _ := queryGroupByName(m.ctx, m.entC, m.iotdName)
 	_, err := addUser(m.ctx, m.entC, name, passwd, eg, adminFlag, phone...)
 	return err
 }

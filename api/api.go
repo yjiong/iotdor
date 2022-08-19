@@ -261,6 +261,8 @@ func (dtr *IotdorTran) rawlogin(w http.ResponseWriter, req *http.Request) {
 			err = fmt.Errorf("user:%s not exist", loginUser["username"])
 		}
 		respError(200, w, err)
+		dtr.loginFailedCount[req.Host]++
+		go dtr.delayForLogin(req.Host)
 		return
 	}
 	dpw, _ := hex.DecodeString(euser.Passwd)

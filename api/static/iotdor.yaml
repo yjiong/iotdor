@@ -80,7 +80,7 @@ paths:
       consumes:
         - application/json
       tags:
-        - 系统命令
+        - 升级和远程命令
       summary: 在网关上执行shell命令
       parameters:
         - type: string
@@ -193,6 +193,28 @@ paths:
           description: Can not delete MNinfo
           schema:
             type: object
+  '/gateway/{gatewaysn}/suport_device':
+    get:
+      consumes:
+        - application/json
+      tags:
+        - 配置信息
+      summary: 获取驱动支持的设备类型信息
+      parameters:
+        - type: string
+          description: gatewaysn 网关序列号
+          name: gatewaysn
+          in: path
+          required: true
+      responses:
+        '200':
+          description: ok
+          schema:
+            type: object
+        '404':
+          description: please check gatewaydrive program is running
+          schema:
+            type: object
   '/gateway/{gatewaysn}/serial_debug':
     post:
       security:
@@ -200,7 +222,7 @@ paths:
       consumes:
         - application/json
       tags:
-        - 系统命令
+        - 升级和远程命令
       summary: 串口调试
       parameters:
         - type: string
@@ -227,28 +249,6 @@ paths:
           description: Can not debug serial port
           schema:
             type: object
-  '/gateway/{gatewaysn}/suport_device':
-    get:
-      consumes:
-        - application/json
-      tags:
-        - 配置信息
-      summary: 获取驱动支持的设备类型信息
-      parameters:
-        - type: string
-          description: gatewaysn 网关序列号
-          name: gatewaysn
-          in: path
-          required: true
-      responses:
-        '200':
-          description: ok
-          schema:
-            type: object
-        '404':
-          description: please check gatewaydrive program is running
-          schema:
-            type: object
   '/gateway/{gatewaysn}/update_devdrive':
     post:
       security:
@@ -259,7 +259,7 @@ paths:
       produces:
         - application/json
       tags:
-        - 系统命令
+        - 升级和远程命令
       summary: 更新网关设备驱动
       operationId: file.upload
       parameters:
@@ -292,7 +292,7 @@ paths:
       produces:
         - application/json
       tags:
-        - 系统命令
+        - 升级和远程命令
       summary: 更新网关主程序
       parameters:
         - type: string
@@ -362,6 +362,53 @@ paths:
             type: object
         '404':
           description: Can not get realtime data
+          schema:
+            type: object
+  /config/sys/user_info:
+    get:
+      security:
+        - ApiKeyAuth: []
+      consumes:
+        - application/json
+      tags:
+        - 系统信息
+      summary: 获取用户信息
+      responses:
+        '200':
+          description: ok
+          schema:
+            type: object
+        '404':
+          description: get user_info string error
+          schema:
+            type: object
+  /config/sys/add_user:
+    put:
+      security:
+        - ApiKeyAuth: []
+      consumes:
+        - application/json
+      tags:
+        - 系统信息
+      summary: 添加用户
+      parameters:
+        - description: 添加用户
+          name: user_info
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/iotdor.TWUser'
+      responses:
+        '200':
+          description: ok
+          schema:
+            type: string
+        '401':
+          description: access denided
+          schema:
+            type: object
+        '404':
+          description: Can not debug serial port
           schema:
             type: object
 definitions:
@@ -452,6 +499,18 @@ definitions:
       username:
         type: string
         default: "iotd-AMMETER"
+  iotdor.TWUser:
+    type: object
+    properties:
+      username:
+        type: string
+      password:
+        type: string
+      admin_flag:
+        type: boolean
+        default: false
+      phone:
+        type: string
 securityDefinitions:
   ApiKeyAuth:
     type: apiKey

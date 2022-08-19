@@ -4,6 +4,8 @@ import "github.com/gorilla/mux"
 
 func configRoute(mr *mux.Router, dtr *IotdorTran) {
 	mr.Use(dtr.validateToken, dtr.validateAdmin)
+	mr.PathPrefix("/sys/user_info").HandlerFunc(dtr.userInfo)
+	mr.PathPrefix("/sys/add_user").HandlerFunc(dtr.addUser).Methods("PUT")
 }
 
 func gatewayRoute(mr *mux.Router, dtr *IotdorTran) {
