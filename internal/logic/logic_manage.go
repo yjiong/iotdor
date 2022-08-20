@@ -15,6 +15,7 @@ import (
 	"github.com/robfig/cron/v3"
 	log "github.com/sirupsen/logrus"
 	"github.com/yjiong/iotdor/ent"
+	"github.com/yjiong/iotdor/ent/user"
 	"github.com/yjiong/iotdor/internal/datasrc"
 )
 
@@ -203,9 +204,15 @@ func (m *Manage) AddUser(name, passwd string, adminFlag bool, phone ...string) e
 	return err
 }
 
+// DelUser ...
+func (m *Manage) DelUser(name string) error {
+	_, err := m.entC.User.Delete().Where(user.Name(name)).Exec(m.ctx)
+	return err
+}
+
 // UpdateUser ...
-func (m *Manage) UpdateUser(name, passwd, group string, adminFlag bool, phone ...string) error {
-	eg, _ := queryGroupByName(m.ctx, m.entC, group)
+func (m *Manage) UpdateUser(name, passwd string, adminFlag bool, phone ...string) error {
+	eg, _ := queryGroupByName(m.ctx, m.entC, m.iotdName)
 	err := updateUser(m.ctx, m.entC, name, passwd, eg, adminFlag, phone...)
 	return err
 }

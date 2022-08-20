@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -13,8 +14,9 @@ type ManageAPI interface {
 	UserInfo(name string) (*ent.User, error)
 	UsersInfo() ([]*ent.User, error)
 	AddUser(name, passwd string, adminFlag bool, phone ...string) error
-	UpdateUser(name, passwd, group string, adminFlag bool, phone ...string) error
+	UpdateUser(name, passwd string, adminFlag bool, phone ...string) error
 	UserAdminFlag(uname string) bool
+	DelUser(name string) error
 	AllDevices() []string
 	DeviceRealTimeValue(devid string) map[string]string
 }
@@ -33,7 +35,7 @@ func (dtr *IotdorTran) userInfo(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (dtr *IotdorTran) addUser(w http.ResponseWriter, r *http.Request) {
+func (dtr *IotdorTran) addUpdateUser(w http.ResponseWriter, r *http.Request) {
 	type User struct {
 		Username  string `json:"username"`
 		Password  string `json:"password"`
@@ -42,10 +44,30 @@ func (dtr *IotdorTran) addUser(w http.ResponseWriter, r *http.Request) {
 	}
 	var u User
 	decodeJSON(r, &u)
-	if err := dtr.AddUser(u.Username, u.Password, u.AdminFlag, u.Phone); err == nil {
-		respJSON(w, map[string]string{"msg": "add user successful"})
+	var err error
+	var parse string
+	if r.Method == "PUT" {
+		parse = "add"
+		err = dtr.AddUser(u.Username, u.Password, u.AdminFlag, u.Phone)
+	} else if r.Method == "POST" {
+		parse = "update"
+		err = dtr.UpdateUser(u.Username, u.Password, u.AdminFlag, u.Phone)
+	}
+	if err == nil {
+		respJSON(w, map[string]string{"msg": fmt.Sprintf("%s user successful", parse)})
 	} else {
 		respError(200, w, err)
+	}
+}
+
+func (dtr *IotdorTran) delUser(w http.ResponseWriter, r *http.Request) {
+	if uname, ok := mux.Vars(r)["uname"]; ok {
+		err := dtr.DelUser(uname)
+		if err == nil {
+			respJSON(w, map[string]string{"msg": "delete user successful"})
+		} else {
+			respError(200, w, err)
+		}
 	}
 }
 

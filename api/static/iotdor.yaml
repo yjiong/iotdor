@@ -411,6 +411,62 @@ paths:
           description: Can not debug serial port
           schema:
             type: object
+  /config/sys/update_user:
+    post:
+      security:
+        - ApiKeyAuth: []
+      consumes:
+        - application/json
+      tags:
+        - 系统信息
+      summary: 更新用户(修改密码，电话, 设置为管理员)
+      parameters:
+        - description: 更新用户
+          name: user_info
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/iotdor.TWUser'
+      responses:
+        '200':
+          description: ok
+          schema:
+            type: string
+        '401':
+          description: access denided
+          schema:
+            type: object
+        '404':
+          description: Can not debug serial port
+          schema:
+            type: object
+  /config/sys/delete_user/{uname}:
+    delete:
+      security:
+        - ApiKeyAuth: []
+      consumes:
+        - application/json
+      tags:
+        - 系统信息
+      summary: 删除用户
+      parameters:
+        - description: 删除用户
+          name: uname
+          in: path
+          required: true
+      responses:
+        '200':
+          description: ok
+          schema:
+            type: string
+        '401':
+          description: access denided
+          schema:
+            type: object
+        '404':
+          description: Can not debug serial port
+          schema:
+            type: object
 definitions:
   iotdor.QuerySection:
     type: object

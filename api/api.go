@@ -282,7 +282,7 @@ func (dtr *IotdorTran) rawlogin(w http.ResponseWriter, req *http.Request) {
 	if tokenstr, err := token.SignedString(dpw); err == nil {
 		tkm := (map[string]string{"Token": tokenstr})
 		if loginUser["password"] == "123456" {
-			tkm["message"] = "尽快修改您的密码"
+			tkm["msg"] = "尽快修改您的密码"
 		}
 		respJSON(w, tkm)
 	} else {

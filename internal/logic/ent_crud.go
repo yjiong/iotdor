@@ -137,7 +137,7 @@ func updateUser(ctx context.Context,
 	if err != nil {
 		return err
 	}
-	tuc := c.User.Update().Where(user.Name(name)).SetPasswd(gpw).AddGroups(group)
+	tuc := c.User.Update().Where(user.Name(name)).SetPasswd(gpw)
 	if len(phone) == 1 {
 		tuc.SetPhone(phone[0])
 	}
