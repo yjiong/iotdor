@@ -7,6 +7,7 @@ info:
     email: yjiong@msn.com
   version: v1.0.0
 basePath: /
+#server: http:/xxx 
 paths:
   /api/login:
     post:
@@ -383,7 +384,7 @@ paths:
           schema:
             type: object
   /config/sys/add_user:
-    put:
+    post:
       security:
         - ApiKeyAuth: []
       consumes:
@@ -392,7 +393,7 @@ paths:
         - 系统信息
       summary: 添加用户
       parameters:
-        - description: 添加用户
+        - description: 创建用户
           name: user_info
           in: body
           required: true
@@ -412,7 +413,7 @@ paths:
           schema:
             type: object
   /config/sys/update_user:
-    post:
+    put:
       security:
         - ApiKeyAuth: []
       consumes:

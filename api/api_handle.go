@@ -46,10 +46,10 @@ func (dtr *IotdorTran) addUpdateUser(w http.ResponseWriter, r *http.Request) {
 	decodeJSON(r, &u)
 	var err error
 	var parse string
-	if r.Method == "PUT" {
+	if r.Method == "POST" {
 		parse = "add"
 		err = dtr.AddUser(u.Username, u.Password, u.AdminFlag, u.Phone)
-	} else if r.Method == "POST" {
+	} else if r.Method == "PUT" {
 		parse = "update"
 		err = dtr.UpdateUser(u.Username, u.Password, u.AdminFlag, u.Phone)
 	}
