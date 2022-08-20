@@ -19,6 +19,7 @@ var (
 		{Name: "conn", Type: field.TypeString},
 		{Name: "name", Type: field.TypeString, Nullable: true},
 		{Name: "delete_flag", Type: field.TypeBool, Nullable: true},
+		{Name: "summary", Type: field.TypeString, Nullable: true},
 		{Name: "gateway_devices", Type: field.TypeInt, Nullable: true},
 	}
 	// DevicesTable holds the schema information for the "devices" table.
@@ -29,7 +30,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "devices_gateways_devices",
-				Columns:    []*schema.Column{DevicesColumns[9]},
+				Columns:    []*schema.Column{DevicesColumns[10]},
 				RefColumns: []*schema.Column{GatewaysColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
@@ -54,6 +55,7 @@ var (
 		{Name: "online", Type: field.TypeBool, Nullable: true},
 		{Name: "delete_flag", Type: field.TypeBool, Nullable: true},
 		{Name: "up_interval", Type: field.TypeInt, Default: 60},
+		{Name: "summary", Type: field.TypeString, Nullable: true},
 		{Name: "group_gateways", Type: field.TypeInt, Nullable: true},
 	}
 	// GatewaysTable holds the schema information for the "gateways" table.
@@ -64,7 +66,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "gateways_groups_gateways",
-				Columns:    []*schema.Column{GatewaysColumns[10]},
+				Columns:    []*schema.Column{GatewaysColumns[11]},
 				RefColumns: []*schema.Column{GroupsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
@@ -81,6 +83,7 @@ var (
 	GroupsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "name", Type: field.TypeString, Unique: true},
+		{Name: "summary", Type: field.TypeString, Nullable: true, Size: 2147483647},
 	}
 	// GroupsTable holds the schema information for the "groups" table.
 	GroupsTable = &schema.Table{

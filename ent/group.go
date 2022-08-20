@@ -17,6 +17,8 @@ type Group struct {
 	ID int `json:"id,omitempty"`
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
+	// Summary holds the value of the "summary" field.
+	Summary string `json:"summary,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the GroupQuery when eager-loading is set.
 	Edges GroupEdges `json:"edges"`
@@ -69,7 +71,7 @@ func (*Group) scanValues(columns []string) ([]interface{}, error) {
 		switch columns[i] {
 		case group.FieldID:
 			values[i] = new(sql.NullInt64)
-		case group.FieldName:
+		case group.FieldName, group.FieldSummary:
 			values[i] = new(sql.NullString)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type Group", columns[i])
@@ -97,6 +99,12 @@ func (gr *Group) assignValues(columns []string, values []interface{}) error {
 				return fmt.Errorf("unexpected type %T for field name", values[i])
 			} else if value.Valid {
 				gr.Name = value.String
+			}
+		case group.FieldSummary:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field summary", values[i])
+			} else if value.Valid {
+				gr.Summary = value.String
 			}
 		}
 	}
@@ -143,6 +151,9 @@ func (gr *Group) String() string {
 	builder.WriteString(fmt.Sprintf("id=%v, ", gr.ID))
 	builder.WriteString("name=")
 	builder.WriteString(gr.Name)
+	builder.WriteString(", ")
+	builder.WriteString("summary=")
+	builder.WriteString(gr.Summary)
 	builder.WriteByte(')')
 	return builder.String()
 }

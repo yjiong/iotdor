@@ -47,6 +47,7 @@ type DeviceMutation struct {
 	conn           *string
 	name           *string
 	_DeleteFlag    *bool
+	summary        *string
 	clearedFields  map[string]struct{}
 	gateway        *int
 	clearedgateway bool
@@ -467,6 +468,55 @@ func (m *DeviceMutation) ResetDeleteFlag() {
 	delete(m.clearedFields, device.FieldDeleteFlag)
 }
 
+// SetSummary sets the "summary" field.
+func (m *DeviceMutation) SetSummary(s string) {
+	m.summary = &s
+}
+
+// Summary returns the value of the "summary" field in the mutation.
+func (m *DeviceMutation) Summary() (r string, exists bool) {
+	v := m.summary
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSummary returns the old "summary" field's value of the Device entity.
+// If the Device object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DeviceMutation) OldSummary(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSummary is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSummary requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSummary: %w", err)
+	}
+	return oldValue.Summary, nil
+}
+
+// ClearSummary clears the value of the "summary" field.
+func (m *DeviceMutation) ClearSummary() {
+	m.summary = nil
+	m.clearedFields[device.FieldSummary] = struct{}{}
+}
+
+// SummaryCleared returns if the "summary" field was cleared in this mutation.
+func (m *DeviceMutation) SummaryCleared() bool {
+	_, ok := m.clearedFields[device.FieldSummary]
+	return ok
+}
+
+// ResetSummary resets all changes to the "summary" field.
+func (m *DeviceMutation) ResetSummary() {
+	m.summary = nil
+	delete(m.clearedFields, device.FieldSummary)
+}
+
 // SetGatewayID sets the "gateway" edge to the Gateway entity by id.
 func (m *DeviceMutation) SetGatewayID(id int) {
 	m.gateway = &id
@@ -525,7 +575,7 @@ func (m *DeviceMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *DeviceMutation) Fields() []string {
-	fields := make([]string, 0, 8)
+	fields := make([]string, 0, 9)
 	if m.create_time != nil {
 		fields = append(fields, device.FieldCreateTime)
 	}
@@ -549,6 +599,9 @@ func (m *DeviceMutation) Fields() []string {
 	}
 	if m._DeleteFlag != nil {
 		fields = append(fields, device.FieldDeleteFlag)
+	}
+	if m.summary != nil {
+		fields = append(fields, device.FieldSummary)
 	}
 	return fields
 }
@@ -574,6 +627,8 @@ func (m *DeviceMutation) Field(name string) (ent.Value, bool) {
 		return m.Name()
 	case device.FieldDeleteFlag:
 		return m.DeleteFlag()
+	case device.FieldSummary:
+		return m.Summary()
 	}
 	return nil, false
 }
@@ -599,6 +654,8 @@ func (m *DeviceMutation) OldField(ctx context.Context, name string) (ent.Value, 
 		return m.OldName(ctx)
 	case device.FieldDeleteFlag:
 		return m.OldDeleteFlag(ctx)
+	case device.FieldSummary:
+		return m.OldSummary(ctx)
 	}
 	return nil, fmt.Errorf("unknown Device field %s", name)
 }
@@ -664,6 +721,13 @@ func (m *DeviceMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetDeleteFlag(v)
 		return nil
+	case device.FieldSummary:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSummary(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Device field %s", name)
 }
@@ -700,6 +764,9 @@ func (m *DeviceMutation) ClearedFields() []string {
 	if m.FieldCleared(device.FieldDeleteFlag) {
 		fields = append(fields, device.FieldDeleteFlag)
 	}
+	if m.FieldCleared(device.FieldSummary) {
+		fields = append(fields, device.FieldSummary)
+	}
 	return fields
 }
 
@@ -719,6 +786,9 @@ func (m *DeviceMutation) ClearField(name string) error {
 		return nil
 	case device.FieldDeleteFlag:
 		m.ClearDeleteFlag()
+		return nil
+	case device.FieldSummary:
+		m.ClearSummary()
 		return nil
 	}
 	return fmt.Errorf("unknown Device nullable field %s", name)
@@ -751,6 +821,9 @@ func (m *DeviceMutation) ResetField(name string) error {
 		return nil
 	case device.FieldDeleteFlag:
 		m.ResetDeleteFlag()
+		return nil
+	case device.FieldSummary:
+		m.ResetSummary()
 		return nil
 	}
 	return fmt.Errorf("unknown Device field %s", name)
@@ -848,6 +921,7 @@ type GatewayMutation struct {
 	_DeleteFlag          *bool
 	upInterval           *int
 	addupInterval        *int
+	summary              *string
 	clearedFields        map[string]struct{}
 	devices              map[int]struct{}
 	removeddevices       map[int]struct{}
@@ -1340,6 +1414,55 @@ func (m *GatewayMutation) ResetUpInterval() {
 	m.addupInterval = nil
 }
 
+// SetSummary sets the "summary" field.
+func (m *GatewayMutation) SetSummary(s string) {
+	m.summary = &s
+}
+
+// Summary returns the value of the "summary" field in the mutation.
+func (m *GatewayMutation) Summary() (r string, exists bool) {
+	v := m.summary
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSummary returns the old "summary" field's value of the Gateway entity.
+// If the Gateway object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GatewayMutation) OldSummary(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSummary is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSummary requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSummary: %w", err)
+	}
+	return oldValue.Summary, nil
+}
+
+// ClearSummary clears the value of the "summary" field.
+func (m *GatewayMutation) ClearSummary() {
+	m.summary = nil
+	m.clearedFields[gateway.FieldSummary] = struct{}{}
+}
+
+// SummaryCleared returns if the "summary" field was cleared in this mutation.
+func (m *GatewayMutation) SummaryCleared() bool {
+	_, ok := m.clearedFields[gateway.FieldSummary]
+	return ok
+}
+
+// ResetSummary resets all changes to the "summary" field.
+func (m *GatewayMutation) ResetSummary() {
+	m.summary = nil
+	delete(m.clearedFields, gateway.FieldSummary)
+}
+
 // AddDeviceIDs adds the "devices" edge to the Device entity by ids.
 func (m *GatewayMutation) AddDeviceIDs(ids ...int) {
 	if m.devices == nil {
@@ -1452,7 +1575,7 @@ func (m *GatewayMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *GatewayMutation) Fields() []string {
-	fields := make([]string, 0, 9)
+	fields := make([]string, 0, 10)
 	if m.create_time != nil {
 		fields = append(fields, gateway.FieldCreateTime)
 	}
@@ -1480,6 +1603,9 @@ func (m *GatewayMutation) Fields() []string {
 	if m.upInterval != nil {
 		fields = append(fields, gateway.FieldUpInterval)
 	}
+	if m.summary != nil {
+		fields = append(fields, gateway.FieldSummary)
+	}
 	return fields
 }
 
@@ -1506,6 +1632,8 @@ func (m *GatewayMutation) Field(name string) (ent.Value, bool) {
 		return m.DeleteFlag()
 	case gateway.FieldUpInterval:
 		return m.UpInterval()
+	case gateway.FieldSummary:
+		return m.Summary()
 	}
 	return nil, false
 }
@@ -1533,6 +1661,8 @@ func (m *GatewayMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldDeleteFlag(ctx)
 	case gateway.FieldUpInterval:
 		return m.OldUpInterval(ctx)
+	case gateway.FieldSummary:
+		return m.OldSummary(ctx)
 	}
 	return nil, fmt.Errorf("unknown Gateway field %s", name)
 }
@@ -1605,6 +1735,13 @@ func (m *GatewayMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetUpInterval(v)
 		return nil
+	case gateway.FieldSummary:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSummary(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Gateway field %s", name)
 }
@@ -1659,6 +1796,9 @@ func (m *GatewayMutation) ClearedFields() []string {
 	if m.FieldCleared(gateway.FieldDeleteFlag) {
 		fields = append(fields, gateway.FieldDeleteFlag)
 	}
+	if m.FieldCleared(gateway.FieldSummary) {
+		fields = append(fields, gateway.FieldSummary)
+	}
 	return fields
 }
 
@@ -1681,6 +1821,9 @@ func (m *GatewayMutation) ClearField(name string) error {
 		return nil
 	case gateway.FieldDeleteFlag:
 		m.ClearDeleteFlag()
+		return nil
+	case gateway.FieldSummary:
+		m.ClearSummary()
 		return nil
 	}
 	return fmt.Errorf("unknown Gateway nullable field %s", name)
@@ -1716,6 +1859,9 @@ func (m *GatewayMutation) ResetField(name string) error {
 		return nil
 	case gateway.FieldUpInterval:
 		m.ResetUpInterval()
+		return nil
+	case gateway.FieldSummary:
+		m.ResetSummary()
 		return nil
 	}
 	return fmt.Errorf("unknown Gateway field %s", name)
@@ -1830,6 +1976,7 @@ type GroupMutation struct {
 	typ             string
 	id              *int
 	name            *string
+	summary         *string
 	clearedFields   map[string]struct{}
 	users           map[int]struct{}
 	removedusers    map[int]struct{}
@@ -1977,6 +2124,55 @@ func (m *GroupMutation) OldName(ctx context.Context) (v string, err error) {
 // ResetName resets all changes to the "name" field.
 func (m *GroupMutation) ResetName() {
 	m.name = nil
+}
+
+// SetSummary sets the "summary" field.
+func (m *GroupMutation) SetSummary(s string) {
+	m.summary = &s
+}
+
+// Summary returns the value of the "summary" field in the mutation.
+func (m *GroupMutation) Summary() (r string, exists bool) {
+	v := m.summary
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSummary returns the old "summary" field's value of the Group entity.
+// If the Group object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GroupMutation) OldSummary(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSummary is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSummary requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSummary: %w", err)
+	}
+	return oldValue.Summary, nil
+}
+
+// ClearSummary clears the value of the "summary" field.
+func (m *GroupMutation) ClearSummary() {
+	m.summary = nil
+	m.clearedFields[group.FieldSummary] = struct{}{}
+}
+
+// SummaryCleared returns if the "summary" field was cleared in this mutation.
+func (m *GroupMutation) SummaryCleared() bool {
+	_, ok := m.clearedFields[group.FieldSummary]
+	return ok
+}
+
+// ResetSummary resets all changes to the "summary" field.
+func (m *GroupMutation) ResetSummary() {
+	m.summary = nil
+	delete(m.clearedFields, group.FieldSummary)
 }
 
 // AddUserIDs adds the "users" edge to the User entity by ids.
@@ -2160,9 +2356,12 @@ func (m *GroupMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *GroupMutation) Fields() []string {
-	fields := make([]string, 0, 1)
+	fields := make([]string, 0, 2)
 	if m.name != nil {
 		fields = append(fields, group.FieldName)
+	}
+	if m.summary != nil {
+		fields = append(fields, group.FieldSummary)
 	}
 	return fields
 }
@@ -2174,6 +2373,8 @@ func (m *GroupMutation) Field(name string) (ent.Value, bool) {
 	switch name {
 	case group.FieldName:
 		return m.Name()
+	case group.FieldSummary:
+		return m.Summary()
 	}
 	return nil, false
 }
@@ -2185,6 +2386,8 @@ func (m *GroupMutation) OldField(ctx context.Context, name string) (ent.Value, e
 	switch name {
 	case group.FieldName:
 		return m.OldName(ctx)
+	case group.FieldSummary:
+		return m.OldSummary(ctx)
 	}
 	return nil, fmt.Errorf("unknown Group field %s", name)
 }
@@ -2200,6 +2403,13 @@ func (m *GroupMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetName(v)
+		return nil
+	case group.FieldSummary:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSummary(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Group field %s", name)
@@ -2230,7 +2440,11 @@ func (m *GroupMutation) AddField(name string, value ent.Value) error {
 // ClearedFields returns all nullable fields that were cleared during this
 // mutation.
 func (m *GroupMutation) ClearedFields() []string {
-	return nil
+	var fields []string
+	if m.FieldCleared(group.FieldSummary) {
+		fields = append(fields, group.FieldSummary)
+	}
+	return fields
 }
 
 // FieldCleared returns a boolean indicating if a field with the given name was
@@ -2243,6 +2457,11 @@ func (m *GroupMutation) FieldCleared(name string) bool {
 // ClearField clears the value of the field with the given name. It returns an
 // error if the field is not defined in the schema.
 func (m *GroupMutation) ClearField(name string) error {
+	switch name {
+	case group.FieldSummary:
+		m.ClearSummary()
+		return nil
+	}
 	return fmt.Errorf("unknown Group nullable field %s", name)
 }
 
@@ -2252,6 +2471,9 @@ func (m *GroupMutation) ResetField(name string) error {
 	switch name {
 	case group.FieldName:
 		m.ResetName()
+		return nil
+	case group.FieldSummary:
+		m.ResetSummary()
 		return nil
 	}
 	return fmt.Errorf("unknown Group field %s", name)

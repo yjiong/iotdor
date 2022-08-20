@@ -46,9 +46,9 @@ func (m *Manage) MsgHandle() {
 			m.redisC.Close()
 			return
 		case msg := <-m.DataDownChan():
+			gwID := msg.Get("sender").MustString()
 			if cmd, err := msg.Get("cmd").String(); err == nil {
 				log.Debugf("receive mqtt data cmd=%s", cmd)
-				gwID := msg.Get("sender").MustString()
 				tstamp, _ := msg.Get("tstamp").Int64()
 				tstr := time.Unix(tstamp, 0).Local().Format("2006-01-02 15:04:05")
 				switch cmd {
@@ -61,10 +61,13 @@ func (m *Manage) MsgHandle() {
 							md["status"] = e
 							delete(md, "error")
 						}
-						if err = m.redisC.HSet(m.ctx, m.mkKeyPrefix(gwID, devID, DeviceValue), md).Err(); err != nil {
+						if err = m.redisC.HSet(m.ctx, m.mkRedisKeyPrefix(gwID, devID, DeviceValue), md).Err(); err != nil {
 							log.Error(err)
 						}
 					}
+				case GwStat:
+					//stat := msg.Get("stat").MustUint64()
+
 				}
 			}
 		}
@@ -101,7 +104,7 @@ func (m *Manage) mInit() {
 	addGroupIfNotExist(m.ctx, m.entC, m.iotdName)
 }
 
-func (m *Manage) mkKeyPrefix(s ...string) (kp string) {
+func (m *Manage) mkRedisKeyPrefix(s ...string) (kp string) {
 	kp = m.iotdName
 	for _, c := range s {
 		kp = fmt.Sprintf("%s:%s", kp, c)

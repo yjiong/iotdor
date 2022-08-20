@@ -27,6 +27,8 @@ const (
 	FieldName = "name"
 	// FieldDeleteFlag holds the string denoting the deleteflag field in the database.
 	FieldDeleteFlag = "delete_flag"
+	// FieldSummary holds the string denoting the summary field in the database.
+	FieldSummary = "summary"
 	// EdgeGateway holds the string denoting the gateway edge name in mutations.
 	EdgeGateway = "gateway"
 	// Table holds the table name of the device in the database.
@@ -51,6 +53,7 @@ var Columns = []string{
 	FieldConn,
 	FieldName,
 	FieldDeleteFlag,
+	FieldSummary,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "devices"

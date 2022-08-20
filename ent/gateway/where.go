@@ -144,6 +144,13 @@ func UpInterval(v int) predicate.Gateway {
 	})
 }
 
+// Summary applies equality check predicate on the "summary" field. It's identical to SummaryEQ.
+func Summary(v string) predicate.Gateway {
+	return predicate.Gateway(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldSummary), v))
+	})
+}
+
 // CreateTimeEQ applies the EQ predicate on the "create_time" field.
 func CreateTimeEQ(v time.Time) predicate.Gateway {
 	return predicate.Gateway(func(s *sql.Selector) {
@@ -799,6 +806,119 @@ func UpIntervalLT(v int) predicate.Gateway {
 func UpIntervalLTE(v int) predicate.Gateway {
 	return predicate.Gateway(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldUpInterval), v))
+	})
+}
+
+// SummaryEQ applies the EQ predicate on the "summary" field.
+func SummaryEQ(v string) predicate.Gateway {
+	return predicate.Gateway(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldSummary), v))
+	})
+}
+
+// SummaryNEQ applies the NEQ predicate on the "summary" field.
+func SummaryNEQ(v string) predicate.Gateway {
+	return predicate.Gateway(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldSummary), v))
+	})
+}
+
+// SummaryIn applies the In predicate on the "summary" field.
+func SummaryIn(vs ...string) predicate.Gateway {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Gateway(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldSummary), v...))
+	})
+}
+
+// SummaryNotIn applies the NotIn predicate on the "summary" field.
+func SummaryNotIn(vs ...string) predicate.Gateway {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Gateway(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldSummary), v...))
+	})
+}
+
+// SummaryGT applies the GT predicate on the "summary" field.
+func SummaryGT(v string) predicate.Gateway {
+	return predicate.Gateway(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldSummary), v))
+	})
+}
+
+// SummaryGTE applies the GTE predicate on the "summary" field.
+func SummaryGTE(v string) predicate.Gateway {
+	return predicate.Gateway(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldSummary), v))
+	})
+}
+
+// SummaryLT applies the LT predicate on the "summary" field.
+func SummaryLT(v string) predicate.Gateway {
+	return predicate.Gateway(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldSummary), v))
+	})
+}
+
+// SummaryLTE applies the LTE predicate on the "summary" field.
+func SummaryLTE(v string) predicate.Gateway {
+	return predicate.Gateway(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldSummary), v))
+	})
+}
+
+// SummaryContains applies the Contains predicate on the "summary" field.
+func SummaryContains(v string) predicate.Gateway {
+	return predicate.Gateway(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldSummary), v))
+	})
+}
+
+// SummaryHasPrefix applies the HasPrefix predicate on the "summary" field.
+func SummaryHasPrefix(v string) predicate.Gateway {
+	return predicate.Gateway(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldSummary), v))
+	})
+}
+
+// SummaryHasSuffix applies the HasSuffix predicate on the "summary" field.
+func SummaryHasSuffix(v string) predicate.Gateway {
+	return predicate.Gateway(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldSummary), v))
+	})
+}
+
+// SummaryIsNil applies the IsNil predicate on the "summary" field.
+func SummaryIsNil() predicate.Gateway {
+	return predicate.Gateway(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldSummary)))
+	})
+}
+
+// SummaryNotNil applies the NotNil predicate on the "summary" field.
+func SummaryNotNil() predicate.Gateway {
+	return predicate.Gateway(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldSummary)))
+	})
+}
+
+// SummaryEqualFold applies the EqualFold predicate on the "summary" field.
+func SummaryEqualFold(v string) predicate.Gateway {
+	return predicate.Gateway(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldSummary), v))
+	})
+}
+
+// SummaryContainsFold applies the ContainsFold predicate on the "summary" field.
+func SummaryContainsFold(v string) predicate.Gateway {
+	return predicate.Gateway(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldSummary), v))
 	})
 }
 

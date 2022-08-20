@@ -101,6 +101,20 @@ func (dc *DeviceCreate) SetNillableDeleteFlag(b *bool) *DeviceCreate {
 	return dc
 }
 
+// SetSummary sets the "summary" field.
+func (dc *DeviceCreate) SetSummary(s string) *DeviceCreate {
+	dc.mutation.SetSummary(s)
+	return dc
+}
+
+// SetNillableSummary sets the "summary" field if the given value is not nil.
+func (dc *DeviceCreate) SetNillableSummary(s *string) *DeviceCreate {
+	if s != nil {
+		dc.SetSummary(*s)
+	}
+	return dc
+}
+
 // SetGatewayID sets the "gateway" edge to the Gateway entity by ID.
 func (dc *DeviceCreate) SetGatewayID(id int) *DeviceCreate {
 	dc.mutation.SetGatewayID(id)
@@ -317,6 +331,14 @@ func (dc *DeviceCreate) createSpec() (*Device, *sqlgraph.CreateSpec) {
 			Column: device.FieldDeleteFlag,
 		})
 		_node.DeleteFlag = value
+	}
+	if value, ok := dc.mutation.Summary(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: device.FieldSummary,
+		})
+		_node.Summary = value
 	}
 	if nodes := dc.mutation.GatewayIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

@@ -20,5 +20,7 @@ const (
 	ListSysSchedule = "list /sys/schedule"
 	SetSysExternal  = "set /sys/external"
 	AutoUpdata      = "push /dev/vars"
+	GwStat          = "push /sys/stat"
 	DeviceValue     = "DEVICE_VALUE"
+	GatewayList     = "GATEWAY_LIST"
 )

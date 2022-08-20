@@ -35,6 +35,26 @@ func (gu *GroupUpdate) SetName(s string) *GroupUpdate {
 	return gu
 }
 
+// SetSummary sets the "summary" field.
+func (gu *GroupUpdate) SetSummary(s string) *GroupUpdate {
+	gu.mutation.SetSummary(s)
+	return gu
+}
+
+// SetNillableSummary sets the "summary" field if the given value is not nil.
+func (gu *GroupUpdate) SetNillableSummary(s *string) *GroupUpdate {
+	if s != nil {
+		gu.SetSummary(*s)
+	}
+	return gu
+}
+
+// ClearSummary clears the value of the "summary" field.
+func (gu *GroupUpdate) ClearSummary() *GroupUpdate {
+	gu.mutation.ClearSummary()
+	return gu
+}
+
 // AddUserIDs adds the "users" edge to the User entity by IDs.
 func (gu *GroupUpdate) AddUserIDs(ids ...int) *GroupUpdate {
 	gu.mutation.AddUserIDs(ids...)
@@ -243,6 +263,19 @@ func (gu *GroupUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: group.FieldName,
 		})
 	}
+	if value, ok := gu.mutation.Summary(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: group.FieldSummary,
+		})
+	}
+	if gu.mutation.SummaryCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: group.FieldSummary,
+		})
+	}
 	if gu.mutation.UsersCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
@@ -427,6 +460,26 @@ type GroupUpdateOne struct {
 // SetName sets the "name" field.
 func (guo *GroupUpdateOne) SetName(s string) *GroupUpdateOne {
 	guo.mutation.SetName(s)
+	return guo
+}
+
+// SetSummary sets the "summary" field.
+func (guo *GroupUpdateOne) SetSummary(s string) *GroupUpdateOne {
+	guo.mutation.SetSummary(s)
+	return guo
+}
+
+// SetNillableSummary sets the "summary" field if the given value is not nil.
+func (guo *GroupUpdateOne) SetNillableSummary(s *string) *GroupUpdateOne {
+	if s != nil {
+		guo.SetSummary(*s)
+	}
+	return guo
+}
+
+// ClearSummary clears the value of the "summary" field.
+func (guo *GroupUpdateOne) ClearSummary() *GroupUpdateOne {
+	guo.mutation.ClearSummary()
 	return guo
 }
 
@@ -666,6 +719,19 @@ func (guo *GroupUpdateOne) sqlSave(ctx context.Context) (_node *Group, err error
 			Type:   field.TypeString,
 			Value:  value,
 			Column: group.FieldName,
+		})
+	}
+	if value, ok := guo.mutation.Summary(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: group.FieldSummary,
+		})
+	}
+	if guo.mutation.SummaryCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: group.FieldSummary,
 		})
 	}
 	if guo.mutation.UsersCleared() {

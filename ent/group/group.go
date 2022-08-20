@@ -9,6 +9,8 @@ const (
 	FieldID = "id"
 	// FieldName holds the string denoting the name field in the database.
 	FieldName = "name"
+	// FieldSummary holds the string denoting the summary field in the database.
+	FieldSummary = "summary"
 	// EdgeUsers holds the string denoting the users edge name in mutations.
 	EdgeUsers = "users"
 	// EdgeAdmins holds the string denoting the admins edge name in mutations.
@@ -40,6 +42,7 @@ const (
 var Columns = []string{
 	FieldID,
 	FieldName,
+	FieldSummary,
 }
 
 var (

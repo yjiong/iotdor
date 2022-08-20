@@ -25,6 +25,8 @@ func (Device) Fields() []ent.Field {
 			Optional(),
 		field.Bool("DeleteFlag").
 			Optional(),
+		field.String("summary").
+			Optional(),
 	}
 }
 

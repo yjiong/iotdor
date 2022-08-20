@@ -99,6 +99,26 @@ func (du *DeviceUpdate) ClearDeleteFlag() *DeviceUpdate {
 	return du
 }
 
+// SetSummary sets the "summary" field.
+func (du *DeviceUpdate) SetSummary(s string) *DeviceUpdate {
+	du.mutation.SetSummary(s)
+	return du
+}
+
+// SetNillableSummary sets the "summary" field if the given value is not nil.
+func (du *DeviceUpdate) SetNillableSummary(s *string) *DeviceUpdate {
+	if s != nil {
+		du.SetSummary(*s)
+	}
+	return du
+}
+
+// ClearSummary clears the value of the "summary" field.
+func (du *DeviceUpdate) ClearSummary() *DeviceUpdate {
+	du.mutation.ClearSummary()
+	return du
+}
+
 // SetGatewayID sets the "gateway" edge to the Gateway entity by ID.
 func (du *DeviceUpdate) SetGatewayID(id int) *DeviceUpdate {
 	du.mutation.SetGatewayID(id)
@@ -271,6 +291,19 @@ func (du *DeviceUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: device.FieldDeleteFlag,
 		})
 	}
+	if value, ok := du.mutation.Summary(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: device.FieldSummary,
+		})
+	}
+	if du.mutation.SummaryCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: device.FieldSummary,
+		})
+	}
 	if du.mutation.GatewayCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -392,6 +425,26 @@ func (duo *DeviceUpdateOne) SetNillableDeleteFlag(b *bool) *DeviceUpdateOne {
 // ClearDeleteFlag clears the value of the "DeleteFlag" field.
 func (duo *DeviceUpdateOne) ClearDeleteFlag() *DeviceUpdateOne {
 	duo.mutation.ClearDeleteFlag()
+	return duo
+}
+
+// SetSummary sets the "summary" field.
+func (duo *DeviceUpdateOne) SetSummary(s string) *DeviceUpdateOne {
+	duo.mutation.SetSummary(s)
+	return duo
+}
+
+// SetNillableSummary sets the "summary" field if the given value is not nil.
+func (duo *DeviceUpdateOne) SetNillableSummary(s *string) *DeviceUpdateOne {
+	if s != nil {
+		duo.SetSummary(*s)
+	}
+	return duo
+}
+
+// ClearSummary clears the value of the "summary" field.
+func (duo *DeviceUpdateOne) ClearSummary() *DeviceUpdateOne {
+	duo.mutation.ClearSummary()
 	return duo
 }
 
@@ -595,6 +648,19 @@ func (duo *DeviceUpdateOne) sqlSave(ctx context.Context) (_node *Device, err err
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeBool,
 			Column: device.FieldDeleteFlag,
+		})
+	}
+	if value, ok := duo.mutation.Summary(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: device.FieldSummary,
+		})
+	}
+	if duo.mutation.SummaryCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: device.FieldSummary,
 		})
 	}
 	if duo.mutation.GatewayCleared() {

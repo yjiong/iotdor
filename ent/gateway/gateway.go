@@ -29,6 +29,8 @@ const (
 	FieldDeleteFlag = "delete_flag"
 	// FieldUpInterval holds the string denoting the upinterval field in the database.
 	FieldUpInterval = "up_interval"
+	// FieldSummary holds the string denoting the summary field in the database.
+	FieldSummary = "summary"
 	// EdgeDevices holds the string denoting the devices edge name in mutations.
 	EdgeDevices = "devices"
 	// EdgeGroup holds the string denoting the group edge name in mutations.
@@ -63,6 +65,7 @@ var Columns = []string{
 	FieldOnline,
 	FieldDeleteFlag,
 	FieldUpInterval,
+	FieldSummary,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "gateways"

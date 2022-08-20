@@ -35,6 +35,8 @@ type Gateway struct {
 	DeleteFlag bool `json:"DeleteFlag,omitempty"`
 	// UpInterval holds the value of the "upInterval" field.
 	UpInterval int `json:"upInterval,omitempty"`
+	// Summary holds the value of the "summary" field.
+	Summary string `json:"summary,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the GatewayQuery when eager-loading is set.
 	Edges          GatewayEdges `json:"edges"`
@@ -83,7 +85,7 @@ func (*Gateway) scanValues(columns []string) ([]interface{}, error) {
 			values[i] = new(sql.NullBool)
 		case gateway.FieldID, gateway.FieldUpInterval:
 			values[i] = new(sql.NullInt64)
-		case gateway.FieldGwid, gateway.FieldSvrid, gateway.FieldBroker, gateway.FieldInstallationLocation:
+		case gateway.FieldGwid, gateway.FieldSvrid, gateway.FieldBroker, gateway.FieldInstallationLocation, gateway.FieldSummary:
 			values[i] = new(sql.NullString)
 		case gateway.FieldCreateTime, gateway.FieldUpdateTime:
 			values[i] = new(sql.NullTime)
@@ -164,6 +166,12 @@ func (ga *Gateway) assignValues(columns []string, values []interface{}) error {
 			} else if value.Valid {
 				ga.UpInterval = int(value.Int64)
 			}
+		case gateway.FieldSummary:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field summary", values[i])
+			} else if value.Valid {
+				ga.Summary = value.String
+			}
 		case gateway.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for edge-field group_gateways", value)
@@ -235,6 +243,9 @@ func (ga *Gateway) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("upInterval=")
 	builder.WriteString(fmt.Sprintf("%v", ga.UpInterval))
+	builder.WriteString(", ")
+	builder.WriteString("summary=")
+	builder.WriteString(ga.Summary)
 	builder.WriteByte(')')
 	return builder.String()
 }

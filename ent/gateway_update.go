@@ -135,6 +135,26 @@ func (gu *GatewayUpdate) AddUpInterval(i int) *GatewayUpdate {
 	return gu
 }
 
+// SetSummary sets the "summary" field.
+func (gu *GatewayUpdate) SetSummary(s string) *GatewayUpdate {
+	gu.mutation.SetSummary(s)
+	return gu
+}
+
+// SetNillableSummary sets the "summary" field if the given value is not nil.
+func (gu *GatewayUpdate) SetNillableSummary(s *string) *GatewayUpdate {
+	if s != nil {
+		gu.SetSummary(*s)
+	}
+	return gu
+}
+
+// ClearSummary clears the value of the "summary" field.
+func (gu *GatewayUpdate) ClearSummary() *GatewayUpdate {
+	gu.mutation.ClearSummary()
+	return gu
+}
+
 // AddDeviceIDs adds the "devices" edge to the Device entity by IDs.
 func (gu *GatewayUpdate) AddDeviceIDs(ids ...int) *GatewayUpdate {
 	gu.mutation.AddDeviceIDs(ids...)
@@ -363,6 +383,19 @@ func (gu *GatewayUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: gateway.FieldUpInterval,
 		})
 	}
+	if value, ok := gu.mutation.Summary(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: gateway.FieldSummary,
+		})
+	}
+	if gu.mutation.SummaryCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: gateway.FieldSummary,
+		})
+	}
 	if gu.mutation.DevicesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -573,6 +606,26 @@ func (guo *GatewayUpdateOne) SetNillableUpInterval(i *int) *GatewayUpdateOne {
 // AddUpInterval adds i to the "upInterval" field.
 func (guo *GatewayUpdateOne) AddUpInterval(i int) *GatewayUpdateOne {
 	guo.mutation.AddUpInterval(i)
+	return guo
+}
+
+// SetSummary sets the "summary" field.
+func (guo *GatewayUpdateOne) SetSummary(s string) *GatewayUpdateOne {
+	guo.mutation.SetSummary(s)
+	return guo
+}
+
+// SetNillableSummary sets the "summary" field if the given value is not nil.
+func (guo *GatewayUpdateOne) SetNillableSummary(s *string) *GatewayUpdateOne {
+	if s != nil {
+		guo.SetSummary(*s)
+	}
+	return guo
+}
+
+// ClearSummary clears the value of the "summary" field.
+func (guo *GatewayUpdateOne) ClearSummary() *GatewayUpdateOne {
+	guo.mutation.ClearSummary()
 	return guo
 }
 
@@ -832,6 +885,19 @@ func (guo *GatewayUpdateOne) sqlSave(ctx context.Context) (_node *Gateway, err e
 			Type:   field.TypeInt,
 			Value:  value,
 			Column: gateway.FieldUpInterval,
+		})
+	}
+	if value, ok := guo.mutation.Summary(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: gateway.FieldSummary,
+		})
+	}
+	if guo.mutation.SummaryCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: gateway.FieldSummary,
 		})
 	}
 	if guo.mutation.DevicesCleared() {

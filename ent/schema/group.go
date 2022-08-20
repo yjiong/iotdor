@@ -19,6 +19,8 @@ func (Group) Fields() []ent.Field {
 		field.String("name").
 			Unique().
 			Match(regexp.MustCompile("[a-zA-Z_]+$")),
+		field.Text("summary").
+			Optional(),
 		//Validate(func(s string) error {
 		//if strings.ToLower(s) == s {
 		//return errors.New("group name must begin with uppercase")

@@ -27,6 +27,20 @@ func (gc *GroupCreate) SetName(s string) *GroupCreate {
 	return gc
 }
 
+// SetSummary sets the "summary" field.
+func (gc *GroupCreate) SetSummary(s string) *GroupCreate {
+	gc.mutation.SetSummary(s)
+	return gc
+}
+
+// SetNillableSummary sets the "summary" field if the given value is not nil.
+func (gc *GroupCreate) SetNillableSummary(s *string) *GroupCreate {
+	if s != nil {
+		gc.SetSummary(*s)
+	}
+	return gc
+}
+
 // AddUserIDs adds the "users" edge to the User entity by IDs.
 func (gc *GroupCreate) AddUserIDs(ids ...int) *GroupCreate {
 	gc.mutation.AddUserIDs(ids...)
@@ -190,6 +204,14 @@ func (gc *GroupCreate) createSpec() (*Group, *sqlgraph.CreateSpec) {
 			Column: group.FieldName,
 		})
 		_node.Name = value
+	}
+	if value, ok := gc.mutation.Summary(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: group.FieldSummary,
+		})
+		_node.Summary = value
 	}
 	if nodes := gc.mutation.UsersIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

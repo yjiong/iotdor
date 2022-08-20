@@ -124,6 +124,20 @@ func (gc *GatewayCreate) SetNillableUpInterval(i *int) *GatewayCreate {
 	return gc
 }
 
+// SetSummary sets the "summary" field.
+func (gc *GatewayCreate) SetSummary(s string) *GatewayCreate {
+	gc.mutation.SetSummary(s)
+	return gc
+}
+
+// SetNillableSummary sets the "summary" field if the given value is not nil.
+func (gc *GatewayCreate) SetNillableSummary(s *string) *GatewayCreate {
+	if s != nil {
+		gc.SetSummary(*s)
+	}
+	return gc
+}
+
 // AddDeviceIDs adds the "devices" edge to the Device entity by IDs.
 func (gc *GatewayCreate) AddDeviceIDs(ids ...int) *GatewayCreate {
 	gc.mutation.AddDeviceIDs(ids...)
@@ -367,6 +381,14 @@ func (gc *GatewayCreate) createSpec() (*Gateway, *sqlgraph.CreateSpec) {
 			Column: gateway.FieldUpInterval,
 		})
 		_node.UpInterval = value
+	}
+	if value, ok := gc.mutation.Summary(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: gateway.FieldSummary,
+		})
+		_node.Summary = value
 	}
 	if nodes := gc.mutation.DevicesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
