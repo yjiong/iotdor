@@ -15,7 +15,6 @@ import (
 	"github.com/robfig/cron/v3"
 	log "github.com/sirupsen/logrus"
 	"github.com/yjiong/iotdor/ent"
-	"github.com/yjiong/iotdor/ent/user"
 	"github.com/yjiong/iotdor/internal/datasrc"
 )
 
@@ -131,7 +130,7 @@ func (m *Manage) runCron() {
 	cStr := fmt.Sprintf("10 */%d * * * *", m.storageInterval)
 	EID1, _ := m.Cron.AddFunc(
 		cStr,
-		m.storateDeviceValue)
+		m.storageDeviceValue)
 	m.ids = []cron.EntryID{EID1}
 	m.Cron.Start()
 }
@@ -144,7 +143,7 @@ func (m *Manage) cronStop() {
 	log.Infoln("cron schedule removed")
 }
 
-func (m *Manage) storateDeviceValue() {
+func (m *Manage) storageDeviceValue() {
 	keys, err := m.redisC.Keys(m.ctx, fmt.Sprintf("*:%s", DeviceValue)).Result()
 	if err != nil {
 		log.Error(errors.Wrap(err, "get DEVICE_VALUE faild"))
@@ -155,73 +154,4 @@ func (m *Manage) storateDeviceValue() {
 		go InsertMap(m.DB, "ammeters", vs)
 		m.spool.Put(vs)
 	}
-}
-
-// AllDevices ....
-func (m *Manage) AllDevices() (ids []string) {
-	keys, _ := m.redisC.Keys(m.ctx, fmt.Sprintf("*:%s", DeviceValue)).Result()
-	for _, key := range keys {
-		kids := strings.Split(key, ":")
-		if len(kids) > 3 {
-			ids = append(ids, kids[2])
-		}
-	}
-	return
-}
-
-// DeviceRealTimeValue ....
-func (m *Manage) DeviceRealTimeValue(devid string) map[string]string {
-	keys, _ := m.redisC.Keys(m.ctx, fmt.Sprintf("*:%s:*", devid)).Result()
-	vs, _ := m.redisC.HGetAll(m.ctx, keys[0]).Result()
-	return vs
-}
-
-// UsersInfo for api
-func (m *Manage) UsersInfo() (us []*ent.User, e error) {
-	if eg, err := queryGroupByName(m.ctx, m.entC, m.iotdName); err != nil {
-		e = err
-	} else {
-		us, _ = eg.QueryUsers().All(m.ctx)
-	}
-	return
-}
-
-// UserInfo for api
-func (m *Manage) UserInfo(name string) (u *ent.User, e error) {
-	if us, err := queryUsers(m.ctx, m.entC); err != nil {
-		e = err
-	} else {
-		for _, eu := range us {
-			if eu.Name == name {
-				u = eu
-			}
-		}
-	}
-	return
-}
-
-// AddUser ...
-func (m *Manage) AddUser(name, passwd string, adminFlag bool, phone ...string) error {
-	eg, _ := queryGroupByName(m.ctx, m.entC, m.iotdName)
-	_, err := addUser(m.ctx, m.entC, name, passwd, eg, adminFlag, phone...)
-	return err
-}
-
-// DelUser ...
-func (m *Manage) DelUser(name string) error {
-	_, err := m.entC.User.Delete().Where(user.Name(name)).Exec(m.ctx)
-	return err
-}
-
-// UpdateUser ...
-func (m *Manage) UpdateUser(name, passwd string, adminFlag bool, phone ...string) error {
-	eg, _ := queryGroupByName(m.ctx, m.entC, m.iotdName)
-	err := updateUser(m.ctx, m.entC, name, passwd, eg, adminFlag, phone...)
-	return err
-}
-
-// UserAdminFlag ....
-func (m *Manage) UserAdminFlag(uname string) bool {
-	u, _ := queryUserByName(m.ctx, m.entC, uname)
-	return userAdminFlag(m.ctx, u, uname)
 }
