@@ -60,7 +60,15 @@ var (
 			{
 				Name:    "ammter_devid",
 				Unique:  true,
+				Columns: []*schema.Column{AmmtersColumns[1]},
+			},
+			{
+				Name:    "ammter_devname",
 				Columns: []*schema.Column{AmmtersColumns[3]},
+			},
+			{
+				Name:    "ammter_timestamp",
+				Columns: []*schema.Column{AmmtersColumns[4]},
 			},
 		},
 	}

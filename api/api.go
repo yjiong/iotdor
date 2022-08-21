@@ -286,7 +286,7 @@ func (dtr *IotdorTran) rawlogin(w http.ResponseWriter, req *http.Request) {
 		}
 		respJSON(w, tkm)
 	} else {
-		respError(200, w, err)
+		respError(http.StatusUnauthorized, w, err)
 	}
 }
 

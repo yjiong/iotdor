@@ -1,4 +1,4 @@
-swagger: '2.0'
+openapi: 3.0.3
 info:
   description: This is iotdor server .
   title: IOTDOR API
@@ -11,18 +11,16 @@ basePath: /
 paths:
   /api/login:
     post:
-      consumes:
-        - application/json
       tags:
         - 登录
       summary: login
-      parameters:
-        - description: 登录
-          name: user_info
-          in: body
-          required: true
-          schema:
-            $ref: '#/definitions/iotdor.TUser'
+      requestBody:
+        content:
+          application/json:
+            name: user_info
+            required: true
+            schema:
+              $ref: '#/components/schemas/TUser'
       responses:
         '200':
           description: ok
@@ -33,13 +31,7 @@ paths:
           schema:
             type: object
   /gateway/list:
-    post:
-      security:
-        - ApiKeyAuth: []
-      consumes:
-        - application/json
-      produces:
-        - application/json
+    get:
       tags:
         - 网关列表
       summary: 网关列表
@@ -52,524 +44,536 @@ paths:
           description: Can not query history data
           schema:
             type: object
-  /gateway/{gatewaysn}/info:
-    get:
-      consumes:
-        - application/json
-      tags:
-        - 配置信息
-      summary: 获取网关信息
-      parameters:
-        - type: string
-          description: gatewaysn 网关序列号
-          name: gatewaysn
-          in: path
-          required: true
-      responses:
-        '200':
-          description: ok
-          schema:
-            type: object
-        '404':
-          description: get version string error
-          schema:
-            type: object
-  '/gateway/{gatewaysn}/cmdline':
-    post:
       security:
-        - ApiKeyAuth: []
-      consumes:
-        - application/json
-      tags:
-        - 升级和远程命令
-      summary: 在网关上执行shell命令
-      parameters:
-        - type: string
-          description: gatewaysn 网关序列号
-          name: gatewaysn
-          in: path
-          required: true
-        - type: string
-          description: cmd
-          name: cmd
-          in: query
-          required: true
-      responses:
-        '200':
-          description: ok
-          schema:
-            type: string
-        '401':
-          description: access denided
-          schema:
-            type: object
-        '404':
-          description: Can not alibration time
-          schema:
-            type: object
-  '/gateway/{gatewaysn}/devices':
-    get:
-      consumes:
-        - application/json
-      tags:
-        - 配置信息
-      summary: 获取设备信息
-      parameters:
-        - type: string
-          description: gatewaysn 网关序列号
-          name: gatewaysn
-          in: path
-          required: true
-      responses:
-        '200':
-          description: ok
-          schema:
-            type: object
-        '404':
-          description: Can not list device add device first
-          schema:
-            type: object
-    put:
-      security:
-        - ApiKeyAuth: []
-      consumes:
-        - application/json
-      tags:
-        - 配置信息
-      summary: 添加或更新设备
-      parameters:
-        - type: string
-          description: gatewaysn 网关序列号
-          name: gatewaysn
-          in: path
-          required: true
-        - description: 设备信息(若ID存在则为更新，否则为新添加)
-          name: t_mn_info
-          in: body
-          required: true
-          schema:
-            $ref: '#/definitions/iotdor.TDevice'
-      responses:
-        '200':
-          description: ok
-          schema:
-            type: object
-        '401':
-          description: access denided
-          schema:
-            type: object
-        '404':
-          description: Can not insert device
-          schema:
-            type: object
-    delete:
-      security:
-        - ApiKeyAuth: []
-      consumes:
-        - application/json
-      tags:
-        - 配置信息
-      summary: 删除设备
-      parameters:
-        - type: string
-          description: gatewaysn 网关序列号
-          name: gatewaysn
-          in: path
-          required: true
-        - type: string
-          description: 设备ID
-          name: device_id
-          in: query
-          required: true
-      responses:
-        '200':
-          description: ok
-          schema:
-            type: object
-        '401':
-          description: access denided
-          schema:
-            type: object
-        '404':
-          description: Can not delete MNinfo
-          schema:
-            type: object
-  '/gateway/{gatewaysn}/suport_device':
-    get:
-      consumes:
-        - application/json
-      tags:
-        - 配置信息
-      summary: 获取驱动支持的设备类型信息
-      parameters:
-        - type: string
-          description: gatewaysn 网关序列号
-          name: gatewaysn
-          in: path
-          required: true
-      responses:
-        '200':
-          description: ok
-          schema:
-            type: object
-        '404':
-          description: please check gatewaydrive program is running
-          schema:
-            type: object
-  '/gateway/{gatewaysn}/serial_debug':
-    post:
-      security:
-        - ApiKeyAuth: []
-      consumes:
-        - application/json
-      tags:
-        - 升级和远程命令
-      summary: 串口调试
-      parameters:
-        - type: string
-          description: gatewaysn 网关序列号
-          name: gatewaysn
-          in: path
-          required: true
-        - description: 串口调试参数
-          name: serial_params
-          in: body
-          required: true
-          schema:
-            $ref: '#/definitions/iotdor.SerialParams'
-      responses:
-        '200':
-          description: ok
-          schema:
-            type: string
-        '401':
-          description: access denided
-          schema:
-            type: object
-        '404':
-          description: Can not debug serial port
-          schema:
-            type: object
-  '/gateway/{gatewaysn}/update_devdrive':
-    post:
-      security:
-        - ApiKeyAuth: []
-      description: update devdrive 请上传文件名为devdrive.tgz的网关驱动程序（devdrive的压缩文件)
-      consumes:
-        - multipart/form-data
-      produces:
-        - application/json
-      tags:
-        - 升级和远程命令
-      summary: 更新网关设备驱动
-      operationId: file.upload
-      parameters:
-        - type: string
-          description: gatewaysn 网关序列号
-          name: gatewaysn
-          in: path
-          required: true
-        - type: file
-          description: 上传驱动更新文件
-          name: file
-          in: formData
-          required: true
-      responses:
-        '200':
-          description: ok
-          schema:
-            type: object
-        '404':
-          description: update gatewaydrive failed
-          schema:
-            type: object
-  '/gateway/{gatewaysn}/update_gateway':
-    post:
-      security:
-        - ApiKeyAuth: []
-      description: update gateway 请上传文件名为gateway.tgz的网关主程序（gateway的压缩文件)
-      consumes:
-        - multipart/form-data
-      produces:
-        - application/json
-      tags:
-        - 升级和远程命令
-      summary: 更新网关主程序
-      parameters:
-        - type: string
-          description: gatewaysn 网关序列号
-          name: gatewaysn
-          in: path
-          required: true
-        - type: file
-          description: 上传网关主程序更新文件
-          name: file
-          in: formData
-          required: true
-      responses:
-        '200':
-          description: ok
-          schema:
-            type: object
-        '401':
-          description: access denided
-          schema:
-            type: object
-        '404':
-          description: update gateway failed
-          schema:
-            type: object
-  '/device/get_all_device_id':
-    get:
-      security:
-        - ApiKeyAuth: []
-      consumes:
-        - application/json
-      produces:
-        - application/json
-      tags:
-        - 当前数据
-      summary: 获取所有设备ID
-      responses:
-        '200':
-          description: ok
-          schema:
-            type: object
-        '404':
-          description: Can not get realtime data
-          schema:
-            type: object
-  '/device/realtime_data/{devid}':
-    get:
-      security:
-        - ApiKeyAuth: []
-      consumes:
-        - application/json
-      produces:
-        - application/json
-      tags:
-        - 当前数据
-      summary: 获取设备实时数据
-      parameters:
-        - type: string
-          description: devid 设备ID
-          name: devid
-          in: path
-          required: true
-      responses:
-        '200':
-          description: ok
-          schema:
-            type: object
-        '404':
-          description: Can not get realtime data
-          schema:
-            type: object
-  /config/sys/user_info:
-    get:
-      security:
-        - ApiKeyAuth: []
-      consumes:
-        - application/json
-      tags:
-        - 系统信息
-      summary: 获取用户信息
-      responses:
-        '200':
-          description: ok
-          schema:
-            type: object
-        '404':
-          description: get user_info string error
-          schema:
-            type: object
-  /config/sys/add_user:
-    post:
-      security:
-        - ApiKeyAuth: []
-      consumes:
-        - application/json
-      tags:
-        - 系统信息
-      summary: 添加用户
-      parameters:
-        - description: 创建用户
-          name: user_info
-          in: body
-          required: true
-          schema:
-            $ref: '#/definitions/iotdor.TWUser'
-      responses:
-        '200':
-          description: ok
-          schema:
-            type: string
-        '401':
-          description: access denided
-          schema:
-            type: object
-        '404':
-          description: Can not debug serial port
-          schema:
-            type: object
-  /config/sys/update_user:
-    put:
-      security:
-        - ApiKeyAuth: []
-      consumes:
-        - application/json
-      tags:
-        - 系统信息
-      summary: 更新用户(修改密码，电话, 设置为管理员)
-      parameters:
-        - description: 更新用户
-          name: user_info
-          in: body
-          required: true
-          schema:
-            $ref: '#/definitions/iotdor.TWUser'
-      responses:
-        '200':
-          description: ok
-          schema:
-            type: string
-        '401':
-          description: access denided
-          schema:
-            type: object
-        '404':
-          description: Can not debug serial port
-          schema:
-            type: object
-  /config/sys/delete_user/{uname}:
-    delete:
-      security:
-        - ApiKeyAuth: []
-      consumes:
-        - application/json
-      tags:
-        - 系统信息
-      summary: 删除用户
-      parameters:
-        - description: 删除用户
-          name: uname
-          in: path
-          required: true
-      responses:
-        '200':
-          description: ok
-          schema:
-            type: string
-        '401':
-          description: access denided
-          schema:
-            type: object
-        '404':
-          description: Can not debug serial port
-          schema:
-            type: object
-definitions:
-  iotdor.QuerySection:
-    type: object
-    properties:
-      page_size:
-        description: 每页记录数
-        type: integer
-      pages_index:
-        description: 第几页 （开始页为0）
-        type: integer
-      since:
-        description: '起始时间 (比如 "2021-01-02 15:04:05")'
-        type: string
-      until:
-        description: '终止时间 (比如 "2021-01-03 15:04:05")'
-        type: string
-  iotdor.SerialParams:
-    type: object
-    properties:
-      baudrate:
-        description: 波特率 e.g. 9600
-        type: integer
-      com:
-        description: 串口
-        type: string
-      data_bit:
-        description: 数据位 e.g. 8
-        type: integer
-      is_hex:
-        description: 16进制发送 =1 ，assic 发送 =0
-        type: integer
-      parity:
-        description: '奇偶校验 N, E或O'
-        type: string
-      payload:
-        description: 发送内容
-        type: string
-      stop_bit:
-        description: 停止位 e.g. 1
-        type: integer
-      time_out:
-        description: 超时 e.g. 1
-        type: integer
-  iotdor.TDevice:
-    type: object
-    properties:
-      address:
-        description: 通讯地址(比如moodbus地址)
-        type: integer
-      baudrate:
-        description: 波特率
-        type: integer
-      com:
-        description: 通讯串口
-        type: string
-      data_bit:
-        description: 数据位
-        type: integer
-      dev_name:
-        description: 设备名称
-        type: string
-      dev_params:
-        description: 设备的参数(一般情况不需要)
-        type: string
-      dev_type:
-        description: 设备类型(驱动名)
-        type: string
-      id:
-        description: device_id
-        type: string
-      ip_addr:
-        description: 若是网络设备，填ip地址或url
-        type: string
-      parity:
-        description: '奇偶校验("N", "E", "O")'
-        type: string
-      stop_bit:
-        description: 停止位
-        type: string
-  iotdor.TUser:
-    type: object
-    properties:
-      password:
-        type: string
-        default: "123456"
-      username:
-        type: string
-        default: "iotd-AMMETER"
-  iotdor.TWUser:
-    type: object
-    properties:
-      username:
-        type: string
-      password:
-        type: string
-      admin_flag:
-        type: boolean
-        default: false
-      phone:
-        type: string
-securityDefinitions:
-  ApiKeyAuth:
-    type: apiKey
-    name: Authorization
-    in: header
+        - api_key: 
+            - read: list
+#  /gateway/{gatewaysn}/info:
+#    get:
+#      consumes:
+#        - application/json
+#      tags:
+#        - 配置信息
+#      summary: 获取网关信息
+#      parameters:
+#        - type: string
+#          description: gatewaysn 网关序列号
+#          name: gatewaysn
+#          in: path
+#          required: true
+#      responses:
+#        '200':
+#          description: ok
+#          schema:
+#            type: object
+#        '404':
+#          description: get version string error
+#          schema:
+#            type: object
+#  '/gateway/{gatewaysn}/cmdline':
+#    post:
+#      security:
+#        - ApiKeyAuth: []
+#      consumes:
+#        - application/json
+#      tags:
+#        - 升级和远程命令
+#      summary: 在网关上执行shell命令
+#      parameters:
+#        - type: string
+#          description: gatewaysn 网关序列号
+#          name: gatewaysn
+#          in: path
+#          required: true
+#        - type: string
+#          description: cmd
+#          name: cmd
+#          in: query
+#          required: true
+#      responses:
+#        '200':
+#          description: ok
+#          schema:
+#            type: string
+#        '401':
+#          description: access denided
+#          schema:
+#            type: object
+#        '404':
+#          description: Can not alibration time
+#          schema:
+#            type: object
+#  '/gateway/{gatewaysn}/devices':
+#    get:
+#      consumes:
+#        - application/json
+#      tags:
+#        - 配置信息
+#      summary: 获取设备信息
+#      parameters:
+#        - type: string
+#          description: gatewaysn 网关序列号
+#          name: gatewaysn
+#          in: path
+#          required: true
+#      responses:
+#        '200':
+#          description: ok
+#          schema:
+#            type: object
+#        '404':
+#          description: Can not list device add device first
+#          schema:
+#            type: object
+#    put:
+#      security:
+#        - ApiKeyAuth: []
+#      consumes:
+#        - application/json
+#      tags:
+#        - 配置信息
+#      summary: 添加或更新设备
+#      parameters:
+#        - type: string
+#          description: gatewaysn 网关序列号
+#          name: gatewaysn
+#          in: path
+#          required: true
+#        - description: 设备信息(若ID存在则为更新，否则为新添加)
+#          name: t_mn_info
+#          in: body
+#          required: true
+#          schema:
+#            $ref: '#/definitions/iotdor/TDevice'
+#      responses:
+#        '200':
+#          description: ok
+#          schema:
+#            type: object
+#        '401':
+#          description: access denided
+#          schema:
+#            type: object
+#        '404':
+#          description: Can not insert device
+#          schema:
+#            type: object
+#    delete:
+#      security:
+#        - ApiKeyAuth: []
+#      consumes:
+#        - application/json
+#      tags:
+#        - 配置信息
+#      summary: 删除设备
+#      parameters:
+#        - type: string
+#          description: gatewaysn 网关序列号
+#          name: gatewaysn
+#          in: path
+#          required: true
+#        - type: string
+#          description: 设备ID
+#          name: device_id
+#          in: query
+#          required: true
+#      responses:
+#        '200':
+#          description: ok
+#          schema:
+#            type: object
+#        '401':
+#          description: access denided
+#          schema:
+#            type: object
+#        '404':
+#          description: Can not delete MNinfo
+#          schema:
+#            type: object
+#  '/gateway/{gatewaysn}/suport_device':
+#    get:
+#      consumes:
+#        - application/json
+#      tags:
+#        - 配置信息
+#      summary: 获取驱动支持的设备类型信息
+#      parameters:
+#        - type: string
+#          description: gatewaysn 网关序列号
+#          name: gatewaysn
+#          in: path
+#          required: true
+#      responses:
+#        '200':
+#          description: ok
+#          schema:
+#            type: object
+#        '404':
+#          description: please check gatewaydrive program is running
+#          schema:
+#            type: object
+#  '/gateway/{gatewaysn}/serial_debug':
+#    post:
+#      security:
+#        - ApiKeyAuth: []
+#      consumes:
+#        - application/json
+#      tags:
+#        - 升级和远程命令
+#      summary: 串口调试
+#      parameters:
+#        - type: string
+#          description: gatewaysn 网关序列号
+#          name: gatewaysn
+#          in: path
+#          required: true
+#        - description: 串口调试参数
+#          name: serial_params
+#          in: body
+#          required: true
+#          schema:
+#            $ref: '#/definitions/iotdor/SerialParams'
+#      responses:
+#        '200':
+#          description: ok
+#          schema:
+#            type: string
+#        '401':
+#          description: access denided
+#          schema:
+#            type: object
+#        '404':
+#          description: Can not debug serial port
+#          schema:
+#            type: object
+#  '/gateway/{gatewaysn}/update_devdrive':
+#    post:
+#      security:
+#        - ApiKeyAuth: []
+#      description: update devdrive 请上传文件名为devdrive.tgz的网关驱动程序（devdrive的压缩文件)
+#      consumes:
+#        - multipart/form-data
+#      produces:
+#        - application/json
+#      tags:
+#        - 升级和远程命令
+#      summary: 更新网关设备驱动
+#      operationId: file.upload
+#      parameters:
+#        - type: string
+#          description: gatewaysn 网关序列号
+#          name: gatewaysn
+#          in: path
+#          required: true
+#        - type: file
+#          description: 上传驱动更新文件
+#          name: file
+#          in: formData
+#          required: true
+#      responses:
+#        '200':
+#          description: ok
+#          schema:
+#            type: object
+#        '404':
+#          description: update gatewaydrive failed
+#          schema:
+#            type: object
+#  '/gateway/{gatewaysn}/update_gateway':
+#    post:
+#      security:
+#        - ApiKeyAuth: []
+#      description: update gateway 请上传文件名为gateway.tgz的网关主程序（gateway的压缩文件)
+#      consumes:
+#        - multipart/form-data
+#      produces:
+#        - application/json
+#      tags:
+#        - 升级和远程命令
+#      summary: 更新网关主程序
+#      parameters:
+#        - type: string
+#          description: gatewaysn 网关序列号
+#          name: gatewaysn
+#          in: path
+#          required: true
+#        - type: file
+#          description: 上传网关主程序更新文件
+#          name: file
+#          in: formData
+#          required: true
+#      responses:
+#        '200':
+#          description: ok
+#          schema:
+#            type: object
+#        '401':
+#          description: access denided
+#          schema:
+#            type: object
+#        '404':
+#          description: update gateway failed
+#          schema:
+#            type: object
+#  '/device/get_all_device_id':
+#    get:
+#      security:
+#        - ApiKeyAuth: []
+#      consumes:
+#        - application/json
+#      produces:
+#        - application/json
+#      tags:
+#        - 当前数据
+#      summary: 获取所有设备ID
+#      responses:
+#        '200':
+#          description: ok
+#          schema:
+#            type: object
+#        '404':
+#          description: Can not get realtime data
+#          schema:
+#            type: object
+#  '/device/realtime_data/{devid}':
+#    get:
+#      security:
+#        - ApiKeyAuth: []
+#      consumes:
+#        - application/json
+#      produces:
+#        - application/json
+#      tags:
+#        - 当前数据
+#      summary: 获取设备实时数据
+#      parameters:
+#        - type: string
+#          description: devid 设备ID
+#          name: devid
+#          in: path
+#          required: true
+#      responses:
+#        '200':
+#          description: ok
+#          schema:
+#            type: object
+#        '404':
+#          description: Can not get realtime data
+#          schema:
+#            type: object
+#  /config/sys/user_info:
+#    get:
+#      security:
+#        - ApiKeyAuth: []
+#      consumes:
+#        - application/json
+#      tags:
+#        - 系统信息
+#      summary: 获取用户信息
+#      responses:
+#        '200':
+#          description: ok
+#          schema:
+#            type: object
+#        '404':
+#          description: get user_info string error
+#          schema:
+#            type: object
+#  /config/sys/add_user:
+#    post:
+#      security:
+#        - ApiKeyAuth: []
+#      consumes:
+#        - application/json
+#      tags:
+#        - 系统信息
+#      summary: 添加用户
+#      parameters:
+#        - description: 创建用户
+#          name: user_info
+#          in: body
+#          required: true
+#          schema:
+#            $ref: '#/definitions/iotdor/TWUser'
+#      responses:
+#        '200':
+#          description: ok
+#          schema:
+#            type: string
+#        '401':
+#          description: access denided
+#          schema:
+#            type: object
+#        '404':
+#          description: Can not debug serial port
+#          schema:
+#            type: object
+#  /config/sys/update_user:
+#    put:
+#      security:
+#        - ApiKeyAuth: []
+#      consumes:
+#        - application/json
+#      tags:
+#        - 系统信息
+#      summary: 更新用户(修改密码，电话, 设置为管理员)
+#      parameters:
+#        - description: 更新用户
+#          name: user_info
+#          in: body
+#          required: true
+#          schema:
+#            $ref: '#/definitions/iotdor/TWUser'
+#      responses:
+#        '200':
+#          description: ok
+#          schema:
+#            type: string
+#        '401':
+#          description: access denided
+#          schema:
+#            type: object
+#        '404':
+#          description: Can not debug serial port
+#          schema:
+#            type: object
+#  /config/sys/delete_user/{uname}:
+#    delete:
+#      security:
+#        - ApiKeyAuth: []
+#      consumes:
+#        - application/json
+#      tags:
+#        - 系统信息
+#      summary: 删除用户
+#      parameters:
+#        - description: 删除用户
+#          name: uname
+#          in: path
+#          required: true
+#      responses:
+#        '200':
+#          description: ok
+#          schema:
+#            type: string
+#        '401':
+#          description: access denided
+#          schema:
+#            type: object
+#        '404':
+#          description: Can not debug serial port
+#          schema:
+#            type: object
+components:
+  schemas:
+    TUser:
+      type: object
+      properties:
+        password:
+          type: string
+          example: "123456"
+        username:
+          type: string
+          example: "iotd-AMMETER"
+    #QuerySection:
+      #type: object
+      #properties:
+        #page_size:
+          #description: 每页记录数
+          #type: integer
+        #pages_index:
+          #description: 第几页 （开始页为0）
+          #type: integer
+        #since:
+          #description: '起始时间 (比如 "2021-01-02 15:04:05")'
+          #type: string
+        #until:
+          #description: '终止时间 (比如 "2021-01-03 15:04:05")'
+          #type: string
+    #SerialParams:
+      #type: object
+      #properties:
+        #baudrate:
+          #description: 波特率 e.g. 9600
+          #type: integer
+        #com:
+          #description: 串口
+          #type: string
+        #data_bit:
+          #description: 数据位 e.g. 8
+          #type: integer
+        #is_hex:
+          #description: 16进制发送 =1 ，assic 发送 =0
+          #type: integer
+        #parity:
+          #description: '奇偶校验 N, E或O'
+          #type: string
+        #payload:
+          #description: 发送内容
+          #type: string
+        #stop_bit:
+          #description: 停止位 e.g. 1
+          #type: integer
+        #time_out:
+          #description: 超时 e.g. 1
+          #type: integer
+    #TDevice:
+      #type: object
+      #properties:
+        #address:
+          #description: 通讯地址(比如moodbus地址)
+          #type: integer
+        #baudrate:
+          #description: 波特率
+          #type: integer
+        #com:
+          #description: 通讯串口
+          #type: string
+        #data_bit:
+          #description: 数据位
+          #type: integer
+        #dev_name:
+          #description: 设备名称
+          #type: string
+        #dev_params:
+          #description: 设备的参数(一般情况不需要)
+          #type: string
+        #dev_type:
+          #description: 设备类型(驱动名)
+          #type: string
+        #id:
+          #description: device_id
+          #type: string
+        #ip_addr:
+          #description: 若是网络设备，填ip地址或url
+          #type: string
+        #parity:
+          #description: '奇偶校验("N", "E", "O")'
+          #type: string
+        #stop_bit:
+          #description: 停止位
+          #type: string
+    #TWUser:
+      #type: object
+      #properties:
+        #username:
+          #type: string
+        #password:
+          #type: string
+        #admin_flag:
+          #type: boolean
+          #default: false
+        #phone:
+          #type: string
+  securitySchemes:
+    #xxxstore_auth:
+      #type: oauth2
+      #flows:
+        #implicit:
+          #authorizationUrl: https://xxx.xxx.xxx/oauth/authorize
+          #scopes:
+            #write:pets: modify pets in your account
+            #read:pets: read your pets
+    api_key:
+      type: apiKey
+      name: Authorization
+      in: header
