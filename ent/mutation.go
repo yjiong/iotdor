@@ -2689,12 +2689,14 @@ type OrganizationMutation struct {
 	floor                 *string
 	unitNo                *string
 	longitudeAndLatituude *string
-	personCharge          *string
 	summary               *string
 	clearedFields         map[string]struct{}
 	devices               map[int]struct{}
 	removeddevices        map[int]struct{}
 	cleareddevices        bool
+	personCharges         map[int]struct{}
+	removedpersonCharges  map[int]struct{}
+	clearedpersonCharges  bool
 	done                  bool
 	oldValue              func(context.Context) (*Organization, error)
 	predicates            []predicate.Organization
@@ -3076,42 +3078,6 @@ func (m *OrganizationMutation) ResetLongitudeAndLatituude() {
 	m.longitudeAndLatituude = nil
 }
 
-// SetPersonCharge sets the "personCharge" field.
-func (m *OrganizationMutation) SetPersonCharge(s string) {
-	m.personCharge = &s
-}
-
-// PersonCharge returns the value of the "personCharge" field in the mutation.
-func (m *OrganizationMutation) PersonCharge() (r string, exists bool) {
-	v := m.personCharge
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldPersonCharge returns the old "personCharge" field's value of the Organization entity.
-// If the Organization object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *OrganizationMutation) OldPersonCharge(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldPersonCharge is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldPersonCharge requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldPersonCharge: %w", err)
-	}
-	return oldValue.PersonCharge, nil
-}
-
-// ResetPersonCharge resets all changes to the "personCharge" field.
-func (m *OrganizationMutation) ResetPersonCharge() {
-	m.personCharge = nil
-}
-
 // SetSummary sets the "summary" field.
 func (m *OrganizationMutation) SetSummary(s string) {
 	m.summary = &s
@@ -3215,6 +3181,60 @@ func (m *OrganizationMutation) ResetDevices() {
 	m.removeddevices = nil
 }
 
+// AddPersonChargeIDs adds the "personCharges" edge to the User entity by ids.
+func (m *OrganizationMutation) AddPersonChargeIDs(ids ...int) {
+	if m.personCharges == nil {
+		m.personCharges = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.personCharges[ids[i]] = struct{}{}
+	}
+}
+
+// ClearPersonCharges clears the "personCharges" edge to the User entity.
+func (m *OrganizationMutation) ClearPersonCharges() {
+	m.clearedpersonCharges = true
+}
+
+// PersonChargesCleared reports if the "personCharges" edge to the User entity was cleared.
+func (m *OrganizationMutation) PersonChargesCleared() bool {
+	return m.clearedpersonCharges
+}
+
+// RemovePersonChargeIDs removes the "personCharges" edge to the User entity by IDs.
+func (m *OrganizationMutation) RemovePersonChargeIDs(ids ...int) {
+	if m.removedpersonCharges == nil {
+		m.removedpersonCharges = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m.personCharges, ids[i])
+		m.removedpersonCharges[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedPersonCharges returns the removed IDs of the "personCharges" edge to the User entity.
+func (m *OrganizationMutation) RemovedPersonChargesIDs() (ids []int) {
+	for id := range m.removedpersonCharges {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// PersonChargesIDs returns the "personCharges" edge IDs in the mutation.
+func (m *OrganizationMutation) PersonChargesIDs() (ids []int) {
+	for id := range m.personCharges {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetPersonCharges resets all changes to the "personCharges" edge.
+func (m *OrganizationMutation) ResetPersonCharges() {
+	m.personCharges = nil
+	m.clearedpersonCharges = false
+	m.removedpersonCharges = nil
+}
+
 // Where appends a list predicates to the OrganizationMutation builder.
 func (m *OrganizationMutation) Where(ps ...predicate.Organization) {
 	m.predicates = append(m.predicates, ps...)
@@ -3234,7 +3254,7 @@ func (m *OrganizationMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *OrganizationMutation) Fields() []string {
-	fields := make([]string, 0, 9)
+	fields := make([]string, 0, 8)
 	if m.create_time != nil {
 		fields = append(fields, organization.FieldCreateTime)
 	}
@@ -3255,9 +3275,6 @@ func (m *OrganizationMutation) Fields() []string {
 	}
 	if m.longitudeAndLatituude != nil {
 		fields = append(fields, organization.FieldLongitudeAndLatituude)
-	}
-	if m.personCharge != nil {
-		fields = append(fields, organization.FieldPersonCharge)
 	}
 	if m.summary != nil {
 		fields = append(fields, organization.FieldSummary)
@@ -3284,8 +3301,6 @@ func (m *OrganizationMutation) Field(name string) (ent.Value, bool) {
 		return m.UnitNo()
 	case organization.FieldLongitudeAndLatituude:
 		return m.LongitudeAndLatituude()
-	case organization.FieldPersonCharge:
-		return m.PersonCharge()
 	case organization.FieldSummary:
 		return m.Summary()
 	}
@@ -3311,8 +3326,6 @@ func (m *OrganizationMutation) OldField(ctx context.Context, name string) (ent.V
 		return m.OldUnitNo(ctx)
 	case organization.FieldLongitudeAndLatituude:
 		return m.OldLongitudeAndLatituude(ctx)
-	case organization.FieldPersonCharge:
-		return m.OldPersonCharge(ctx)
 	case organization.FieldSummary:
 		return m.OldSummary(ctx)
 	}
@@ -3372,13 +3385,6 @@ func (m *OrganizationMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetLongitudeAndLatituude(v)
-		return nil
-	case organization.FieldPersonCharge:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetPersonCharge(v)
 		return nil
 	case organization.FieldSummary:
 		v, ok := value.(string)
@@ -3478,9 +3484,6 @@ func (m *OrganizationMutation) ResetField(name string) error {
 	case organization.FieldLongitudeAndLatituude:
 		m.ResetLongitudeAndLatituude()
 		return nil
-	case organization.FieldPersonCharge:
-		m.ResetPersonCharge()
-		return nil
 	case organization.FieldSummary:
 		m.ResetSummary()
 		return nil
@@ -3490,9 +3493,12 @@ func (m *OrganizationMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *OrganizationMutation) AddedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	if m.devices != nil {
 		edges = append(edges, organization.EdgeDevices)
+	}
+	if m.personCharges != nil {
+		edges = append(edges, organization.EdgePersonCharges)
 	}
 	return edges
 }
@@ -3507,15 +3513,24 @@ func (m *OrganizationMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case organization.EdgePersonCharges:
+		ids := make([]ent.Value, 0, len(m.personCharges))
+		for id := range m.personCharges {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *OrganizationMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	if m.removeddevices != nil {
 		edges = append(edges, organization.EdgeDevices)
+	}
+	if m.removedpersonCharges != nil {
+		edges = append(edges, organization.EdgePersonCharges)
 	}
 	return edges
 }
@@ -3530,15 +3545,24 @@ func (m *OrganizationMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case organization.EdgePersonCharges:
+		ids := make([]ent.Value, 0, len(m.removedpersonCharges))
+		for id := range m.removedpersonCharges {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *OrganizationMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	if m.cleareddevices {
 		edges = append(edges, organization.EdgeDevices)
+	}
+	if m.clearedpersonCharges {
+		edges = append(edges, organization.EdgePersonCharges)
 	}
 	return edges
 }
@@ -3549,6 +3573,8 @@ func (m *OrganizationMutation) EdgeCleared(name string) bool {
 	switch name {
 	case organization.EdgeDevices:
 		return m.cleareddevices
+	case organization.EdgePersonCharges:
+		return m.clearedpersonCharges
 	}
 	return false
 }
@@ -3568,6 +3594,9 @@ func (m *OrganizationMutation) ResetEdge(name string) error {
 	case organization.EdgeDevices:
 		m.ResetDevices()
 		return nil
+	case organization.EdgePersonCharges:
+		m.ResetPersonCharges()
+		return nil
 	}
 	return fmt.Errorf("unknown Organization edge %s", name)
 }
@@ -3575,26 +3604,29 @@ func (m *OrganizationMutation) ResetEdge(name string) error {
 // UserMutation represents an operation that mutates the User nodes in the graph.
 type UserMutation struct {
 	config
-	op              Op
-	typ             string
-	id              *int
-	create_time     *time.Time
-	update_time     *time.Time
-	name            *string
-	passwd          *string
-	phone           *string
-	last_login_ip   *string
-	last_login_time *time.Time
-	clearedFields   map[string]struct{}
-	groups          map[int]struct{}
-	removedgroups   map[int]struct{}
-	clearedgroups   bool
-	admins          map[int]struct{}
-	removedadmins   map[int]struct{}
-	clearedadmins   bool
-	done            bool
-	oldValue        func(context.Context) (*User, error)
-	predicates      []predicate.User
+	op                   Op
+	typ                  string
+	id                   *int
+	create_time          *time.Time
+	update_time          *time.Time
+	name                 *string
+	passwd               *string
+	phone                *string
+	last_login_ip        *string
+	last_login_time      *time.Time
+	clearedFields        map[string]struct{}
+	groups               map[int]struct{}
+	removedgroups        map[int]struct{}
+	clearedgroups        bool
+	admins               map[int]struct{}
+	removedadmins        map[int]struct{}
+	clearedadmins        bool
+	personCharges        map[int]struct{}
+	removedpersonCharges map[int]struct{}
+	clearedpersonCharges bool
+	done                 bool
+	oldValue             func(context.Context) (*User, error)
+	predicates           []predicate.User
 }
 
 var _ ent.Mutation = (*UserMutation)(nil)
@@ -4094,6 +4126,60 @@ func (m *UserMutation) ResetAdmins() {
 	m.removedadmins = nil
 }
 
+// AddPersonChargeIDs adds the "personCharges" edge to the Organization entity by ids.
+func (m *UserMutation) AddPersonChargeIDs(ids ...int) {
+	if m.personCharges == nil {
+		m.personCharges = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.personCharges[ids[i]] = struct{}{}
+	}
+}
+
+// ClearPersonCharges clears the "personCharges" edge to the Organization entity.
+func (m *UserMutation) ClearPersonCharges() {
+	m.clearedpersonCharges = true
+}
+
+// PersonChargesCleared reports if the "personCharges" edge to the Organization entity was cleared.
+func (m *UserMutation) PersonChargesCleared() bool {
+	return m.clearedpersonCharges
+}
+
+// RemovePersonChargeIDs removes the "personCharges" edge to the Organization entity by IDs.
+func (m *UserMutation) RemovePersonChargeIDs(ids ...int) {
+	if m.removedpersonCharges == nil {
+		m.removedpersonCharges = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m.personCharges, ids[i])
+		m.removedpersonCharges[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedPersonCharges returns the removed IDs of the "personCharges" edge to the Organization entity.
+func (m *UserMutation) RemovedPersonChargesIDs() (ids []int) {
+	for id := range m.removedpersonCharges {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// PersonChargesIDs returns the "personCharges" edge IDs in the mutation.
+func (m *UserMutation) PersonChargesIDs() (ids []int) {
+	for id := range m.personCharges {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetPersonCharges resets all changes to the "personCharges" edge.
+func (m *UserMutation) ResetPersonCharges() {
+	m.personCharges = nil
+	m.clearedpersonCharges = false
+	m.removedpersonCharges = nil
+}
+
 // Where appends a list predicates to the UserMutation builder.
 func (m *UserMutation) Where(ps ...predicate.User) {
 	m.predicates = append(m.predicates, ps...)
@@ -4335,12 +4421,15 @@ func (m *UserMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *UserMutation) AddedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.groups != nil {
 		edges = append(edges, user.EdgeGroups)
 	}
 	if m.admins != nil {
 		edges = append(edges, user.EdgeAdmins)
+	}
+	if m.personCharges != nil {
+		edges = append(edges, user.EdgePersonCharges)
 	}
 	return edges
 }
@@ -4361,18 +4450,27 @@ func (m *UserMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case user.EdgePersonCharges:
+		ids := make([]ent.Value, 0, len(m.personCharges))
+		for id := range m.personCharges {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *UserMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.removedgroups != nil {
 		edges = append(edges, user.EdgeGroups)
 	}
 	if m.removedadmins != nil {
 		edges = append(edges, user.EdgeAdmins)
+	}
+	if m.removedpersonCharges != nil {
+		edges = append(edges, user.EdgePersonCharges)
 	}
 	return edges
 }
@@ -4393,18 +4491,27 @@ func (m *UserMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case user.EdgePersonCharges:
+		ids := make([]ent.Value, 0, len(m.removedpersonCharges))
+		for id := range m.removedpersonCharges {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *UserMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.clearedgroups {
 		edges = append(edges, user.EdgeGroups)
 	}
 	if m.clearedadmins {
 		edges = append(edges, user.EdgeAdmins)
+	}
+	if m.clearedpersonCharges {
+		edges = append(edges, user.EdgePersonCharges)
 	}
 	return edges
 }
@@ -4417,6 +4524,8 @@ func (m *UserMutation) EdgeCleared(name string) bool {
 		return m.clearedgroups
 	case user.EdgeAdmins:
 		return m.clearedadmins
+	case user.EdgePersonCharges:
+		return m.clearedpersonCharges
 	}
 	return false
 }
@@ -4438,6 +4547,9 @@ func (m *UserMutation) ResetEdge(name string) error {
 		return nil
 	case user.EdgeAdmins:
 		m.ResetAdmins()
+		return nil
+	case user.EdgePersonCharges:
+		m.ResetPersonCharges()
 		return nil
 	}
 	return fmt.Errorf("unknown User edge %s", name)

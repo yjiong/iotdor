@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/yjiong/iotdor/ent/group"
+	"github.com/yjiong/iotdor/ent/organization"
 	"github.com/yjiong/iotdor/ent/user"
 )
 
@@ -131,6 +132,21 @@ func (uc *UserCreate) AddAdmins(g ...*Group) *UserCreate {
 		ids[i] = g[i].ID
 	}
 	return uc.AddAdminIDs(ids...)
+}
+
+// AddPersonChargeIDs adds the "personCharges" edge to the Organization entity by IDs.
+func (uc *UserCreate) AddPersonChargeIDs(ids ...int) *UserCreate {
+	uc.mutation.AddPersonChargeIDs(ids...)
+	return uc
+}
+
+// AddPersonCharges adds the "personCharges" edges to the Organization entity.
+func (uc *UserCreate) AddPersonCharges(o ...*Organization) *UserCreate {
+	ids := make([]int, len(o))
+	for i := range o {
+		ids[i] = o[i].ID
+	}
+	return uc.AddPersonChargeIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -347,6 +363,25 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: group.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.PersonChargesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   user.PersonChargesTable,
+			Columns: user.PersonChargesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: organization.FieldID,
 				},
 			},
 		}

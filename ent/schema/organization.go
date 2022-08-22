@@ -21,7 +21,6 @@ func (Organization) Fields() []ent.Field {
 		field.String("floor").Optional(),
 		field.String("unitNo").Optional(),
 		field.String("longitudeAndLatituude"),
-		field.String("personCharge"),
 		field.String("summary").Optional(),
 	}
 }
@@ -30,6 +29,7 @@ func (Organization) Fields() []ent.Field {
 func (Organization) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("devices", Device.Type),
+		edge.To("personCharges", User.Type),
 	}
 }
 

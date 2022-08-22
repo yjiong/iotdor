@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/yjiong/iotdor/ent/group"
+	"github.com/yjiong/iotdor/ent/organization"
 	"github.com/yjiong/iotdor/ent/predicate"
 	"github.com/yjiong/iotdor/ent/user"
 )
@@ -19,14 +20,15 @@ import (
 // UserQuery is the builder for querying User entities.
 type UserQuery struct {
 	config
-	limit      *int
-	offset     *int
-	unique     *bool
-	order      []OrderFunc
-	fields     []string
-	predicates []predicate.User
-	withGroups *GroupQuery
-	withAdmins *GroupQuery
+	limit             *int
+	offset            *int
+	unique            *bool
+	order             []OrderFunc
+	fields            []string
+	predicates        []predicate.User
+	withGroups        *GroupQuery
+	withAdmins        *GroupQuery
+	withPersonCharges *OrganizationQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -100,6 +102,28 @@ func (uq *UserQuery) QueryAdmins() *GroupQuery {
 			sqlgraph.From(user.Table, user.FieldID, selector),
 			sqlgraph.To(group.Table, group.FieldID),
 			sqlgraph.Edge(sqlgraph.M2M, true, user.AdminsTable, user.AdminsPrimaryKey...),
+		)
+		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryPersonCharges chains the current query on the "personCharges" edge.
+func (uq *UserQuery) QueryPersonCharges() *OrganizationQuery {
+	query := &OrganizationQuery{config: uq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := uq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := uq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(organization.Table, organization.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, user.PersonChargesTable, user.PersonChargesPrimaryKey...),
 		)
 		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
 		return fromU, nil
@@ -283,13 +307,14 @@ func (uq *UserQuery) Clone() *UserQuery {
 		return nil
 	}
 	return &UserQuery{
-		config:     uq.config,
-		limit:      uq.limit,
-		offset:     uq.offset,
-		order:      append([]OrderFunc{}, uq.order...),
-		predicates: append([]predicate.User{}, uq.predicates...),
-		withGroups: uq.withGroups.Clone(),
-		withAdmins: uq.withAdmins.Clone(),
+		config:            uq.config,
+		limit:             uq.limit,
+		offset:            uq.offset,
+		order:             append([]OrderFunc{}, uq.order...),
+		predicates:        append([]predicate.User{}, uq.predicates...),
+		withGroups:        uq.withGroups.Clone(),
+		withAdmins:        uq.withAdmins.Clone(),
+		withPersonCharges: uq.withPersonCharges.Clone(),
 		// clone intermediate query.
 		sql:    uq.sql.Clone(),
 		path:   uq.path,
@@ -316,6 +341,17 @@ func (uq *UserQuery) WithAdmins(opts ...func(*GroupQuery)) *UserQuery {
 		opt(query)
 	}
 	uq.withAdmins = query
+	return uq
+}
+
+// WithPersonCharges tells the query-builder to eager-load the nodes that are connected to
+// the "personCharges" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithPersonCharges(opts ...func(*OrganizationQuery)) *UserQuery {
+	query := &OrganizationQuery{config: uq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	uq.withPersonCharges = query
 	return uq
 }
 
@@ -389,9 +425,10 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 	var (
 		nodes       = []*User{}
 		_spec       = uq.querySpec()
-		loadedTypes = [2]bool{
+		loadedTypes = [3]bool{
 			uq.withGroups != nil,
 			uq.withAdmins != nil,
+			uq.withPersonCharges != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]interface{}, error) {
@@ -423,6 +460,13 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 		if err := uq.loadAdmins(ctx, query, nodes,
 			func(n *User) { n.Edges.Admins = []*Group{} },
 			func(n *User, e *Group) { n.Edges.Admins = append(n.Edges.Admins, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := uq.withPersonCharges; query != nil {
+		if err := uq.loadPersonCharges(ctx, query, nodes,
+			func(n *User) { n.Edges.PersonCharges = []*Organization{} },
+			func(n *User, e *Organization) { n.Edges.PersonCharges = append(n.Edges.PersonCharges, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -538,6 +582,64 @@ func (uq *UserQuery) loadAdmins(ctx context.Context, query *GroupQuery, nodes []
 		nodes, ok := nids[n.ID]
 		if !ok {
 			return fmt.Errorf(`unexpected "admins" node returned %v`, n.ID)
+		}
+		for kn := range nodes {
+			assign(kn, n)
+		}
+	}
+	return nil
+}
+func (uq *UserQuery) loadPersonCharges(ctx context.Context, query *OrganizationQuery, nodes []*User, init func(*User), assign func(*User, *Organization)) error {
+	edgeIDs := make([]driver.Value, len(nodes))
+	byID := make(map[int]*User)
+	nids := make(map[int]map[*User]struct{})
+	for i, node := range nodes {
+		edgeIDs[i] = node.ID
+		byID[node.ID] = node
+		if init != nil {
+			init(node)
+		}
+	}
+	query.Where(func(s *sql.Selector) {
+		joinT := sql.Table(user.PersonChargesTable)
+		s.Join(joinT).On(s.C(organization.FieldID), joinT.C(user.PersonChargesPrimaryKey[0]))
+		s.Where(sql.InValues(joinT.C(user.PersonChargesPrimaryKey[1]), edgeIDs...))
+		columns := s.SelectedColumns()
+		s.Select(joinT.C(user.PersonChargesPrimaryKey[1]))
+		s.AppendSelect(columns...)
+		s.SetDistinct(false)
+	})
+	if err := query.prepareQuery(ctx); err != nil {
+		return err
+	}
+	neighbors, err := query.sqlAll(ctx, func(_ context.Context, spec *sqlgraph.QuerySpec) {
+		assign := spec.Assign
+		values := spec.ScanValues
+		spec.ScanValues = func(columns []string) ([]interface{}, error) {
+			values, err := values(columns[1:])
+			if err != nil {
+				return nil, err
+			}
+			return append([]interface{}{new(sql.NullInt64)}, values...), nil
+		}
+		spec.Assign = func(columns []string, values []interface{}) error {
+			outValue := int(values[0].(*sql.NullInt64).Int64)
+			inValue := int(values[1].(*sql.NullInt64).Int64)
+			if nids[inValue] == nil {
+				nids[inValue] = map[*User]struct{}{byID[outValue]: struct{}{}}
+				return assign(columns[1:], values[1:])
+			}
+			nids[inValue][byID[outValue]] = struct{}{}
+			return nil
+		}
+	})
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected "personCharges" node returned %v`, n.ID)
 		}
 		for kn := range nodes {
 			assign(kn, n)

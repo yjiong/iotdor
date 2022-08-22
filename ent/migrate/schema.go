@@ -108,7 +108,6 @@ var (
 		{Name: "floor", Type: field.TypeString, Nullable: true},
 		{Name: "unit_no", Type: field.TypeString, Nullable: true},
 		{Name: "longitude_and_latituude", Type: field.TypeString},
-		{Name: "person_charge", Type: field.TypeString},
 		{Name: "summary", Type: field.TypeString, Nullable: true},
 	}
 	// OrganizationsTable holds the schema information for the "organizations" table.
@@ -191,6 +190,31 @@ var (
 			},
 		},
 	}
+	// OrganizationPersonChargesColumns holds the columns for the "organization_personCharges" table.
+	OrganizationPersonChargesColumns = []*schema.Column{
+		{Name: "organization_id", Type: field.TypeInt},
+		{Name: "user_id", Type: field.TypeInt},
+	}
+	// OrganizationPersonChargesTable holds the schema information for the "organization_personCharges" table.
+	OrganizationPersonChargesTable = &schema.Table{
+		Name:       "organization_personCharges",
+		Columns:    OrganizationPersonChargesColumns,
+		PrimaryKey: []*schema.Column{OrganizationPersonChargesColumns[0], OrganizationPersonChargesColumns[1]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "organization_personCharges_organization_id",
+				Columns:    []*schema.Column{OrganizationPersonChargesColumns[0]},
+				RefColumns: []*schema.Column{OrganizationsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "organization_personCharges_user_id",
+				Columns:    []*schema.Column{OrganizationPersonChargesColumns[1]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		DevicesTable,
@@ -200,6 +224,7 @@ var (
 		UsersTable,
 		GroupUsersTable,
 		GroupAdminsTable,
+		OrganizationPersonChargesTable,
 	}
 )
 
@@ -211,4 +236,6 @@ func init() {
 	GroupUsersTable.ForeignKeys[1].RefTable = UsersTable
 	GroupAdminsTable.ForeignKeys[0].RefTable = GroupsTable
 	GroupAdminsTable.ForeignKeys[1].RefTable = UsersTable
+	OrganizationPersonChargesTable.ForeignKeys[0].RefTable = OrganizationsTable
+	OrganizationPersonChargesTable.ForeignKeys[1].RefTable = UsersTable
 }

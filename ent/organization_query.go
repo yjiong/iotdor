@@ -14,18 +14,20 @@ import (
 	"github.com/yjiong/iotdor/ent/device"
 	"github.com/yjiong/iotdor/ent/organization"
 	"github.com/yjiong/iotdor/ent/predicate"
+	"github.com/yjiong/iotdor/ent/user"
 )
 
 // OrganizationQuery is the builder for querying Organization entities.
 type OrganizationQuery struct {
 	config
-	limit       *int
-	offset      *int
-	unique      *bool
-	order       []OrderFunc
-	fields      []string
-	predicates  []predicate.Organization
-	withDevices *DeviceQuery
+	limit             *int
+	offset            *int
+	unique            *bool
+	order             []OrderFunc
+	fields            []string
+	predicates        []predicate.Organization
+	withDevices       *DeviceQuery
+	withPersonCharges *UserQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -77,6 +79,28 @@ func (oq *OrganizationQuery) QueryDevices() *DeviceQuery {
 			sqlgraph.From(organization.Table, organization.FieldID, selector),
 			sqlgraph.To(device.Table, device.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, organization.DevicesTable, organization.DevicesColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(oq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryPersonCharges chains the current query on the "personCharges" edge.
+func (oq *OrganizationQuery) QueryPersonCharges() *UserQuery {
+	query := &UserQuery{config: oq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := oq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := oq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(organization.Table, organization.FieldID, selector),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, organization.PersonChargesTable, organization.PersonChargesPrimaryKey...),
 		)
 		fromU = sqlgraph.SetNeighbors(oq.driver.Dialect(), step)
 		return fromU, nil
@@ -260,12 +284,13 @@ func (oq *OrganizationQuery) Clone() *OrganizationQuery {
 		return nil
 	}
 	return &OrganizationQuery{
-		config:      oq.config,
-		limit:       oq.limit,
-		offset:      oq.offset,
-		order:       append([]OrderFunc{}, oq.order...),
-		predicates:  append([]predicate.Organization{}, oq.predicates...),
-		withDevices: oq.withDevices.Clone(),
+		config:            oq.config,
+		limit:             oq.limit,
+		offset:            oq.offset,
+		order:             append([]OrderFunc{}, oq.order...),
+		predicates:        append([]predicate.Organization{}, oq.predicates...),
+		withDevices:       oq.withDevices.Clone(),
+		withPersonCharges: oq.withPersonCharges.Clone(),
 		// clone intermediate query.
 		sql:    oq.sql.Clone(),
 		path:   oq.path,
@@ -281,6 +306,17 @@ func (oq *OrganizationQuery) WithDevices(opts ...func(*DeviceQuery)) *Organizati
 		opt(query)
 	}
 	oq.withDevices = query
+	return oq
+}
+
+// WithPersonCharges tells the query-builder to eager-load the nodes that are connected to
+// the "personCharges" edge. The optional arguments are used to configure the query builder of the edge.
+func (oq *OrganizationQuery) WithPersonCharges(opts ...func(*UserQuery)) *OrganizationQuery {
+	query := &UserQuery{config: oq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	oq.withPersonCharges = query
 	return oq
 }
 
@@ -354,8 +390,9 @@ func (oq *OrganizationQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 	var (
 		nodes       = []*Organization{}
 		_spec       = oq.querySpec()
-		loadedTypes = [1]bool{
+		loadedTypes = [2]bool{
 			oq.withDevices != nil,
+			oq.withPersonCharges != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]interface{}, error) {
@@ -380,6 +417,13 @@ func (oq *OrganizationQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 		if err := oq.loadDevices(ctx, query, nodes,
 			func(n *Organization) { n.Edges.Devices = []*Device{} },
 			func(n *Organization, e *Device) { n.Edges.Devices = append(n.Edges.Devices, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := oq.withPersonCharges; query != nil {
+		if err := oq.loadPersonCharges(ctx, query, nodes,
+			func(n *Organization) { n.Edges.PersonCharges = []*User{} },
+			func(n *Organization, e *User) { n.Edges.PersonCharges = append(n.Edges.PersonCharges, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -414,6 +458,64 @@ func (oq *OrganizationQuery) loadDevices(ctx context.Context, query *DeviceQuery
 			return fmt.Errorf(`unexpected foreign-key "organization_devices" returned %v for node %v`, *fk, n.ID)
 		}
 		assign(node, n)
+	}
+	return nil
+}
+func (oq *OrganizationQuery) loadPersonCharges(ctx context.Context, query *UserQuery, nodes []*Organization, init func(*Organization), assign func(*Organization, *User)) error {
+	edgeIDs := make([]driver.Value, len(nodes))
+	byID := make(map[int]*Organization)
+	nids := make(map[int]map[*Organization]struct{})
+	for i, node := range nodes {
+		edgeIDs[i] = node.ID
+		byID[node.ID] = node
+		if init != nil {
+			init(node)
+		}
+	}
+	query.Where(func(s *sql.Selector) {
+		joinT := sql.Table(organization.PersonChargesTable)
+		s.Join(joinT).On(s.C(user.FieldID), joinT.C(organization.PersonChargesPrimaryKey[1]))
+		s.Where(sql.InValues(joinT.C(organization.PersonChargesPrimaryKey[0]), edgeIDs...))
+		columns := s.SelectedColumns()
+		s.Select(joinT.C(organization.PersonChargesPrimaryKey[0]))
+		s.AppendSelect(columns...)
+		s.SetDistinct(false)
+	})
+	if err := query.prepareQuery(ctx); err != nil {
+		return err
+	}
+	neighbors, err := query.sqlAll(ctx, func(_ context.Context, spec *sqlgraph.QuerySpec) {
+		assign := spec.Assign
+		values := spec.ScanValues
+		spec.ScanValues = func(columns []string) ([]interface{}, error) {
+			values, err := values(columns[1:])
+			if err != nil {
+				return nil, err
+			}
+			return append([]interface{}{new(sql.NullInt64)}, values...), nil
+		}
+		spec.Assign = func(columns []string, values []interface{}) error {
+			outValue := int(values[0].(*sql.NullInt64).Int64)
+			inValue := int(values[1].(*sql.NullInt64).Int64)
+			if nids[inValue] == nil {
+				nids[inValue] = map[*Organization]struct{}{byID[outValue]: struct{}{}}
+				return assign(columns[1:], values[1:])
+			}
+			nids[inValue][byID[outValue]] = struct{}{}
+			return nil
+		}
+	})
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected "personCharges" node returned %v`, n.ID)
+		}
+		for kn := range nodes {
+			assign(kn, n)
+		}
 	}
 	return nil
 }

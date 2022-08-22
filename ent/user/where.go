@@ -816,6 +816,34 @@ func HasAdminsWith(preds ...predicate.Group) predicate.User {
 	})
 }
 
+// HasPersonCharges applies the HasEdge predicate on the "personCharges" edge.
+func HasPersonCharges() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(PersonChargesTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, PersonChargesTable, PersonChargesPrimaryKey...),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasPersonChargesWith applies the HasEdge predicate on the "personCharges" edge with a given conditions (other predicates).
+func HasPersonChargesWith(preds ...predicate.Organization) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(PersonChargesInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, PersonChargesTable, PersonChargesPrimaryKey...),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.User) predicate.User {
 	return predicate.User(func(s *sql.Selector) {

@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/yjiong/iotdor/ent/device"
 	"github.com/yjiong/iotdor/ent/organization"
+	"github.com/yjiong/iotdor/ent/user"
 )
 
 // OrganizationCreate is the builder for creating a Organization entity.
@@ -95,12 +96,6 @@ func (oc *OrganizationCreate) SetLongitudeAndLatituude(s string) *OrganizationCr
 	return oc
 }
 
-// SetPersonCharge sets the "personCharge" field.
-func (oc *OrganizationCreate) SetPersonCharge(s string) *OrganizationCreate {
-	oc.mutation.SetPersonCharge(s)
-	return oc
-}
-
 // SetSummary sets the "summary" field.
 func (oc *OrganizationCreate) SetSummary(s string) *OrganizationCreate {
 	oc.mutation.SetSummary(s)
@@ -128,6 +123,21 @@ func (oc *OrganizationCreate) AddDevices(d ...*Device) *OrganizationCreate {
 		ids[i] = d[i].ID
 	}
 	return oc.AddDeviceIDs(ids...)
+}
+
+// AddPersonChargeIDs adds the "personCharges" edge to the User entity by IDs.
+func (oc *OrganizationCreate) AddPersonChargeIDs(ids ...int) *OrganizationCreate {
+	oc.mutation.AddPersonChargeIDs(ids...)
+	return oc
+}
+
+// AddPersonCharges adds the "personCharges" edges to the User entity.
+func (oc *OrganizationCreate) AddPersonCharges(u ...*User) *OrganizationCreate {
+	ids := make([]int, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
+	}
+	return oc.AddPersonChargeIDs(ids...)
 }
 
 // Mutation returns the OrganizationMutation object of the builder.
@@ -234,9 +244,6 @@ func (oc *OrganizationCreate) check() error {
 	if _, ok := oc.mutation.LongitudeAndLatituude(); !ok {
 		return &ValidationError{Name: "longitudeAndLatituude", err: errors.New(`ent: missing required field "Organization.longitudeAndLatituude"`)}
 	}
-	if _, ok := oc.mutation.PersonCharge(); !ok {
-		return &ValidationError{Name: "personCharge", err: errors.New(`ent: missing required field "Organization.personCharge"`)}
-	}
 	return nil
 }
 
@@ -320,14 +327,6 @@ func (oc *OrganizationCreate) createSpec() (*Organization, *sqlgraph.CreateSpec)
 		})
 		_node.LongitudeAndLatituude = value
 	}
-	if value, ok := oc.mutation.PersonCharge(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: organization.FieldPersonCharge,
-		})
-		_node.PersonCharge = value
-	}
 	if value, ok := oc.mutation.Summary(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
@@ -347,6 +346,25 @@ func (oc *OrganizationCreate) createSpec() (*Organization, *sqlgraph.CreateSpec)
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: device.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := oc.mutation.PersonChargesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   organization.PersonChargesTable,
+			Columns: organization.PersonChargesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: user.FieldID,
 				},
 			},
 		}

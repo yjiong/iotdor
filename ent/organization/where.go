@@ -130,13 +130,6 @@ func LongitudeAndLatituude(v string) predicate.Organization {
 	})
 }
 
-// PersonCharge applies equality check predicate on the "personCharge" field. It's identical to PersonChargeEQ.
-func PersonCharge(v string) predicate.Organization {
-	return predicate.Organization(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldPersonCharge), v))
-	})
-}
-
 // Summary applies equality check predicate on the "summary" field. It's identical to SummaryEQ.
 func Summary(v string) predicate.Organization {
 	return predicate.Organization(func(s *sql.Selector) {
@@ -795,105 +788,6 @@ func LongitudeAndLatituudeContainsFold(v string) predicate.Organization {
 	})
 }
 
-// PersonChargeEQ applies the EQ predicate on the "personCharge" field.
-func PersonChargeEQ(v string) predicate.Organization {
-	return predicate.Organization(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldPersonCharge), v))
-	})
-}
-
-// PersonChargeNEQ applies the NEQ predicate on the "personCharge" field.
-func PersonChargeNEQ(v string) predicate.Organization {
-	return predicate.Organization(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldPersonCharge), v))
-	})
-}
-
-// PersonChargeIn applies the In predicate on the "personCharge" field.
-func PersonChargeIn(vs ...string) predicate.Organization {
-	v := make([]interface{}, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Organization(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldPersonCharge), v...))
-	})
-}
-
-// PersonChargeNotIn applies the NotIn predicate on the "personCharge" field.
-func PersonChargeNotIn(vs ...string) predicate.Organization {
-	v := make([]interface{}, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Organization(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldPersonCharge), v...))
-	})
-}
-
-// PersonChargeGT applies the GT predicate on the "personCharge" field.
-func PersonChargeGT(v string) predicate.Organization {
-	return predicate.Organization(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldPersonCharge), v))
-	})
-}
-
-// PersonChargeGTE applies the GTE predicate on the "personCharge" field.
-func PersonChargeGTE(v string) predicate.Organization {
-	return predicate.Organization(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldPersonCharge), v))
-	})
-}
-
-// PersonChargeLT applies the LT predicate on the "personCharge" field.
-func PersonChargeLT(v string) predicate.Organization {
-	return predicate.Organization(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldPersonCharge), v))
-	})
-}
-
-// PersonChargeLTE applies the LTE predicate on the "personCharge" field.
-func PersonChargeLTE(v string) predicate.Organization {
-	return predicate.Organization(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldPersonCharge), v))
-	})
-}
-
-// PersonChargeContains applies the Contains predicate on the "personCharge" field.
-func PersonChargeContains(v string) predicate.Organization {
-	return predicate.Organization(func(s *sql.Selector) {
-		s.Where(sql.Contains(s.C(FieldPersonCharge), v))
-	})
-}
-
-// PersonChargeHasPrefix applies the HasPrefix predicate on the "personCharge" field.
-func PersonChargeHasPrefix(v string) predicate.Organization {
-	return predicate.Organization(func(s *sql.Selector) {
-		s.Where(sql.HasPrefix(s.C(FieldPersonCharge), v))
-	})
-}
-
-// PersonChargeHasSuffix applies the HasSuffix predicate on the "personCharge" field.
-func PersonChargeHasSuffix(v string) predicate.Organization {
-	return predicate.Organization(func(s *sql.Selector) {
-		s.Where(sql.HasSuffix(s.C(FieldPersonCharge), v))
-	})
-}
-
-// PersonChargeEqualFold applies the EqualFold predicate on the "personCharge" field.
-func PersonChargeEqualFold(v string) predicate.Organization {
-	return predicate.Organization(func(s *sql.Selector) {
-		s.Where(sql.EqualFold(s.C(FieldPersonCharge), v))
-	})
-}
-
-// PersonChargeContainsFold applies the ContainsFold predicate on the "personCharge" field.
-func PersonChargeContainsFold(v string) predicate.Organization {
-	return predicate.Organization(func(s *sql.Selector) {
-		s.Where(sql.ContainsFold(s.C(FieldPersonCharge), v))
-	})
-}
-
 // SummaryEQ applies the EQ predicate on the "summary" field.
 func SummaryEQ(v string) predicate.Organization {
 	return predicate.Organization(func(s *sql.Selector) {
@@ -1026,6 +920,34 @@ func HasDevicesWith(preds ...predicate.Device) predicate.Organization {
 			sqlgraph.From(Table, FieldID),
 			sqlgraph.To(DevicesInverseTable, FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, DevicesTable, DevicesColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasPersonCharges applies the HasEdge predicate on the "personCharges" edge.
+func HasPersonCharges() predicate.Organization {
+	return predicate.Organization(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(PersonChargesTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, PersonChargesTable, PersonChargesPrimaryKey...),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasPersonChargesWith applies the HasEdge predicate on the "personCharges" edge with a given conditions (other predicates).
+func HasPersonChargesWith(preds ...predicate.User) predicate.Organization {
+	return predicate.Organization(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(PersonChargesInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, PersonChargesTable, PersonChargesPrimaryKey...),
 		)
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {

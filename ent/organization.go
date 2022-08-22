@@ -30,8 +30,6 @@ type Organization struct {
 	UnitNo string `json:"unitNo,omitempty"`
 	// LongitudeAndLatituude holds the value of the "longitudeAndLatituude" field.
 	LongitudeAndLatituude string `json:"longitudeAndLatituude,omitempty"`
-	// PersonCharge holds the value of the "personCharge" field.
-	PersonCharge string `json:"personCharge,omitempty"`
 	// Summary holds the value of the "summary" field.
 	Summary string `json:"summary,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -43,9 +41,11 @@ type Organization struct {
 type OrganizationEdges struct {
 	// Devices holds the value of the devices edge.
 	Devices []*Device `json:"devices,omitempty"`
+	// PersonCharges holds the value of the personCharges edge.
+	PersonCharges []*User `json:"personCharges,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [1]bool
+	loadedTypes [2]bool
 }
 
 // DevicesOrErr returns the Devices value or an error if the edge
@@ -57,6 +57,15 @@ func (e OrganizationEdges) DevicesOrErr() ([]*Device, error) {
 	return nil, &NotLoadedError{edge: "devices"}
 }
 
+// PersonChargesOrErr returns the PersonCharges value or an error if the edge
+// was not loaded in eager-loading.
+func (e OrganizationEdges) PersonChargesOrErr() ([]*User, error) {
+	if e.loadedTypes[1] {
+		return e.PersonCharges, nil
+	}
+	return nil, &NotLoadedError{edge: "personCharges"}
+}
+
 // scanValues returns the types for scanning values from sql.Rows.
 func (*Organization) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
@@ -64,7 +73,7 @@ func (*Organization) scanValues(columns []string) ([]interface{}, error) {
 		switch columns[i] {
 		case organization.FieldID:
 			values[i] = new(sql.NullInt64)
-		case organization.FieldName, organization.FieldAddress, organization.FieldFloor, organization.FieldUnitNo, organization.FieldLongitudeAndLatituude, organization.FieldPersonCharge, organization.FieldSummary:
+		case organization.FieldName, organization.FieldAddress, organization.FieldFloor, organization.FieldUnitNo, organization.FieldLongitudeAndLatituude, organization.FieldSummary:
 			values[i] = new(sql.NullString)
 		case organization.FieldCreateTime, organization.FieldUpdateTime:
 			values[i] = new(sql.NullTime)
@@ -131,12 +140,6 @@ func (o *Organization) assignValues(columns []string, values []interface{}) erro
 			} else if value.Valid {
 				o.LongitudeAndLatituude = value.String
 			}
-		case organization.FieldPersonCharge:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field personCharge", values[i])
-			} else if value.Valid {
-				o.PersonCharge = value.String
-			}
 		case organization.FieldSummary:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field summary", values[i])
@@ -151,6 +154,11 @@ func (o *Organization) assignValues(columns []string, values []interface{}) erro
 // QueryDevices queries the "devices" edge of the Organization entity.
 func (o *Organization) QueryDevices() *DeviceQuery {
 	return (&OrganizationClient{config: o.config}).QueryDevices(o)
+}
+
+// QueryPersonCharges queries the "personCharges" edge of the Organization entity.
+func (o *Organization) QueryPersonCharges() *UserQuery {
+	return (&OrganizationClient{config: o.config}).QueryPersonCharges(o)
 }
 
 // Update returns a builder for updating this Organization.
@@ -196,9 +204,6 @@ func (o *Organization) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("longitudeAndLatituude=")
 	builder.WriteString(o.LongitudeAndLatituude)
-	builder.WriteString(", ")
-	builder.WriteString("personCharge=")
-	builder.WriteString(o.PersonCharge)
 	builder.WriteString(", ")
 	builder.WriteString("summary=")
 	builder.WriteString(o.Summary)

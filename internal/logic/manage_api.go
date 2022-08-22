@@ -97,7 +97,6 @@ func (m *Manage) AddOrganization(o ent.Organization) error {
 		SetFloor(o.Floor).
 		SetAddress(o.Address).
 		SetName(o.Name).
-		SetUnitNo(o.PersonCharge).
 		SetUnitNo(o.UnitNo).
 		SetLongitudeAndLatituude(o.LongitudeAndLatituude).
 		SetSummary(o.Summary).Exec(m.ctx)
@@ -109,7 +108,6 @@ func (m *Manage) UpdateOrganization(name string, o ent.Organization) error {
 		Where(organization.Name(name)).
 		SetFloor(o.Floor).
 		SetAddress(o.Address).
-		SetUnitNo(o.PersonCharge).
 		SetUnitNo(o.UnitNo).
 		SetLongitudeAndLatituude(o.LongitudeAndLatituude).
 		SetSummary(o.Summary).Exec(m.ctx)
@@ -163,4 +161,24 @@ func (m *Manage) RemoveDeviceFromOrganization(devid string) error {
 		rerr = derr
 	}
 	return rerr
+}
+
+// SetPersonChargeWithOrganization .....
+func (m *Manage) SetPersonChargeWithOrganization(oname, uname string) error {
+	o, oerr := m.entC.Organization.Query().Where(organization.Name(oname)).Only(m.ctx)
+	u, uerr := m.entC.User.Query().Where(user.Name(uname)).Only(m.ctx)
+	if oerr == nil && uerr == nil {
+		return u.Update().AddPersonCharges(o).Exec(m.ctx)
+	}
+	return fmt.Errorf("%v-%v", oerr, uerr)
+}
+
+// RemovePersonChargeWithOrganization .....
+func (m *Manage) RemovePersonChargeWithOrganization(oname, uname string) error {
+	o, oerr := m.entC.Organization.Query().Where(organization.Name(oname)).Only(m.ctx)
+	u, uerr := m.entC.User.Query().Where(user.Name(uname)).Only(m.ctx)
+	if oerr == nil && uerr == nil {
+		return o.Update().RemovePersonCharges(u).Exec(m.ctx)
+	}
+	return fmt.Errorf("%v-%v", oerr, uerr)
 }

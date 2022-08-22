@@ -25,12 +25,12 @@ const (
 	FieldUnitNo = "unit_no"
 	// FieldLongitudeAndLatituude holds the string denoting the longitudeandlatituude field in the database.
 	FieldLongitudeAndLatituude = "longitude_and_latituude"
-	// FieldPersonCharge holds the string denoting the personcharge field in the database.
-	FieldPersonCharge = "person_charge"
 	// FieldSummary holds the string denoting the summary field in the database.
 	FieldSummary = "summary"
 	// EdgeDevices holds the string denoting the devices edge name in mutations.
 	EdgeDevices = "devices"
+	// EdgePersonCharges holds the string denoting the personcharges edge name in mutations.
+	EdgePersonCharges = "personCharges"
 	// Table holds the table name of the organization in the database.
 	Table = "organizations"
 	// DevicesTable is the table that holds the devices relation/edge.
@@ -40,6 +40,11 @@ const (
 	DevicesInverseTable = "devices"
 	// DevicesColumn is the table column denoting the devices relation/edge.
 	DevicesColumn = "organization_devices"
+	// PersonChargesTable is the table that holds the personCharges relation/edge. The primary key declared below.
+	PersonChargesTable = "organization_personCharges"
+	// PersonChargesInverseTable is the table name for the User entity.
+	// It exists in this package in order to avoid circular dependency with the "user" package.
+	PersonChargesInverseTable = "users"
 )
 
 // Columns holds all SQL columns for organization fields.
@@ -52,9 +57,14 @@ var Columns = []string{
 	FieldFloor,
 	FieldUnitNo,
 	FieldLongitudeAndLatituude,
-	FieldPersonCharge,
 	FieldSummary,
 }
+
+var (
+	// PersonChargesPrimaryKey and PersonChargesColumn2 are the table columns denoting the
+	// primary key for the personCharges relation (M2M).
+	PersonChargesPrimaryKey = []string{"organization_id", "user_id"}
+)
 
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {

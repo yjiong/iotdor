@@ -20,7 +20,7 @@ paths:
             name: user_info
             required: true
             schema:
-              $ref: '#/components/schemas/TUser'
+              $ref: '#/components/schemas/LoginUser'
       responses:
         '200':
           description: ok
@@ -553,10 +553,10 @@ paths:
         - 系统组织结构关联信息
       summary:  删除组织结构信息
       parameters:
-        - description: 组织结构的名称
-          name: oname
-          in: path
-          required: true
+        description: 组织结构的名称
+        name: oname
+        in: path
+        required: true
       responses:
         '200':
           description: ok
@@ -570,9 +570,126 @@ paths:
           description: add user failed
           schema:
             type: object
+  /config/sys/add_organization_person_charge/{oname}/{uname}:
+    post:
+      security:
+        - api_key: []
+      consumes:
+        - application/json
+      tags:
+        - 系统组织结构关联信息
+      summary:  设置组织结构负责人
+      parameters:
+        - description: 组织结构名
+          type: string
+          name: oname
+          in: path
+          required: true
+        - description: 设置组织结构负责人(需在用户内已经存在的)
+          type: string
+          name: uname
+          in: path
+          required: true
+      responses:
+        '200':
+          description: ok
+          schema:
+            type: object
+        '401':
+          description: access denided
+          schema:
+            type: object
+        '404':
+          description: add Organization person charge failed
+          schema:
+            type: object
+  /config/sys/remove_organization_person_charge/{uname}:
+    delete:
+      security:
+        - api_key: []
+      consumes:
+        - application/json
+      tags:
+        - 系统组织结构关联信息
+      summary:  删除组织结构负责人
+      parameters:
+        - description: 删除组织结构负责人
+          type: string
+          name: uname
+          in: path
+          required: true
+      responses:
+        '200':
+          description: ok
+          schema:
+            type: object
+        '401':
+          description: access denided
+          schema:
+            type: object
+        '404':
+          description: remove Organization person charge failed
+          schema:
+            type: object
+  /config/sys/add_organization_device/{devid}:
+    post:
+      security:
+        - api_key: []
+      consumes:
+        - application/json
+      tags:
+        - 系统组织结构关联信息
+      summary:  关联组织结构的设备
+      parameters:
+        - description: 关联组织结构的设备(需在设备列表内存在，并且尚未关联)
+          type: string
+          name: devid
+          in: path
+          required: true
+      responses:
+        '200':
+          description: ok
+          schema:
+            type: object
+        '401':
+          description: access denided
+          schema:
+            type: object
+        '404':
+          description: add Organization device
+          schema:
+            type: object
+  /config/sys/remove_organization_device/{devid}:
+    delete:
+      security:
+        - api_key: []
+      consumes:
+        - application/json
+      tags:
+        - 系统组织结构关联信息
+      summary:  除移已关联组织结构的设备
+      parameters:
+        - description: 除移已关联组织结构的设备
+          type: string
+          name: devid
+          in: path
+          required: true
+      responses:
+        '200':
+          description: ok
+          schema:
+            type: object
+        '401':
+          description: access denided
+          schema:
+            type: object
+        '404':
+          description: add Organization device
+          schema:
+            type: object
 components:
   schemas:
-    TUser:
+    LoginUser:
       type: object
       properties:
         password:

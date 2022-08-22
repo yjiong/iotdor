@@ -635,6 +635,22 @@ func (c *OrganizationClient) QueryDevices(o *Organization) *DeviceQuery {
 	return query
 }
 
+// QueryPersonCharges queries the personCharges edge of a Organization.
+func (c *OrganizationClient) QueryPersonCharges(o *Organization) *UserQuery {
+	query := &UserQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := o.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(organization.Table, organization.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, organization.PersonChargesTable, organization.PersonChargesPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(o.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *OrganizationClient) Hooks() []Hook {
 	return c.hooks.Organization
@@ -750,6 +766,22 @@ func (c *UserClient) QueryAdmins(u *User) *GroupQuery {
 			sqlgraph.From(user.Table, user.FieldID, id),
 			sqlgraph.To(group.Table, group.FieldID),
 			sqlgraph.Edge(sqlgraph.M2M, true, user.AdminsTable, user.AdminsPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryPersonCharges queries the personCharges edge of a User.
+func (c *UserClient) QueryPersonCharges(u *User) *OrganizationQuery {
+	query := &OrganizationQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(organization.Table, organization.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, user.PersonChargesTable, user.PersonChargesPrimaryKey...),
 		)
 		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
 		return fromV, nil

@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/yjiong/iotdor/ent/group"
+	"github.com/yjiong/iotdor/ent/organization"
 	"github.com/yjiong/iotdor/ent/predicate"
 	"github.com/yjiong/iotdor/ent/user"
 )
@@ -137,6 +138,21 @@ func (uu *UserUpdate) AddAdmins(g ...*Group) *UserUpdate {
 	return uu.AddAdminIDs(ids...)
 }
 
+// AddPersonChargeIDs adds the "personCharges" edge to the Organization entity by IDs.
+func (uu *UserUpdate) AddPersonChargeIDs(ids ...int) *UserUpdate {
+	uu.mutation.AddPersonChargeIDs(ids...)
+	return uu
+}
+
+// AddPersonCharges adds the "personCharges" edges to the Organization entity.
+func (uu *UserUpdate) AddPersonCharges(o ...*Organization) *UserUpdate {
+	ids := make([]int, len(o))
+	for i := range o {
+		ids[i] = o[i].ID
+	}
+	return uu.AddPersonChargeIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uu *UserUpdate) Mutation() *UserMutation {
 	return uu.mutation
@@ -182,6 +198,27 @@ func (uu *UserUpdate) RemoveAdmins(g ...*Group) *UserUpdate {
 		ids[i] = g[i].ID
 	}
 	return uu.RemoveAdminIDs(ids...)
+}
+
+// ClearPersonCharges clears all "personCharges" edges to the Organization entity.
+func (uu *UserUpdate) ClearPersonCharges() *UserUpdate {
+	uu.mutation.ClearPersonCharges()
+	return uu
+}
+
+// RemovePersonChargeIDs removes the "personCharges" edge to Organization entities by IDs.
+func (uu *UserUpdate) RemovePersonChargeIDs(ids ...int) *UserUpdate {
+	uu.mutation.RemovePersonChargeIDs(ids...)
+	return uu
+}
+
+// RemovePersonCharges removes "personCharges" edges to Organization entities.
+func (uu *UserUpdate) RemovePersonCharges(o ...*Organization) *UserUpdate {
+	ids := make([]int, len(o))
+	for i := range o {
+		ids[i] = o[i].ID
+	}
+	return uu.RemovePersonChargeIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -433,6 +470,60 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if uu.mutation.PersonChargesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   user.PersonChargesTable,
+			Columns: user.PersonChargesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: organization.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedPersonChargesIDs(); len(nodes) > 0 && !uu.mutation.PersonChargesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   user.PersonChargesTable,
+			Columns: user.PersonChargesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: organization.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.PersonChargesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   user.PersonChargesTable,
+			Columns: user.PersonChargesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: organization.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, uu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{user.Label}
@@ -560,6 +651,21 @@ func (uuo *UserUpdateOne) AddAdmins(g ...*Group) *UserUpdateOne {
 	return uuo.AddAdminIDs(ids...)
 }
 
+// AddPersonChargeIDs adds the "personCharges" edge to the Organization entity by IDs.
+func (uuo *UserUpdateOne) AddPersonChargeIDs(ids ...int) *UserUpdateOne {
+	uuo.mutation.AddPersonChargeIDs(ids...)
+	return uuo
+}
+
+// AddPersonCharges adds the "personCharges" edges to the Organization entity.
+func (uuo *UserUpdateOne) AddPersonCharges(o ...*Organization) *UserUpdateOne {
+	ids := make([]int, len(o))
+	for i := range o {
+		ids[i] = o[i].ID
+	}
+	return uuo.AddPersonChargeIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uuo *UserUpdateOne) Mutation() *UserMutation {
 	return uuo.mutation
@@ -605,6 +711,27 @@ func (uuo *UserUpdateOne) RemoveAdmins(g ...*Group) *UserUpdateOne {
 		ids[i] = g[i].ID
 	}
 	return uuo.RemoveAdminIDs(ids...)
+}
+
+// ClearPersonCharges clears all "personCharges" edges to the Organization entity.
+func (uuo *UserUpdateOne) ClearPersonCharges() *UserUpdateOne {
+	uuo.mutation.ClearPersonCharges()
+	return uuo
+}
+
+// RemovePersonChargeIDs removes the "personCharges" edge to Organization entities by IDs.
+func (uuo *UserUpdateOne) RemovePersonChargeIDs(ids ...int) *UserUpdateOne {
+	uuo.mutation.RemovePersonChargeIDs(ids...)
+	return uuo
+}
+
+// RemovePersonCharges removes "personCharges" edges to Organization entities.
+func (uuo *UserUpdateOne) RemovePersonCharges(o ...*Organization) *UserUpdateOne {
+	ids := make([]int, len(o))
+	for i := range o {
+		ids[i] = o[i].ID
+	}
+	return uuo.RemovePersonChargeIDs(ids...)
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
@@ -878,6 +1005,60 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: group.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.PersonChargesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   user.PersonChargesTable,
+			Columns: user.PersonChargesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: organization.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedPersonChargesIDs(); len(nodes) > 0 && !uuo.mutation.PersonChargesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   user.PersonChargesTable,
+			Columns: user.PersonChargesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: organization.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.PersonChargesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   user.PersonChargesTable,
+			Columns: user.PersonChargesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: organization.FieldID,
 				},
 			},
 		}
