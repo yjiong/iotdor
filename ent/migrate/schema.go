@@ -21,6 +21,7 @@ var (
 		{Name: "delete_flag", Type: field.TypeBool, Nullable: true},
 		{Name: "summary", Type: field.TypeString, Nullable: true},
 		{Name: "gateway_devices", Type: field.TypeInt, Nullable: true},
+		{Name: "organization_devices", Type: field.TypeInt, Nullable: true},
 	}
 	// DevicesTable holds the schema information for the "devices" table.
 	DevicesTable = &schema.Table{
@@ -32,6 +33,12 @@ var (
 				Symbol:     "devices_gateways_devices",
 				Columns:    []*schema.Column{DevicesColumns[10]},
 				RefColumns: []*schema.Column{GatewaysColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:     "devices_organizations_devices",
+				Columns:    []*schema.Column{DevicesColumns[11]},
+				RefColumns: []*schema.Column{OrganizationsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 		},
@@ -90,6 +97,30 @@ var (
 		Name:       "groups",
 		Columns:    GroupsColumns,
 		PrimaryKey: []*schema.Column{GroupsColumns[0]},
+	}
+	// OrganizationsColumns holds the columns for the "organizations" table.
+	OrganizationsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "name", Type: field.TypeString, Unique: true},
+		{Name: "address", Type: field.TypeString},
+		{Name: "floor", Type: field.TypeString, Nullable: true},
+		{Name: "unit_no", Type: field.TypeString, Nullable: true},
+		{Name: "longitude_and_latituude", Type: field.TypeString},
+		{Name: "person_charge", Type: field.TypeString},
+		{Name: "summary", Type: field.TypeString, Nullable: true},
+	}
+	// OrganizationsTable holds the schema information for the "organizations" table.
+	OrganizationsTable = &schema.Table{
+		Name:       "organizations",
+		Columns:    OrganizationsColumns,
+		PrimaryKey: []*schema.Column{OrganizationsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "organization_name",
+				Unique:  false,
+				Columns: []*schema.Column{OrganizationsColumns[1]},
+			},
+		},
 	}
 	// UsersColumns holds the columns for the "users" table.
 	UsersColumns = []*schema.Column{
@@ -163,6 +194,7 @@ var (
 		DevicesTable,
 		GatewaysTable,
 		GroupsTable,
+		OrganizationsTable,
 		UsersTable,
 		GroupUsersTable,
 		GroupAdminsTable,
@@ -171,6 +203,7 @@ var (
 
 func init() {
 	DevicesTable.ForeignKeys[0].RefTable = GatewaysTable
+	DevicesTable.ForeignKeys[1].RefTable = OrganizationsTable
 	GatewaysTable.ForeignKeys[0].RefTable = GroupsTable
 	GroupUsersTable.ForeignKeys[0].RefTable = GroupsTable
 	GroupUsersTable.ForeignKeys[1].RefTable = UsersTable

@@ -10,6 +10,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"github.com/yjiong/iotdor/ent/device"
 	"github.com/yjiong/iotdor/ent/gateway"
+	"github.com/yjiong/iotdor/ent/organization"
 )
 
 // Device is the model entity for the Device schema.
@@ -31,29 +32,45 @@ type Device struct {
 	Conn string `json:"conn,omitempty"`
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
-	// DeleteFlag holds the value of the "DeleteFlag" field.
-	DeleteFlag bool `json:"DeleteFlag,omitempty"`
+	// DeleteFlag holds the value of the "deleteFlag" field.
+	DeleteFlag bool `json:"deleteFlag,omitempty"`
 	// Summary holds the value of the "summary" field.
 	Summary string `json:"summary,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the DeviceQuery when eager-loading is set.
-	Edges           DeviceEdges `json:"edges"`
-	gateway_devices *int
+	Edges                DeviceEdges `json:"edges"`
+	gateway_devices      *int
+	organization_devices *int
 }
 
 // DeviceEdges holds the relations/edges for other nodes in the graph.
 type DeviceEdges struct {
+	// Organization holds the value of the Organization edge.
+	Organization *Organization `json:"Organization,omitempty"`
 	// Gateway holds the value of the gateway edge.
 	Gateway *Gateway `json:"gateway,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [1]bool
+	loadedTypes [2]bool
+}
+
+// OrganizationOrErr returns the Organization value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e DeviceEdges) OrganizationOrErr() (*Organization, error) {
+	if e.loadedTypes[0] {
+		if e.Organization == nil {
+			// Edge was loaded but was not found.
+			return nil, &NotFoundError{label: organization.Label}
+		}
+		return e.Organization, nil
+	}
+	return nil, &NotLoadedError{edge: "Organization"}
 }
 
 // GatewayOrErr returns the Gateway value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e DeviceEdges) GatewayOrErr() (*Gateway, error) {
-	if e.loadedTypes[0] {
+	if e.loadedTypes[1] {
 		if e.Gateway == nil {
 			// Edge was loaded but was not found.
 			return nil, &NotFoundError{label: gateway.Label}
@@ -77,6 +94,8 @@ func (*Device) scanValues(columns []string) ([]interface{}, error) {
 		case device.FieldCreateTime, device.FieldUpdateTime:
 			values[i] = new(sql.NullTime)
 		case device.ForeignKeys[0]: // gateway_devices
+			values[i] = new(sql.NullInt64)
+		case device.ForeignKeys[1]: // organization_devices
 			values[i] = new(sql.NullInt64)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type Device", columns[i])
@@ -143,7 +162,7 @@ func (d *Device) assignValues(columns []string, values []interface{}) error {
 			}
 		case device.FieldDeleteFlag:
 			if value, ok := values[i].(*sql.NullBool); !ok {
-				return fmt.Errorf("unexpected type %T for field DeleteFlag", values[i])
+				return fmt.Errorf("unexpected type %T for field deleteFlag", values[i])
 			} else if value.Valid {
 				d.DeleteFlag = value.Bool
 			}
@@ -160,9 +179,21 @@ func (d *Device) assignValues(columns []string, values []interface{}) error {
 				d.gateway_devices = new(int)
 				*d.gateway_devices = int(value.Int64)
 			}
+		case device.ForeignKeys[1]:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for edge-field organization_devices", value)
+			} else if value.Valid {
+				d.organization_devices = new(int)
+				*d.organization_devices = int(value.Int64)
+			}
 		}
 	}
 	return nil
+}
+
+// QueryOrganization queries the "Organization" edge of the Device entity.
+func (d *Device) QueryOrganization() *OrganizationQuery {
+	return (&DeviceClient{config: d.config}).QueryOrganization(d)
 }
 
 // QueryGateway queries the "gateway" edge of the Device entity.
@@ -214,7 +245,7 @@ func (d *Device) String() string {
 	builder.WriteString("name=")
 	builder.WriteString(d.Name)
 	builder.WriteString(", ")
-	builder.WriteString("DeleteFlag=")
+	builder.WriteString("deleteFlag=")
 	builder.WriteString(fmt.Sprintf("%v", d.DeleteFlag))
 	builder.WriteString(", ")
 	builder.WriteString("summary=")

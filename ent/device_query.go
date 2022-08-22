@@ -12,20 +12,22 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/yjiong/iotdor/ent/device"
 	"github.com/yjiong/iotdor/ent/gateway"
+	"github.com/yjiong/iotdor/ent/organization"
 	"github.com/yjiong/iotdor/ent/predicate"
 )
 
 // DeviceQuery is the builder for querying Device entities.
 type DeviceQuery struct {
 	config
-	limit       *int
-	offset      *int
-	unique      *bool
-	order       []OrderFunc
-	fields      []string
-	predicates  []predicate.Device
-	withGateway *GatewayQuery
-	withFKs     bool
+	limit            *int
+	offset           *int
+	unique           *bool
+	order            []OrderFunc
+	fields           []string
+	predicates       []predicate.Device
+	withOrganization *OrganizationQuery
+	withGateway      *GatewayQuery
+	withFKs          bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -60,6 +62,28 @@ func (dq *DeviceQuery) Unique(unique bool) *DeviceQuery {
 func (dq *DeviceQuery) Order(o ...OrderFunc) *DeviceQuery {
 	dq.order = append(dq.order, o...)
 	return dq
+}
+
+// QueryOrganization chains the current query on the "Organization" edge.
+func (dq *DeviceQuery) QueryOrganization() *OrganizationQuery {
+	query := &OrganizationQuery{config: dq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := dq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := dq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(device.Table, device.FieldID, selector),
+			sqlgraph.To(organization.Table, organization.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, device.OrganizationTable, device.OrganizationColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(dq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
 }
 
 // QueryGateway chains the current query on the "gateway" edge.
@@ -260,17 +284,29 @@ func (dq *DeviceQuery) Clone() *DeviceQuery {
 		return nil
 	}
 	return &DeviceQuery{
-		config:      dq.config,
-		limit:       dq.limit,
-		offset:      dq.offset,
-		order:       append([]OrderFunc{}, dq.order...),
-		predicates:  append([]predicate.Device{}, dq.predicates...),
-		withGateway: dq.withGateway.Clone(),
+		config:           dq.config,
+		limit:            dq.limit,
+		offset:           dq.offset,
+		order:            append([]OrderFunc{}, dq.order...),
+		predicates:       append([]predicate.Device{}, dq.predicates...),
+		withOrganization: dq.withOrganization.Clone(),
+		withGateway:      dq.withGateway.Clone(),
 		// clone intermediate query.
 		sql:    dq.sql.Clone(),
 		path:   dq.path,
 		unique: dq.unique,
 	}
+}
+
+// WithOrganization tells the query-builder to eager-load the nodes that are connected to
+// the "Organization" edge. The optional arguments are used to configure the query builder of the edge.
+func (dq *DeviceQuery) WithOrganization(opts ...func(*OrganizationQuery)) *DeviceQuery {
+	query := &OrganizationQuery{config: dq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	dq.withOrganization = query
+	return dq
 }
 
 // WithGateway tells the query-builder to eager-load the nodes that are connected to
@@ -355,11 +391,12 @@ func (dq *DeviceQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Devic
 		nodes       = []*Device{}
 		withFKs     = dq.withFKs
 		_spec       = dq.querySpec()
-		loadedTypes = [1]bool{
+		loadedTypes = [2]bool{
+			dq.withOrganization != nil,
 			dq.withGateway != nil,
 		}
 	)
-	if dq.withGateway != nil {
+	if dq.withOrganization != nil || dq.withGateway != nil {
 		withFKs = true
 	}
 	if withFKs {
@@ -383,6 +420,12 @@ func (dq *DeviceQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Devic
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
+	if query := dq.withOrganization; query != nil {
+		if err := dq.loadOrganization(ctx, query, nodes, nil,
+			func(n *Device, e *Organization) { n.Edges.Organization = e }); err != nil {
+			return nil, err
+		}
+	}
 	if query := dq.withGateway; query != nil {
 		if err := dq.loadGateway(ctx, query, nodes, nil,
 			func(n *Device, e *Gateway) { n.Edges.Gateway = e }); err != nil {
@@ -392,6 +435,35 @@ func (dq *DeviceQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Devic
 	return nodes, nil
 }
 
+func (dq *DeviceQuery) loadOrganization(ctx context.Context, query *OrganizationQuery, nodes []*Device, init func(*Device), assign func(*Device, *Organization)) error {
+	ids := make([]int, 0, len(nodes))
+	nodeids := make(map[int][]*Device)
+	for i := range nodes {
+		if nodes[i].organization_devices == nil {
+			continue
+		}
+		fk := *nodes[i].organization_devices
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
+		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
+	}
+	query.Where(organization.IDIn(ids...))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nodeids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "organization_devices" returned %v`, n.ID)
+		}
+		for i := range nodes {
+			assign(nodes[i], n)
+		}
+	}
+	return nil
+}
 func (dq *DeviceQuery) loadGateway(ctx context.Context, query *GatewayQuery, nodes []*Device, init func(*Device), assign func(*Device, *Gateway)) error {
 	ids := make([]int, 0, len(nodes))
 	nodeids := make(map[int][]*Device)

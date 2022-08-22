@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/yjiong/iotdor/ent/device"
 	"github.com/yjiong/iotdor/ent/gateway"
+	"github.com/yjiong/iotdor/ent/organization"
 )
 
 // DeviceCreate is the builder for creating a Device entity.
@@ -87,13 +88,13 @@ func (dc *DeviceCreate) SetNillableName(s *string) *DeviceCreate {
 	return dc
 }
 
-// SetDeleteFlag sets the "DeleteFlag" field.
+// SetDeleteFlag sets the "deleteFlag" field.
 func (dc *DeviceCreate) SetDeleteFlag(b bool) *DeviceCreate {
 	dc.mutation.SetDeleteFlag(b)
 	return dc
 }
 
-// SetNillableDeleteFlag sets the "DeleteFlag" field if the given value is not nil.
+// SetNillableDeleteFlag sets the "deleteFlag" field if the given value is not nil.
 func (dc *DeviceCreate) SetNillableDeleteFlag(b *bool) *DeviceCreate {
 	if b != nil {
 		dc.SetDeleteFlag(*b)
@@ -113,6 +114,25 @@ func (dc *DeviceCreate) SetNillableSummary(s *string) *DeviceCreate {
 		dc.SetSummary(*s)
 	}
 	return dc
+}
+
+// SetOrganizationID sets the "Organization" edge to the Organization entity by ID.
+func (dc *DeviceCreate) SetOrganizationID(id int) *DeviceCreate {
+	dc.mutation.SetOrganizationID(id)
+	return dc
+}
+
+// SetNillableOrganizationID sets the "Organization" edge to the Organization entity by ID if the given value is not nil.
+func (dc *DeviceCreate) SetNillableOrganizationID(id *int) *DeviceCreate {
+	if id != nil {
+		dc = dc.SetOrganizationID(*id)
+	}
+	return dc
+}
+
+// SetOrganization sets the "Organization" edge to the Organization entity.
+func (dc *DeviceCreate) SetOrganization(o *Organization) *DeviceCreate {
+	return dc.SetOrganizationID(o.ID)
 }
 
 // SetGatewayID sets the "gateway" edge to the Gateway entity by ID.
@@ -339,6 +359,26 @@ func (dc *DeviceCreate) createSpec() (*Device, *sqlgraph.CreateSpec) {
 			Column: device.FieldSummary,
 		})
 		_node.Summary = value
+	}
+	if nodes := dc.mutation.OrganizationIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   device.OrganizationTable,
+			Columns: []string{device.OrganizationColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: organization.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.organization_devices = &nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := dc.mutation.GatewayIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

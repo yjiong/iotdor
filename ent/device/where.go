@@ -130,7 +130,7 @@ func Name(v string) predicate.Device {
 	})
 }
 
-// DeleteFlag applies equality check predicate on the "DeleteFlag" field. It's identical to DeleteFlagEQ.
+// DeleteFlag applies equality check predicate on the "deleteFlag" field. It's identical to DeleteFlagEQ.
 func DeleteFlag(v bool) predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldDeleteFlag), v))
@@ -781,28 +781,28 @@ func NameContainsFold(v string) predicate.Device {
 	})
 }
 
-// DeleteFlagEQ applies the EQ predicate on the "DeleteFlag" field.
+// DeleteFlagEQ applies the EQ predicate on the "deleteFlag" field.
 func DeleteFlagEQ(v bool) predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldDeleteFlag), v))
 	})
 }
 
-// DeleteFlagNEQ applies the NEQ predicate on the "DeleteFlag" field.
+// DeleteFlagNEQ applies the NEQ predicate on the "deleteFlag" field.
 func DeleteFlagNEQ(v bool) predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
 		s.Where(sql.NEQ(s.C(FieldDeleteFlag), v))
 	})
 }
 
-// DeleteFlagIsNil applies the IsNil predicate on the "DeleteFlag" field.
+// DeleteFlagIsNil applies the IsNil predicate on the "deleteFlag" field.
 func DeleteFlagIsNil() predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
 		s.Where(sql.IsNull(s.C(FieldDeleteFlag)))
 	})
 }
 
-// DeleteFlagNotNil applies the NotNil predicate on the "DeleteFlag" field.
+// DeleteFlagNotNil applies the NotNil predicate on the "deleteFlag" field.
 func DeleteFlagNotNil() predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
 		s.Where(sql.NotNull(s.C(FieldDeleteFlag)))
@@ -919,6 +919,34 @@ func SummaryEqualFold(v string) predicate.Device {
 func SummaryContainsFold(v string) predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
 		s.Where(sql.ContainsFold(s.C(FieldSummary), v))
+	})
+}
+
+// HasOrganization applies the HasEdge predicate on the "Organization" edge.
+func HasOrganization() predicate.Device {
+	return predicate.Device(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(OrganizationTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, OrganizationTable, OrganizationColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasOrganizationWith applies the HasEdge predicate on the "Organization" edge with a given conditions (other predicates).
+func HasOrganizationWith(preds ...predicate.Organization) predicate.Device {
+	return predicate.Device(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(OrganizationInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, OrganizationTable, OrganizationColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
 	})
 }
 

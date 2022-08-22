@@ -23,7 +23,7 @@ func (Device) Fields() []ent.Field {
 		field.String("conn"),
 		field.String("name").
 			Optional(),
-		field.Bool("DeleteFlag").
+		field.Bool("deleteFlag").
 			Optional(),
 		field.String("summary").
 			Optional(),
@@ -33,6 +33,9 @@ func (Device) Fields() []ent.Field {
 // Edges of the Device.
 func (Device) Edges() []ent.Edge {
 	return []ent.Edge{
+		edge.From("Organization", Organization.Type).
+			Ref("devices").
+			Unique(),
 		edge.From("gateway", Gateway.Type).
 			Ref("devices").
 			Unique(),

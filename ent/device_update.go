@@ -13,6 +13,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/yjiong/iotdor/ent/device"
 	"github.com/yjiong/iotdor/ent/gateway"
+	"github.com/yjiong/iotdor/ent/organization"
 	"github.com/yjiong/iotdor/ent/predicate"
 )
 
@@ -79,13 +80,13 @@ func (du *DeviceUpdate) ClearName() *DeviceUpdate {
 	return du
 }
 
-// SetDeleteFlag sets the "DeleteFlag" field.
+// SetDeleteFlag sets the "deleteFlag" field.
 func (du *DeviceUpdate) SetDeleteFlag(b bool) *DeviceUpdate {
 	du.mutation.SetDeleteFlag(b)
 	return du
 }
 
-// SetNillableDeleteFlag sets the "DeleteFlag" field if the given value is not nil.
+// SetNillableDeleteFlag sets the "deleteFlag" field if the given value is not nil.
 func (du *DeviceUpdate) SetNillableDeleteFlag(b *bool) *DeviceUpdate {
 	if b != nil {
 		du.SetDeleteFlag(*b)
@@ -93,7 +94,7 @@ func (du *DeviceUpdate) SetNillableDeleteFlag(b *bool) *DeviceUpdate {
 	return du
 }
 
-// ClearDeleteFlag clears the value of the "DeleteFlag" field.
+// ClearDeleteFlag clears the value of the "deleteFlag" field.
 func (du *DeviceUpdate) ClearDeleteFlag() *DeviceUpdate {
 	du.mutation.ClearDeleteFlag()
 	return du
@@ -119,6 +120,25 @@ func (du *DeviceUpdate) ClearSummary() *DeviceUpdate {
 	return du
 }
 
+// SetOrganizationID sets the "Organization" edge to the Organization entity by ID.
+func (du *DeviceUpdate) SetOrganizationID(id int) *DeviceUpdate {
+	du.mutation.SetOrganizationID(id)
+	return du
+}
+
+// SetNillableOrganizationID sets the "Organization" edge to the Organization entity by ID if the given value is not nil.
+func (du *DeviceUpdate) SetNillableOrganizationID(id *int) *DeviceUpdate {
+	if id != nil {
+		du = du.SetOrganizationID(*id)
+	}
+	return du
+}
+
+// SetOrganization sets the "Organization" edge to the Organization entity.
+func (du *DeviceUpdate) SetOrganization(o *Organization) *DeviceUpdate {
+	return du.SetOrganizationID(o.ID)
+}
+
 // SetGatewayID sets the "gateway" edge to the Gateway entity by ID.
 func (du *DeviceUpdate) SetGatewayID(id int) *DeviceUpdate {
 	du.mutation.SetGatewayID(id)
@@ -141,6 +161,12 @@ func (du *DeviceUpdate) SetGateway(g *Gateway) *DeviceUpdate {
 // Mutation returns the DeviceMutation object of the builder.
 func (du *DeviceUpdate) Mutation() *DeviceMutation {
 	return du.mutation
+}
+
+// ClearOrganization clears the "Organization" edge to the Organization entity.
+func (du *DeviceUpdate) ClearOrganization() *DeviceUpdate {
+	du.mutation.ClearOrganization()
+	return du
 }
 
 // ClearGateway clears the "gateway" edge to the Gateway entity.
@@ -304,6 +330,41 @@ func (du *DeviceUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: device.FieldSummary,
 		})
 	}
+	if du.mutation.OrganizationCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   device.OrganizationTable,
+			Columns: []string{device.OrganizationColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: organization.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := du.mutation.OrganizationIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   device.OrganizationTable,
+			Columns: []string{device.OrganizationColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: organization.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if du.mutation.GatewayCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -408,13 +469,13 @@ func (duo *DeviceUpdateOne) ClearName() *DeviceUpdateOne {
 	return duo
 }
 
-// SetDeleteFlag sets the "DeleteFlag" field.
+// SetDeleteFlag sets the "deleteFlag" field.
 func (duo *DeviceUpdateOne) SetDeleteFlag(b bool) *DeviceUpdateOne {
 	duo.mutation.SetDeleteFlag(b)
 	return duo
 }
 
-// SetNillableDeleteFlag sets the "DeleteFlag" field if the given value is not nil.
+// SetNillableDeleteFlag sets the "deleteFlag" field if the given value is not nil.
 func (duo *DeviceUpdateOne) SetNillableDeleteFlag(b *bool) *DeviceUpdateOne {
 	if b != nil {
 		duo.SetDeleteFlag(*b)
@@ -422,7 +483,7 @@ func (duo *DeviceUpdateOne) SetNillableDeleteFlag(b *bool) *DeviceUpdateOne {
 	return duo
 }
 
-// ClearDeleteFlag clears the value of the "DeleteFlag" field.
+// ClearDeleteFlag clears the value of the "deleteFlag" field.
 func (duo *DeviceUpdateOne) ClearDeleteFlag() *DeviceUpdateOne {
 	duo.mutation.ClearDeleteFlag()
 	return duo
@@ -448,6 +509,25 @@ func (duo *DeviceUpdateOne) ClearSummary() *DeviceUpdateOne {
 	return duo
 }
 
+// SetOrganizationID sets the "Organization" edge to the Organization entity by ID.
+func (duo *DeviceUpdateOne) SetOrganizationID(id int) *DeviceUpdateOne {
+	duo.mutation.SetOrganizationID(id)
+	return duo
+}
+
+// SetNillableOrganizationID sets the "Organization" edge to the Organization entity by ID if the given value is not nil.
+func (duo *DeviceUpdateOne) SetNillableOrganizationID(id *int) *DeviceUpdateOne {
+	if id != nil {
+		duo = duo.SetOrganizationID(*id)
+	}
+	return duo
+}
+
+// SetOrganization sets the "Organization" edge to the Organization entity.
+func (duo *DeviceUpdateOne) SetOrganization(o *Organization) *DeviceUpdateOne {
+	return duo.SetOrganizationID(o.ID)
+}
+
 // SetGatewayID sets the "gateway" edge to the Gateway entity by ID.
 func (duo *DeviceUpdateOne) SetGatewayID(id int) *DeviceUpdateOne {
 	duo.mutation.SetGatewayID(id)
@@ -470,6 +550,12 @@ func (duo *DeviceUpdateOne) SetGateway(g *Gateway) *DeviceUpdateOne {
 // Mutation returns the DeviceMutation object of the builder.
 func (duo *DeviceUpdateOne) Mutation() *DeviceMutation {
 	return duo.mutation
+}
+
+// ClearOrganization clears the "Organization" edge to the Organization entity.
+func (duo *DeviceUpdateOne) ClearOrganization() *DeviceUpdateOne {
+	duo.mutation.ClearOrganization()
+	return duo
 }
 
 // ClearGateway clears the "gateway" edge to the Gateway entity.
@@ -662,6 +748,41 @@ func (duo *DeviceUpdateOne) sqlSave(ctx context.Context) (_node *Device, err err
 			Type:   field.TypeString,
 			Column: device.FieldSummary,
 		})
+	}
+	if duo.mutation.OrganizationCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   device.OrganizationTable,
+			Columns: []string{device.OrganizationColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: organization.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := duo.mutation.OrganizationIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   device.OrganizationTable,
+			Columns: []string{device.OrganizationColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: organization.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	if duo.mutation.GatewayCleared() {
 		edge := &sqlgraph.EdgeSpec{

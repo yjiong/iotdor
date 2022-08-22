@@ -29,10 +29,19 @@ const (
 	FieldDeleteFlag = "delete_flag"
 	// FieldSummary holds the string denoting the summary field in the database.
 	FieldSummary = "summary"
+	// EdgeOrganization holds the string denoting the organization edge name in mutations.
+	EdgeOrganization = "Organization"
 	// EdgeGateway holds the string denoting the gateway edge name in mutations.
 	EdgeGateway = "gateway"
 	// Table holds the table name of the device in the database.
 	Table = "devices"
+	// OrganizationTable is the table that holds the Organization relation/edge.
+	OrganizationTable = "devices"
+	// OrganizationInverseTable is the table name for the Organization entity.
+	// It exists in this package in order to avoid circular dependency with the "organization" package.
+	OrganizationInverseTable = "organizations"
+	// OrganizationColumn is the table column denoting the Organization relation/edge.
+	OrganizationColumn = "organization_devices"
 	// GatewayTable is the table that holds the gateway relation/edge.
 	GatewayTable = "devices"
 	// GatewayInverseTable is the table name for the Gateway entity.
@@ -60,6 +69,7 @@ var Columns = []string{
 // table and are not defined as standalone fields in the schema.
 var ForeignKeys = []string{
 	"gateway_devices",
+	"organization_devices",
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
