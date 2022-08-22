@@ -171,7 +171,7 @@ func (h *MQTTDSrcer) rxmsgDSrcer(c mqtt.Client, msg mqtt.Message) {
 		return
 	}
 	logsb, _ := mymsgjson.EncodePretty()
-	log.WithFields(log.Fields{"topic": msg.Topic(), "messageType": "received cmd", "Qos": msg.Qos()}).Info(string(logsb))
+	log.WithFields(log.Fields{"topic": msg.Topic(), "messageType": "received cmd", "Qos": msg.Qos()}).Debug(string(logsb))
 	h.dataDownChan <- DataDownPayload{mymsgjson}
 }
 

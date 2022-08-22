@@ -86,6 +86,11 @@ func (m *Manage) UserAdminFlag(uname string) bool {
 	return userAdminFlag(m.ctx, u, uname)
 }
 
+// OrganizationInfo ...
+func (m *Manage) OrganizationInfo() ([]*ent.Organization, error) {
+	return m.entC.Organization.Query().All(m.ctx)
+}
+
 // AddOrganization .....
 func (m *Manage) AddOrganization(o ent.Organization) error {
 	return m.entC.Organization.Create().
@@ -114,6 +119,21 @@ func (m *Manage) UpdateOrganization(name string, o ent.Organization) error {
 func (m *Manage) DeleteOrganization(name string) error {
 	_, err := m.entC.Organization.Delete().Where(organization.Name(name)).Exec(m.ctx)
 	return err
+}
+
+// QueryOrganizationDevices ....
+func (m *Manage) QueryOrganizationDevices(name string) (ds []string, err error) {
+	var o *ent.Organization
+	o, err = m.entC.Organization.Query().Where(organization.Name(name)).Only(m.ctx)
+	if err == nil {
+		eds, _ := o.QueryDevices().All(m.ctx)
+		if len(eds) > 0 {
+			for _, ed := range eds {
+				ds = append(ds, ed.DevID)
+			}
+		}
+	}
+	return
 }
 
 // BeRelatedDeviceToOrganization .....

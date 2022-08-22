@@ -12,15 +12,25 @@ import (
 
 // ManageAPI ...
 type ManageAPI interface {
-	UserInfo(name string) (*ent.User, error)
+	// user ....
 	UsersInfo() ([]*ent.User, error)
-	AddUser(name, passwd string, adminFlag bool, phone ...string) error
-	UpdateUser(name, passwd string, adminFlag bool, phone ...string) error
-	UserAdminFlag(uname string) bool
-	DelUser(name string) error
+	UserInfo(uName string) (*ent.User, error)
+	AddUser(uName, passwd string, adminFlag bool, phone ...string) error
+	UpdateUser(uName, passwd string, adminFlag bool, phone ...string) error
+	UserAdminFlag(uName string) bool
+	DelUser(uName string) error
+	// device ....
 	AllDevices() []string
 	DeviceRealTimeValue(devid string) map[string]string
-	UpdateUserLoginInfo(name, lip string) error
+	UpdateUserLoginInfo(uName, lip string) error
+	// organization ....
+	OrganizationInfo() ([]*ent.Organization, error)
+	AddOrganization(o ent.Organization) error
+	UpdateOrganization(oName string, o ent.Organization) error
+	DeleteOrganization(oName string) error
+	BeRelatedDeviceToOrganization(oName, devid string) error
+	RemoveDeviceFromOrganization(devid string) error
+	QueryOrganizationDevices(oName string) ([]string, error)
 }
 
 func (dtr *IotdorTran) userInfo(w http.ResponseWriter, r *http.Request) {
