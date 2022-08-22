@@ -21,6 +21,10 @@ const (
 	FieldPasswd = "passwd"
 	// FieldPhone holds the string denoting the phone field in the database.
 	FieldPhone = "phone"
+	// FieldLastLoginIP holds the string denoting the last_login_ip field in the database.
+	FieldLastLoginIP = "last_login_ip"
+	// FieldLastLoginTime holds the string denoting the last_login_time field in the database.
+	FieldLastLoginTime = "last_login_time"
 	// EdgeGroups holds the string denoting the groups edge name in mutations.
 	EdgeGroups = "groups"
 	// EdgeAdmins holds the string denoting the admins edge name in mutations.
@@ -47,6 +51,8 @@ var Columns = []string{
 	FieldName,
 	FieldPasswd,
 	FieldPhone,
+	FieldLastLoginIP,
+	FieldLastLoginTime,
 }
 
 var (

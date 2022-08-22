@@ -59,7 +59,6 @@ var (
 		Indexes: []*schema.Index{
 			{
 				Name:    "ammter_devid",
-				Unique:  true,
 				Columns: []*schema.Column{AmmtersColumns[1]},
 			},
 			{

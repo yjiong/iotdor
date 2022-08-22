@@ -22,6 +22,10 @@ func (User) Fields() []ent.Field {
 			Sensitive(),
 		field.String("phone").
 			Optional(),
+		field.String("last_login_ip").
+			Optional(),
+		field.Time("last_login_time").
+			Optional(),
 	}
 }
 

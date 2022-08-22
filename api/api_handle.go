@@ -3,6 +3,7 @@ package api
 import (
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/gorilla/mux"
 	"github.com/pkg/errors"
@@ -19,16 +20,20 @@ type ManageAPI interface {
 	DelUser(name string) error
 	AllDevices() []string
 	DeviceRealTimeValue(devid string) map[string]string
+	UpdateUserLoginInfo(name, lip string) error
 }
 
 func (dtr *IotdorTran) userInfo(w http.ResponseWriter, r *http.Request) {
+	loc, _ := time.LoadLocation("Local")
 	if usinfo, err := dtr.UsersInfo(); err == nil {
 		usis := make([]map[string]any, 0)
 		for _, uinfo := range usinfo {
 			usis = append(usis, map[string]any{
-				"name":       uinfo.Name,
-				"phone":      uinfo.Phone,
-				"admin_flag": dtr.UserAdminFlag(uinfo.Name),
+				"name":            uinfo.Name,
+				"phone":           uinfo.Phone,
+				"last_login_time": uinfo.LastLoginTime.In(loc).Format("2006-01-02 15:04:05"),
+				"last_login_ip":   uinfo.LastLoginIP,
+				"admin_flag":      dtr.UserAdminFlag(uinfo.Name),
 			})
 		}
 		respJSON(w, usis)

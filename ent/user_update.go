@@ -67,6 +67,46 @@ func (uu *UserUpdate) ClearPhone() *UserUpdate {
 	return uu
 }
 
+// SetLastLoginIP sets the "last_login_ip" field.
+func (uu *UserUpdate) SetLastLoginIP(s string) *UserUpdate {
+	uu.mutation.SetLastLoginIP(s)
+	return uu
+}
+
+// SetNillableLastLoginIP sets the "last_login_ip" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableLastLoginIP(s *string) *UserUpdate {
+	if s != nil {
+		uu.SetLastLoginIP(*s)
+	}
+	return uu
+}
+
+// ClearLastLoginIP clears the value of the "last_login_ip" field.
+func (uu *UserUpdate) ClearLastLoginIP() *UserUpdate {
+	uu.mutation.ClearLastLoginIP()
+	return uu
+}
+
+// SetLastLoginTime sets the "last_login_time" field.
+func (uu *UserUpdate) SetLastLoginTime(t time.Time) *UserUpdate {
+	uu.mutation.SetLastLoginTime(t)
+	return uu
+}
+
+// SetNillableLastLoginTime sets the "last_login_time" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableLastLoginTime(t *time.Time) *UserUpdate {
+	if t != nil {
+		uu.SetLastLoginTime(*t)
+	}
+	return uu
+}
+
+// ClearLastLoginTime clears the value of the "last_login_time" field.
+func (uu *UserUpdate) ClearLastLoginTime() *UserUpdate {
+	uu.mutation.ClearLastLoginTime()
+	return uu
+}
+
 // AddGroupIDs adds the "groups" edge to the Group entity by IDs.
 func (uu *UserUpdate) AddGroupIDs(ids ...int) *UserUpdate {
 	uu.mutation.AddGroupIDs(ids...)
@@ -259,6 +299,32 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: user.FieldPhone,
 		})
 	}
+	if value, ok := uu.mutation.LastLoginIP(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: user.FieldLastLoginIP,
+		})
+	}
+	if uu.mutation.LastLoginIPCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: user.FieldLastLoginIP,
+		})
+	}
+	if value, ok := uu.mutation.LastLoginTime(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: user.FieldLastLoginTime,
+		})
+	}
+	if uu.mutation.LastLoginTimeCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Column: user.FieldLastLoginTime,
+		})
+	}
 	if uu.mutation.GroupsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
@@ -421,6 +487,46 @@ func (uuo *UserUpdateOne) SetNillablePhone(s *string) *UserUpdateOne {
 // ClearPhone clears the value of the "phone" field.
 func (uuo *UserUpdateOne) ClearPhone() *UserUpdateOne {
 	uuo.mutation.ClearPhone()
+	return uuo
+}
+
+// SetLastLoginIP sets the "last_login_ip" field.
+func (uuo *UserUpdateOne) SetLastLoginIP(s string) *UserUpdateOne {
+	uuo.mutation.SetLastLoginIP(s)
+	return uuo
+}
+
+// SetNillableLastLoginIP sets the "last_login_ip" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableLastLoginIP(s *string) *UserUpdateOne {
+	if s != nil {
+		uuo.SetLastLoginIP(*s)
+	}
+	return uuo
+}
+
+// ClearLastLoginIP clears the value of the "last_login_ip" field.
+func (uuo *UserUpdateOne) ClearLastLoginIP() *UserUpdateOne {
+	uuo.mutation.ClearLastLoginIP()
+	return uuo
+}
+
+// SetLastLoginTime sets the "last_login_time" field.
+func (uuo *UserUpdateOne) SetLastLoginTime(t time.Time) *UserUpdateOne {
+	uuo.mutation.SetLastLoginTime(t)
+	return uuo
+}
+
+// SetNillableLastLoginTime sets the "last_login_time" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableLastLoginTime(t *time.Time) *UserUpdateOne {
+	if t != nil {
+		uuo.SetLastLoginTime(*t)
+	}
+	return uuo
+}
+
+// ClearLastLoginTime clears the value of the "last_login_time" field.
+func (uuo *UserUpdateOne) ClearLastLoginTime() *UserUpdateOne {
+	uuo.mutation.ClearLastLoginTime()
 	return uuo
 }
 
@@ -644,6 +750,32 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Column: user.FieldPhone,
+		})
+	}
+	if value, ok := uuo.mutation.LastLoginIP(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: user.FieldLastLoginIP,
+		})
+	}
+	if uuo.mutation.LastLoginIPCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: user.FieldLastLoginIP,
+		})
+	}
+	if value, ok := uuo.mutation.LastLoginTime(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: user.FieldLastLoginTime,
+		})
+	}
+	if uuo.mutation.LastLoginTimeCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Column: user.FieldLastLoginTime,
 		})
 	}
 	if uuo.mutation.GroupsCleared() {

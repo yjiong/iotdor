@@ -99,6 +99,8 @@ var (
 		{Name: "name", Type: field.TypeString, Unique: true},
 		{Name: "passwd", Type: field.TypeString},
 		{Name: "phone", Type: field.TypeString, Nullable: true},
+		{Name: "last_login_ip", Type: field.TypeString, Nullable: true},
+		{Name: "last_login_time", Type: field.TypeTime, Nullable: true},
 	}
 	// UsersTable holds the schema information for the "users" table.
 	UsersTable = &schema.Table{

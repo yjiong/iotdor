@@ -3,6 +3,7 @@ package logic
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/yjiong/iotdor/ent"
 	"github.com/yjiong/iotdor/ent/user"
@@ -69,6 +70,13 @@ func (m *Manage) UpdateUser(name, passwd string, adminFlag bool, phone ...string
 	eg, _ := queryGroupByName(m.ctx, m.entC, m.iotdName)
 	err := updateUser(m.ctx, m.entC, name, passwd, eg, adminFlag, phone...)
 	return err
+}
+
+// UpdateUserLoginInfo ...
+func (m *Manage) UpdateUserLoginInfo(name, lip string) error {
+	return m.entC.User.Update().Where(user.Name(name)).
+		SetLastLoginTime(time.Now()).
+		SetLastLoginIP(lip).Exec(m.ctx)
 }
 
 // UserAdminFlag ....

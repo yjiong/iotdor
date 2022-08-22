@@ -278,6 +278,7 @@ func (dtr *IotdorTran) rawlogin(w http.ResponseWriter, req *http.Request) {
 	claims["iat"] = float64(1)
 	claims["uname"] = euser.Name
 	token.Claims = claims
+	dtr.UpdateUserLoginInfo(euser.Name, req.RemoteAddr)
 
 	if tokenstr, err := token.SignedString(dpw); err == nil {
 		tkm := (map[string]string{"Token": tokenstr})

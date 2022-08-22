@@ -72,7 +72,7 @@ paths:
 #  '/gateway/{gatewaysn}/cmdline':
 #    post:
 #      security:
-#        - ApiKeyAuth: []
+#        - api_key: []
 #      consumes:
 #        - application/json
 #      tags:
@@ -126,7 +126,7 @@ paths:
 #            type: object
 #    put:
 #      security:
-#        - ApiKeyAuth: []
+#        - api_key: []
 #      consumes:
 #        - application/json
 #      tags:
@@ -143,7 +143,7 @@ paths:
 #          in: body
 #          required: true
 #          schema:
-#            $ref: '#/definitions/iotdor/TDevice'
+#            $ref: '#/components/schemas/TDevice'
 #      responses:
 #        '200':
 #          description: ok
@@ -159,7 +159,7 @@ paths:
 #            type: object
 #    delete:
 #      security:
-#        - ApiKeyAuth: []
+#        - api_key: []
 #      consumes:
 #        - application/json
 #      tags:
@@ -214,7 +214,7 @@ paths:
 #  '/gateway/{gatewaysn}/serial_debug':
 #    post:
 #      security:
-#        - ApiKeyAuth: []
+#        - api_key: []
 #      consumes:
 #        - application/json
 #      tags:
@@ -231,7 +231,7 @@ paths:
 #          in: body
 #          required: true
 #          schema:
-#            $ref: '#/definitions/iotdor/SerialParams'
+#            $ref: '#/components/schemas/SerialParams'
 #      responses:
 #        '200':
 #          description: ok
@@ -248,7 +248,7 @@ paths:
 #  '/gateway/{gatewaysn}/update_devdrive':
 #    post:
 #      security:
-#        - ApiKeyAuth: []
+#        - api_key: []
 #      description: update devdrive 请上传文件名为devdrive.tgz的网关驱动程序（devdrive的压缩文件)
 #      consumes:
 #        - multipart/form-data
@@ -281,7 +281,7 @@ paths:
 #  '/gateway/{gatewaysn}/update_gateway':
 #    post:
 #      security:
-#        - ApiKeyAuth: []
+#        - api_key: []
 #      description: update gateway 请上传文件名为gateway.tgz的网关主程序（gateway的压缩文件)
 #      consumes:
 #        - multipart/form-data
@@ -314,155 +314,155 @@ paths:
 #          description: update gateway failed
 #          schema:
 #            type: object
-#  '/device/get_all_device_id':
-#    get:
-#      security:
-#        - ApiKeyAuth: []
-#      consumes:
-#        - application/json
-#      produces:
-#        - application/json
-#      tags:
-#        - 当前数据
-#      summary: 获取所有设备ID
-#      responses:
-#        '200':
-#          description: ok
-#          schema:
-#            type: object
-#        '404':
-#          description: Can not get realtime data
-#          schema:
-#            type: object
-#  '/device/realtime_data/{devid}':
-#    get:
-#      security:
-#        - ApiKeyAuth: []
-#      consumes:
-#        - application/json
-#      produces:
-#        - application/json
-#      tags:
-#        - 当前数据
-#      summary: 获取设备实时数据
-#      parameters:
-#        - type: string
-#          description: devid 设备ID
-#          name: devid
-#          in: path
-#          required: true
-#      responses:
-#        '200':
-#          description: ok
-#          schema:
-#            type: object
-#        '404':
-#          description: Can not get realtime data
-#          schema:
-#            type: object
-#  /config/sys/user_info:
-#    get:
-#      security:
-#        - ApiKeyAuth: []
-#      consumes:
-#        - application/json
-#      tags:
-#        - 系统信息
-#      summary: 获取用户信息
-#      responses:
-#        '200':
-#          description: ok
-#          schema:
-#            type: object
-#        '404':
-#          description: get user_info string error
-#          schema:
-#            type: object
-#  /config/sys/add_user:
-#    post:
-#      security:
-#        - ApiKeyAuth: []
-#      consumes:
-#        - application/json
-#      tags:
-#        - 系统信息
-#      summary: 添加用户
-#      parameters:
-#        - description: 创建用户
-#          name: user_info
-#          in: body
-#          required: true
-#          schema:
-#            $ref: '#/definitions/iotdor/TWUser'
-#      responses:
-#        '200':
-#          description: ok
-#          schema:
-#            type: string
-#        '401':
-#          description: access denided
-#          schema:
-#            type: object
-#        '404':
-#          description: Can not debug serial port
-#          schema:
-#            type: object
-#  /config/sys/update_user:
-#    put:
-#      security:
-#        - ApiKeyAuth: []
-#      consumes:
-#        - application/json
-#      tags:
-#        - 系统信息
-#      summary: 更新用户(修改密码，电话, 设置为管理员)
-#      parameters:
-#        - description: 更新用户
-#          name: user_info
-#          in: body
-#          required: true
-#          schema:
-#            $ref: '#/definitions/iotdor/TWUser'
-#      responses:
-#        '200':
-#          description: ok
-#          schema:
-#            type: string
-#        '401':
-#          description: access denided
-#          schema:
-#            type: object
-#        '404':
-#          description: Can not debug serial port
-#          schema:
-#            type: object
-#  /config/sys/delete_user/{uname}:
-#    delete:
-#      security:
-#        - ApiKeyAuth: []
-#      consumes:
-#        - application/json
-#      tags:
-#        - 系统信息
-#      summary: 删除用户
-#      parameters:
-#        - description: 删除用户
-#          name: uname
-#          in: path
-#          required: true
-#      responses:
-#        '200':
-#          description: ok
-#          schema:
-#            type: string
-#        '401':
-#          description: access denided
-#          schema:
-#            type: object
-#        '404':
-#          description: Can not debug serial port
-#          schema:
-#            type: object
+  '/device/get_all_device_id':
+    get:
+      security:
+        - api_key: [] 
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      tags:
+        - 当前数据
+      summary: 获取所有设备ID
+      responses:
+        '200':
+          description: ok
+          schema:
+            type: object
+        '404':
+          description: Can not get realtime data
+          schema:
+            type: object
+  '/device/realtime_data/{devid}':
+    get:
+      security:
+        - api_key: []
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      tags:
+        - 当前数据
+      summary: 获取设备实时数据
+      parameters:
+        - type: string
+          description: devid 设备ID
+          name: devid
+          in: path
+          required: true
+      responses:
+        '200':
+          description: ok
+          schema:
+            type: object
+        '404':
+          description: Can not get realtime data
+          schema:
+            type: object
+  /config/sys/user_info:
+    get:
+      security:
+        - api_key: []
+      consumes:
+        - application/json
+      tags:
+        - 系统信息
+      summary: 获取用户信息
+      responses:
+        '200':
+          description: ok
+          schema:
+            type: object
+        '404':
+          description: get user_info string error
+          schema:
+            type: object
+  /config/sys/add_user:
+    post:
+      security:
+        - api_key: []
+      consumes:
+        - application/json
+      tags:
+        - 系统信息
+      summary: 添加用户
+      requestBody:
+        content:
+          application/json:
+            name: user_info
+            required: true
+            schema:
+              $ref: '#/components/schemas/TWUser'
+      responses:
+        '200':
+          description: ok
+          schema:
+            type: string
+        '401':
+          description: access denided
+          schema:
+            type: object
+        '404':
+          description: add user failed
+          schema:
+            type: object
+  /config/sys/update_user:
+    put:
+      security:
+        - api_key: []
+      consumes:
+        - application/json
+      tags:
+        - 系统信息
+      summary: 更新用户(修改密码，电话, 设置为管理员)
+      requestBody:
+        content:
+          application/json:
+            name: user_info
+            required: true
+            schema:
+              $ref: '#/components/schemas/TWUser'
+      responses:
+        '200':
+          description: ok
+          schema:
+            type: string
+        '401':
+          description: access denided
+          schema:
+            type: object
+        '404':
+          description: update user failed
+          schema:
+            type: object
+  /config/sys/delete_user/{uname}:
+    delete:
+      security:
+        - api_key: []
+      consumes:
+        - application/json
+      tags:
+        - 系统信息
+      summary: 删除用户
+      parameters:
+        - description: 删除用户
+          name: uname
+          in: path
+          required: true
+      responses:
+        '200':
+          description: ok
+          schema:
+            type: string
+        '401':
+          description: access denided
+          schema:
+            type: object
+        '404':
+          description: delete user failed
+          schema:
+            type: object
 components:
   schemas:
     TUser:
@@ -474,21 +474,21 @@ components:
         username:
           type: string
           example: "iotd-AMMETER"
-    #QuerySection:
-      #type: object
-      #properties:
-        #page_size:
-          #description: 每页记录数
-          #type: integer
-        #pages_index:
-          #description: 第几页 （开始页为0）
-          #type: integer
-        #since:
-          #description: '起始时间 (比如 "2021-01-02 15:04:05")'
-          #type: string
-        #until:
-          #description: '终止时间 (比如 "2021-01-03 15:04:05")'
-          #type: string
+    QuerySection:
+      type: object
+      properties:
+        page_size:
+          description: 每页记录数
+          type: integer
+        pages_index:
+          description: 第几页 （开始页为0）
+          type: integer
+        since:
+          description: '起始时间 (比如 "2021-01-02 15:04:05")'
+          type: string
+        until:
+          description: '终止时间 (比如 "2021-01-03 15:04:05")'
+          type: string
     #SerialParams:
       #type: object
       #properties:
@@ -552,18 +552,18 @@ components:
         #stop_bit:
           #description: 停止位
           #type: string
-    #TWUser:
-      #type: object
-      #properties:
-        #username:
-          #type: string
-        #password:
-          #type: string
-        #admin_flag:
-          #type: boolean
-          #default: false
-        #phone:
-          #type: string
+    TWUser:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+        admin_flag:
+          type: boolean
+          default: false
+        phone:
+          type: string
   securitySchemes:
     #xxxstore_auth:
       #type: oauth2

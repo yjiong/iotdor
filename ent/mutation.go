@@ -2618,24 +2618,26 @@ func (m *GroupMutation) ResetEdge(name string) error {
 // UserMutation represents an operation that mutates the User nodes in the graph.
 type UserMutation struct {
 	config
-	op            Op
-	typ           string
-	id            *int
-	create_time   *time.Time
-	update_time   *time.Time
-	name          *string
-	passwd        *string
-	phone         *string
-	clearedFields map[string]struct{}
-	groups        map[int]struct{}
-	removedgroups map[int]struct{}
-	clearedgroups bool
-	admins        map[int]struct{}
-	removedadmins map[int]struct{}
-	clearedadmins bool
-	done          bool
-	oldValue      func(context.Context) (*User, error)
-	predicates    []predicate.User
+	op              Op
+	typ             string
+	id              *int
+	create_time     *time.Time
+	update_time     *time.Time
+	name            *string
+	passwd          *string
+	phone           *string
+	last_login_ip   *string
+	last_login_time *time.Time
+	clearedFields   map[string]struct{}
+	groups          map[int]struct{}
+	removedgroups   map[int]struct{}
+	clearedgroups   bool
+	admins          map[int]struct{}
+	removedadmins   map[int]struct{}
+	clearedadmins   bool
+	done            bool
+	oldValue        func(context.Context) (*User, error)
+	predicates      []predicate.User
 }
 
 var _ ent.Mutation = (*UserMutation)(nil)
@@ -2929,6 +2931,104 @@ func (m *UserMutation) ResetPhone() {
 	delete(m.clearedFields, user.FieldPhone)
 }
 
+// SetLastLoginIP sets the "last_login_ip" field.
+func (m *UserMutation) SetLastLoginIP(s string) {
+	m.last_login_ip = &s
+}
+
+// LastLoginIP returns the value of the "last_login_ip" field in the mutation.
+func (m *UserMutation) LastLoginIP() (r string, exists bool) {
+	v := m.last_login_ip
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLastLoginIP returns the old "last_login_ip" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldLastLoginIP(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLastLoginIP is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLastLoginIP requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLastLoginIP: %w", err)
+	}
+	return oldValue.LastLoginIP, nil
+}
+
+// ClearLastLoginIP clears the value of the "last_login_ip" field.
+func (m *UserMutation) ClearLastLoginIP() {
+	m.last_login_ip = nil
+	m.clearedFields[user.FieldLastLoginIP] = struct{}{}
+}
+
+// LastLoginIPCleared returns if the "last_login_ip" field was cleared in this mutation.
+func (m *UserMutation) LastLoginIPCleared() bool {
+	_, ok := m.clearedFields[user.FieldLastLoginIP]
+	return ok
+}
+
+// ResetLastLoginIP resets all changes to the "last_login_ip" field.
+func (m *UserMutation) ResetLastLoginIP() {
+	m.last_login_ip = nil
+	delete(m.clearedFields, user.FieldLastLoginIP)
+}
+
+// SetLastLoginTime sets the "last_login_time" field.
+func (m *UserMutation) SetLastLoginTime(t time.Time) {
+	m.last_login_time = &t
+}
+
+// LastLoginTime returns the value of the "last_login_time" field in the mutation.
+func (m *UserMutation) LastLoginTime() (r time.Time, exists bool) {
+	v := m.last_login_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLastLoginTime returns the old "last_login_time" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldLastLoginTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLastLoginTime is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLastLoginTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLastLoginTime: %w", err)
+	}
+	return oldValue.LastLoginTime, nil
+}
+
+// ClearLastLoginTime clears the value of the "last_login_time" field.
+func (m *UserMutation) ClearLastLoginTime() {
+	m.last_login_time = nil
+	m.clearedFields[user.FieldLastLoginTime] = struct{}{}
+}
+
+// LastLoginTimeCleared returns if the "last_login_time" field was cleared in this mutation.
+func (m *UserMutation) LastLoginTimeCleared() bool {
+	_, ok := m.clearedFields[user.FieldLastLoginTime]
+	return ok
+}
+
+// ResetLastLoginTime resets all changes to the "last_login_time" field.
+func (m *UserMutation) ResetLastLoginTime() {
+	m.last_login_time = nil
+	delete(m.clearedFields, user.FieldLastLoginTime)
+}
+
 // AddGroupIDs adds the "groups" edge to the Group entity by ids.
 func (m *UserMutation) AddGroupIDs(ids ...int) {
 	if m.groups == nil {
@@ -3056,7 +3156,7 @@ func (m *UserMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserMutation) Fields() []string {
-	fields := make([]string, 0, 5)
+	fields := make([]string, 0, 7)
 	if m.create_time != nil {
 		fields = append(fields, user.FieldCreateTime)
 	}
@@ -3071,6 +3171,12 @@ func (m *UserMutation) Fields() []string {
 	}
 	if m.phone != nil {
 		fields = append(fields, user.FieldPhone)
+	}
+	if m.last_login_ip != nil {
+		fields = append(fields, user.FieldLastLoginIP)
+	}
+	if m.last_login_time != nil {
+		fields = append(fields, user.FieldLastLoginTime)
 	}
 	return fields
 }
@@ -3090,6 +3196,10 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 		return m.Passwd()
 	case user.FieldPhone:
 		return m.Phone()
+	case user.FieldLastLoginIP:
+		return m.LastLoginIP()
+	case user.FieldLastLoginTime:
+		return m.LastLoginTime()
 	}
 	return nil, false
 }
@@ -3109,6 +3219,10 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldPasswd(ctx)
 	case user.FieldPhone:
 		return m.OldPhone(ctx)
+	case user.FieldLastLoginIP:
+		return m.OldLastLoginIP(ctx)
+	case user.FieldLastLoginTime:
+		return m.OldLastLoginTime(ctx)
 	}
 	return nil, fmt.Errorf("unknown User field %s", name)
 }
@@ -3153,6 +3267,20 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetPhone(v)
 		return nil
+	case user.FieldLastLoginIP:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLastLoginIP(v)
+		return nil
+	case user.FieldLastLoginTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLastLoginTime(v)
+		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)
 }
@@ -3186,6 +3314,12 @@ func (m *UserMutation) ClearedFields() []string {
 	if m.FieldCleared(user.FieldPhone) {
 		fields = append(fields, user.FieldPhone)
 	}
+	if m.FieldCleared(user.FieldLastLoginIP) {
+		fields = append(fields, user.FieldLastLoginIP)
+	}
+	if m.FieldCleared(user.FieldLastLoginTime) {
+		fields = append(fields, user.FieldLastLoginTime)
+	}
 	return fields
 }
 
@@ -3202,6 +3336,12 @@ func (m *UserMutation) ClearField(name string) error {
 	switch name {
 	case user.FieldPhone:
 		m.ClearPhone()
+		return nil
+	case user.FieldLastLoginIP:
+		m.ClearLastLoginIP()
+		return nil
+	case user.FieldLastLoginTime:
+		m.ClearLastLoginTime()
 		return nil
 	}
 	return fmt.Errorf("unknown User nullable field %s", name)
@@ -3225,6 +3365,12 @@ func (m *UserMutation) ResetField(name string) error {
 		return nil
 	case user.FieldPhone:
 		m.ResetPhone()
+		return nil
+	case user.FieldLastLoginIP:
+		m.ResetLastLoginIP()
+		return nil
+	case user.FieldLastLoginTime:
+		m.ResetLastLoginTime()
 		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)

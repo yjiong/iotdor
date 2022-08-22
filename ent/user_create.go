@@ -75,6 +75,34 @@ func (uc *UserCreate) SetNillablePhone(s *string) *UserCreate {
 	return uc
 }
 
+// SetLastLoginIP sets the "last_login_ip" field.
+func (uc *UserCreate) SetLastLoginIP(s string) *UserCreate {
+	uc.mutation.SetLastLoginIP(s)
+	return uc
+}
+
+// SetNillableLastLoginIP sets the "last_login_ip" field if the given value is not nil.
+func (uc *UserCreate) SetNillableLastLoginIP(s *string) *UserCreate {
+	if s != nil {
+		uc.SetLastLoginIP(*s)
+	}
+	return uc
+}
+
+// SetLastLoginTime sets the "last_login_time" field.
+func (uc *UserCreate) SetLastLoginTime(t time.Time) *UserCreate {
+	uc.mutation.SetLastLoginTime(t)
+	return uc
+}
+
+// SetNillableLastLoginTime sets the "last_login_time" field if the given value is not nil.
+func (uc *UserCreate) SetNillableLastLoginTime(t *time.Time) *UserCreate {
+	if t != nil {
+		uc.SetLastLoginTime(*t)
+	}
+	return uc
+}
+
 // AddGroupIDs adds the "groups" edge to the Group entity by IDs.
 func (uc *UserCreate) AddGroupIDs(ids ...int) *UserCreate {
 	uc.mutation.AddGroupIDs(ids...)
@@ -272,6 +300,22 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Column: user.FieldPhone,
 		})
 		_node.Phone = value
+	}
+	if value, ok := uc.mutation.LastLoginIP(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: user.FieldLastLoginIP,
+		})
+		_node.LastLoginIP = value
+	}
+	if value, ok := uc.mutation.LastLoginTime(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: user.FieldLastLoginTime,
+		})
+		_node.LastLoginTime = value
 	}
 	if nodes := uc.mutation.GroupsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

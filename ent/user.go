@@ -26,6 +26,10 @@ type User struct {
 	Passwd string `json:"-"`
 	// Phone holds the value of the "phone" field.
 	Phone string `json:"phone,omitempty"`
+	// LastLoginIP holds the value of the "last_login_ip" field.
+	LastLoginIP string `json:"last_login_ip,omitempty"`
+	// LastLoginTime holds the value of the "last_login_time" field.
+	LastLoginTime time.Time `json:"last_login_time,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UserQuery when eager-loading is set.
 	Edges UserEdges `json:"edges"`
@@ -67,9 +71,9 @@ func (*User) scanValues(columns []string) ([]interface{}, error) {
 		switch columns[i] {
 		case user.FieldID:
 			values[i] = new(sql.NullInt64)
-		case user.FieldName, user.FieldPasswd, user.FieldPhone:
+		case user.FieldName, user.FieldPasswd, user.FieldPhone, user.FieldLastLoginIP:
 			values[i] = new(sql.NullString)
-		case user.FieldCreateTime, user.FieldUpdateTime:
+		case user.FieldCreateTime, user.FieldUpdateTime, user.FieldLastLoginTime:
 			values[i] = new(sql.NullTime)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type User", columns[i])
@@ -122,6 +126,18 @@ func (u *User) assignValues(columns []string, values []interface{}) error {
 			} else if value.Valid {
 				u.Phone = value.String
 			}
+		case user.FieldLastLoginIP:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field last_login_ip", values[i])
+			} else if value.Valid {
+				u.LastLoginIP = value.String
+			}
+		case user.FieldLastLoginTime:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field last_login_time", values[i])
+			} else if value.Valid {
+				u.LastLoginTime = value.Time
+			}
 		}
 	}
 	return nil
@@ -173,6 +189,12 @@ func (u *User) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("phone=")
 	builder.WriteString(u.Phone)
+	builder.WriteString(", ")
+	builder.WriteString("last_login_ip=")
+	builder.WriteString(u.LastLoginIP)
+	builder.WriteString(", ")
+	builder.WriteString("last_login_time=")
+	builder.WriteString(u.LastLoginTime.Format(time.ANSIC))
 	builder.WriteByte(')')
 	return builder.String()
 }
