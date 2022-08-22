@@ -290,12 +290,12 @@ func (oq *OrganizationQuery) WithDevices(opts ...func(*DeviceQuery)) *Organizati
 // Example:
 //
 //	var v []struct {
-//		Name string `json:"name,omitempty"`
+//		CreateTime time.Time `json:"create_time,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.Organization.Query().
-//		GroupBy(organization.FieldName).
+//		GroupBy(organization.FieldCreateTime).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 //
@@ -319,11 +319,11 @@ func (oq *OrganizationQuery) GroupBy(field string, fields ...string) *Organizati
 // Example:
 //
 //	var v []struct {
-//		Name string `json:"name,omitempty"`
+//		CreateTime time.Time `json:"create_time,omitempty"`
 //	}
 //
 //	client.Organization.Query().
-//		Select(organization.FieldName).
+//		Select(organization.FieldCreateTime).
 //		Scan(ctx, &v)
 //
 func (oq *OrganizationQuery) Select(fields ...string) *OrganizationSelect {

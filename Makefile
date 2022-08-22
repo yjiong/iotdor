@@ -29,9 +29,6 @@ build:
 	@mkdir -p build
 	@env $(ENV) go build $(FLAGS) -o ./build/$(PROJECT) ./cmd/${PROJECT}/main.go
 
-swagger:
-	@swag init -g api/http_server.go -o api/docs
-
 clean:
 	@echo "Cleaning up workspace"
 	@rm -rf build 

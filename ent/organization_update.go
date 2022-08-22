@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -25,6 +26,12 @@ type OrganizationUpdate struct {
 // Where appends a list predicates to the OrganizationUpdate builder.
 func (ou *OrganizationUpdate) Where(ps ...predicate.Organization) *OrganizationUpdate {
 	ou.mutation.Where(ps...)
+	return ou
+}
+
+// SetUpdateTime sets the "update_time" field.
+func (ou *OrganizationUpdate) SetUpdateTime(t time.Time) *OrganizationUpdate {
+	ou.mutation.SetUpdateTime(t)
 	return ou
 }
 
@@ -159,6 +166,7 @@ func (ou *OrganizationUpdate) Save(ctx context.Context) (int, error) {
 		err      error
 		affected int
 	)
+	ou.defaults()
 	if len(ou.hooks) == 0 {
 		affected, err = ou.sqlSave(ctx)
 	} else {
@@ -207,6 +215,14 @@ func (ou *OrganizationUpdate) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (ou *OrganizationUpdate) defaults() {
+	if _, ok := ou.mutation.UpdateTime(); !ok {
+		v := organization.UpdateDefaultUpdateTime()
+		ou.mutation.SetUpdateTime(v)
+	}
+}
+
 func (ou *OrganizationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
@@ -224,6 +240,13 @@ func (ou *OrganizationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := ou.mutation.UpdateTime(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: organization.FieldUpdateTime,
+		})
 	}
 	if value, ok := ou.mutation.Name(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
@@ -365,6 +388,12 @@ type OrganizationUpdateOne struct {
 	mutation *OrganizationMutation
 }
 
+// SetUpdateTime sets the "update_time" field.
+func (ouo *OrganizationUpdateOne) SetUpdateTime(t time.Time) *OrganizationUpdateOne {
+	ouo.mutation.SetUpdateTime(t)
+	return ouo
+}
+
 // SetName sets the "name" field.
 func (ouo *OrganizationUpdateOne) SetName(s string) *OrganizationUpdateOne {
 	ouo.mutation.SetName(s)
@@ -503,6 +532,7 @@ func (ouo *OrganizationUpdateOne) Save(ctx context.Context) (*Organization, erro
 		err  error
 		node *Organization
 	)
+	ouo.defaults()
 	if len(ouo.hooks) == 0 {
 		node, err = ouo.sqlSave(ctx)
 	} else {
@@ -557,6 +587,14 @@ func (ouo *OrganizationUpdateOne) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (ouo *OrganizationUpdateOne) defaults() {
+	if _, ok := ouo.mutation.UpdateTime(); !ok {
+		v := organization.UpdateDefaultUpdateTime()
+		ouo.mutation.SetUpdateTime(v)
+	}
+}
+
 func (ouo *OrganizationUpdateOne) sqlSave(ctx context.Context) (_node *Organization, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
@@ -591,6 +629,13 @@ func (ouo *OrganizationUpdateOne) sqlSave(ctx context.Context) (_node *Organizat
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := ouo.mutation.UpdateTime(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: organization.FieldUpdateTime,
+		})
 	}
 	if value, ok := ouo.mutation.Name(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{

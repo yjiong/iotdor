@@ -101,6 +101,8 @@ var (
 	// OrganizationsColumns holds the columns for the "organizations" table.
 	OrganizationsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
 		{Name: "name", Type: field.TypeString, Unique: true},
 		{Name: "address", Type: field.TypeString},
 		{Name: "floor", Type: field.TypeString, Nullable: true},
@@ -118,7 +120,7 @@ var (
 			{
 				Name:    "organization_name",
 				Unique:  false,
-				Columns: []*schema.Column{OrganizationsColumns[1]},
+				Columns: []*schema.Column{OrganizationsColumns[3]},
 			},
 		},
 	}

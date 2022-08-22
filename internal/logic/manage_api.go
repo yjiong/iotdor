@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/yjiong/iotdor/ent"
+	"github.com/yjiong/iotdor/ent/organization"
 	"github.com/yjiong/iotdor/ent/user"
 )
 
@@ -83,4 +84,63 @@ func (m *Manage) UpdateUserLoginInfo(name, lip string) error {
 func (m *Manage) UserAdminFlag(uname string) bool {
 	u, _ := queryUserByName(m.ctx, m.entC, uname)
 	return userAdminFlag(m.ctx, u, uname)
+}
+
+// AddOrganization .....
+func (m *Manage) AddOrganization(o ent.Organization) error {
+	return m.entC.Organization.Create().
+		SetFloor(o.Floor).
+		SetAddress(o.Address).
+		SetName(o.Name).
+		SetUnitNo(o.PersonCharge).
+		SetUnitNo(o.UnitNo).
+		SetLongitudeAndLatituude(o.LongitudeAndLatituude).
+		SetSummary(o.Summary).Exec(m.ctx)
+}
+
+// UpdateOrganization .....
+func (m *Manage) UpdateOrganization(name string, o ent.Organization) error {
+	return m.entC.Organization.Update().
+		Where(organization.Name(name)).
+		SetFloor(o.Floor).
+		SetAddress(o.Address).
+		SetUnitNo(o.PersonCharge).
+		SetUnitNo(o.UnitNo).
+		SetLongitudeAndLatituude(o.LongitudeAndLatituude).
+		SetSummary(o.Summary).Exec(m.ctx)
+}
+
+// DeleteOrganization .....
+func (m *Manage) DeleteOrganization(name string) error {
+	_, err := m.entC.Organization.Delete().Where(organization.Name(name)).Exec(m.ctx)
+	return err
+}
+
+// BeRelatedDeviceToOrganization .....
+func (m *Manage) BeRelatedDeviceToOrganization(name, devid string) error {
+	var rerr error
+	o, oerr := m.entC.Organization.Query().Where(organization.Name(name)).Only(m.ctx)
+	if oerr == nil {
+		d, derr := queryDeviceByDevID(m.ctx, m.entC, devid)
+		if derr == nil {
+			rerr = d.Update().SetOrganization(o).Exec(m.ctx)
+		} else {
+			rerr = derr
+		}
+	} else {
+		rerr = oerr
+	}
+	return rerr
+}
+
+// RemoveDeviceFromOrganization .....
+func (m *Manage) RemoveDeviceFromOrganization(devid string) error {
+	var rerr error
+	d, derr := queryDeviceByDevID(m.ctx, m.entC, devid)
+	if derr == nil {
+		rerr = d.Update().ClearOrganization().Exec(m.ctx)
+	} else {
+		rerr = derr
+	}
+	return rerr
 }

@@ -8,6 +8,7 @@ import (
 	"github.com/yjiong/iotdor/ent/device"
 	"github.com/yjiong/iotdor/ent/gateway"
 	"github.com/yjiong/iotdor/ent/group"
+	"github.com/yjiong/iotdor/ent/organization"
 	"github.com/yjiong/iotdor/ent/schema"
 	"github.com/yjiong/iotdor/ent/user"
 )
@@ -56,6 +57,21 @@ func init() {
 	groupDescName := groupFields[0].Descriptor()
 	// group.NameValidator is a validator for the "name" field. It is called by the builders before save.
 	group.NameValidator = groupDescName.Validators[0].(func(string) error)
+	organizationMixin := schema.Organization{}.Mixin()
+	organizationMixinFields0 := organizationMixin[0].Fields()
+	_ = organizationMixinFields0
+	organizationFields := schema.Organization{}.Fields()
+	_ = organizationFields
+	// organizationDescCreateTime is the schema descriptor for create_time field.
+	organizationDescCreateTime := organizationMixinFields0[0].Descriptor()
+	// organization.DefaultCreateTime holds the default value on creation for the create_time field.
+	organization.DefaultCreateTime = organizationDescCreateTime.Default.(func() time.Time)
+	// organizationDescUpdateTime is the schema descriptor for update_time field.
+	organizationDescUpdateTime := organizationMixinFields0[1].Descriptor()
+	// organization.DefaultUpdateTime holds the default value on creation for the update_time field.
+	organization.DefaultUpdateTime = organizationDescUpdateTime.Default.(func() time.Time)
+	// organization.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
+	organization.UpdateDefaultUpdateTime = organizationDescUpdateTime.UpdateDefault.(func() time.Time)
 	userMixin := schema.User{}.Mixin()
 	userMixinFields0 := userMixin[0].Fields()
 	_ = userMixinFields0

@@ -367,7 +367,7 @@ paths:
       consumes:
         - application/json
       tags:
-        - 系统信息
+        - 系统用户信息
       summary: 获取用户信息
       responses:
         '200':
@@ -385,7 +385,7 @@ paths:
       consumes:
         - application/json
       tags:
-        - 系统信息
+        - 系统用户信息
       summary: 添加用户
       requestBody:
         content:
@@ -398,7 +398,7 @@ paths:
         '200':
           description: ok
           schema:
-            type: string
+            type: object
         '401':
           description: access denided
           schema:
@@ -414,7 +414,7 @@ paths:
       consumes:
         - application/json
       tags:
-        - 系统信息
+        - 系统用户信息
       summary: 更新用户(修改密码，电话, 设置为管理员)
       requestBody:
         content:
@@ -427,7 +427,7 @@ paths:
         '200':
           description: ok
           schema:
-            type: string
+            type: object
         '401':
           description: access denided
           schema:
@@ -443,10 +443,10 @@ paths:
       consumes:
         - application/json
       tags:
-        - 系统信息
+        - 系统用户信息
       summary: 删除用户
       parameters:
-        - description: 删除用户
+        - description: 用户名
           name: uname
           in: path
           required: true
@@ -454,13 +454,120 @@ paths:
         '200':
           description: ok
           schema:
-            type: string
+            type: object
         '401':
           description: access denided
           schema:
             type: object
         '404':
           description: delete user failed
+          schema:
+            type: object
+  /config/sys/organization_info:
+    get:
+      security:
+        - api_key: []
+      consumes:
+        - application/json
+      tags:
+        - 系统组织结构关联信息
+      summary:  获取组织结构信息
+      responses:
+        '200':
+          description: ok
+          schema:
+            type: object
+        '401':
+          description: access denided
+          schema:
+            type: object
+        '404':
+          description: delete user failed
+          schema:
+            type: object
+  /config/sys/add_organization:
+    post:
+      security:
+        - api_key: []
+      consumes:
+        - application/json
+      tags:
+        - 系统组织结构关联信息
+      summary:  添加组织结构信息
+      requestBody:
+        content:
+          application/json:
+            name: organization_info
+            required: true
+            schema:
+              $ref: '#/components/schemas/Organization'
+      responses:
+        '200':
+          description: ok
+          schema:
+            type: object
+        '401':
+          description: access denided
+          schema:
+            type: object
+        '404':
+          description: add user failed
+          schema:
+            type: object
+  /config/sys/update_organization:
+    put:
+      security:
+        - api_key: []
+      consumes:
+        - application/json
+      tags:
+        - 系统组织结构关联信息
+      summary:  更新组织结构信息
+      requestBody:
+        content:
+          application/json:
+            name: organization_info
+            required: true
+            schema:
+              $ref: '#/components/schemas/Organization'
+      responses:
+        '200':
+          description: ok
+          schema:
+            type: object
+        '401':
+          description: access denided
+          schema:
+            type: object
+        '404':
+          description: add user failed
+          schema:
+            type: object
+  /config/sys/delete_organization/{oname}:
+    delete:
+      security:
+        - api_key: []
+      consumes:
+        - application/json
+      tags:
+        - 系统组织结构关联信息
+      summary:  删除组织结构信息
+      parameters:
+        - description: 组织结构的名称
+          name: oname
+          in: path
+          required: true
+      responses:
+        '200':
+          description: ok
+          schema:
+            type: object
+        '401':
+          description: access denided
+          schema:
+            type: object
+        '404':
+          description: add user failed
           schema:
             type: object
 components:
@@ -562,8 +669,30 @@ components:
         admin_flag:
           type: boolean
           default: false
+          description: 是否设置为管理员
         phone:
           type: string
+    Organization:        
+      type: object
+      properties:
+        name:
+          type: string
+          description: 组织结构的名称(需唯一)
+        address:
+          type: string
+          description: 详细地址
+        floor:
+          type: string
+          description: 楼层
+        unit_no:
+          type: string
+          description: 单元号(门牌号之类的)
+        longitude_and_latituude:    
+          type: string
+          description: 经纬度
+        summary:
+          type: string
+          description: 简介备注
   securitySchemes:
     #xxxstore_auth:
       #type: oauth2

@@ -5,6 +5,7 @@ import (
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
+	"entgo.io/ent/schema/mixin"
 )
 
 // Organization holds the schema definition for the Organization entity.
@@ -36,5 +37,12 @@ func (Organization) Edges() []ent.Edge {
 func (Organization) Indexes() []ent.Index {
 	return []ent.Index{
 		index.Fields("name"),
+	}
+}
+
+// Mixin ....
+func (Organization) Mixin() []ent.Mixin {
+	return []ent.Mixin{
+		mixin.Time{},
 	}
 }
