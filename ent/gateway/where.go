@@ -116,7 +116,7 @@ func Broker(v string) predicate.Gateway {
 	})
 }
 
-// InstallationLocation applies equality check predicate on the "installationLocation" field. It's identical to InstallationLocationEQ.
+// InstallationLocation applies equality check predicate on the "installation_location" field. It's identical to InstallationLocationEQ.
 func InstallationLocation(v string) predicate.Gateway {
 	return predicate.Gateway(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldInstallationLocation), v))
@@ -130,14 +130,14 @@ func Online(v bool) predicate.Gateway {
 	})
 }
 
-// DeleteFlag applies equality check predicate on the "DeleteFlag" field. It's identical to DeleteFlagEQ.
+// DeleteFlag applies equality check predicate on the "delete_flag" field. It's identical to DeleteFlagEQ.
 func DeleteFlag(v bool) predicate.Gateway {
 	return predicate.Gateway(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldDeleteFlag), v))
 	})
 }
 
-// UpInterval applies equality check predicate on the "upInterval" field. It's identical to UpIntervalEQ.
+// UpInterval applies equality check predicate on the "up_interval" field. It's identical to UpIntervalEQ.
 func UpInterval(v int) predicate.Gateway {
 	return predicate.Gateway(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldUpInterval), v))
@@ -576,21 +576,21 @@ func BrokerContainsFold(v string) predicate.Gateway {
 	})
 }
 
-// InstallationLocationEQ applies the EQ predicate on the "installationLocation" field.
+// InstallationLocationEQ applies the EQ predicate on the "installation_location" field.
 func InstallationLocationEQ(v string) predicate.Gateway {
 	return predicate.Gateway(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldInstallationLocation), v))
 	})
 }
 
-// InstallationLocationNEQ applies the NEQ predicate on the "installationLocation" field.
+// InstallationLocationNEQ applies the NEQ predicate on the "installation_location" field.
 func InstallationLocationNEQ(v string) predicate.Gateway {
 	return predicate.Gateway(func(s *sql.Selector) {
 		s.Where(sql.NEQ(s.C(FieldInstallationLocation), v))
 	})
 }
 
-// InstallationLocationIn applies the In predicate on the "installationLocation" field.
+// InstallationLocationIn applies the In predicate on the "installation_location" field.
 func InstallationLocationIn(vs ...string) predicate.Gateway {
 	v := make([]interface{}, len(vs))
 	for i := range v {
@@ -601,7 +601,7 @@ func InstallationLocationIn(vs ...string) predicate.Gateway {
 	})
 }
 
-// InstallationLocationNotIn applies the NotIn predicate on the "installationLocation" field.
+// InstallationLocationNotIn applies the NotIn predicate on the "installation_location" field.
 func InstallationLocationNotIn(vs ...string) predicate.Gateway {
 	v := make([]interface{}, len(vs))
 	for i := range v {
@@ -612,77 +612,77 @@ func InstallationLocationNotIn(vs ...string) predicate.Gateway {
 	})
 }
 
-// InstallationLocationGT applies the GT predicate on the "installationLocation" field.
+// InstallationLocationGT applies the GT predicate on the "installation_location" field.
 func InstallationLocationGT(v string) predicate.Gateway {
 	return predicate.Gateway(func(s *sql.Selector) {
 		s.Where(sql.GT(s.C(FieldInstallationLocation), v))
 	})
 }
 
-// InstallationLocationGTE applies the GTE predicate on the "installationLocation" field.
+// InstallationLocationGTE applies the GTE predicate on the "installation_location" field.
 func InstallationLocationGTE(v string) predicate.Gateway {
 	return predicate.Gateway(func(s *sql.Selector) {
 		s.Where(sql.GTE(s.C(FieldInstallationLocation), v))
 	})
 }
 
-// InstallationLocationLT applies the LT predicate on the "installationLocation" field.
+// InstallationLocationLT applies the LT predicate on the "installation_location" field.
 func InstallationLocationLT(v string) predicate.Gateway {
 	return predicate.Gateway(func(s *sql.Selector) {
 		s.Where(sql.LT(s.C(FieldInstallationLocation), v))
 	})
 }
 
-// InstallationLocationLTE applies the LTE predicate on the "installationLocation" field.
+// InstallationLocationLTE applies the LTE predicate on the "installation_location" field.
 func InstallationLocationLTE(v string) predicate.Gateway {
 	return predicate.Gateway(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldInstallationLocation), v))
 	})
 }
 
-// InstallationLocationContains applies the Contains predicate on the "installationLocation" field.
+// InstallationLocationContains applies the Contains predicate on the "installation_location" field.
 func InstallationLocationContains(v string) predicate.Gateway {
 	return predicate.Gateway(func(s *sql.Selector) {
 		s.Where(sql.Contains(s.C(FieldInstallationLocation), v))
 	})
 }
 
-// InstallationLocationHasPrefix applies the HasPrefix predicate on the "installationLocation" field.
+// InstallationLocationHasPrefix applies the HasPrefix predicate on the "installation_location" field.
 func InstallationLocationHasPrefix(v string) predicate.Gateway {
 	return predicate.Gateway(func(s *sql.Selector) {
 		s.Where(sql.HasPrefix(s.C(FieldInstallationLocation), v))
 	})
 }
 
-// InstallationLocationHasSuffix applies the HasSuffix predicate on the "installationLocation" field.
+// InstallationLocationHasSuffix applies the HasSuffix predicate on the "installation_location" field.
 func InstallationLocationHasSuffix(v string) predicate.Gateway {
 	return predicate.Gateway(func(s *sql.Selector) {
 		s.Where(sql.HasSuffix(s.C(FieldInstallationLocation), v))
 	})
 }
 
-// InstallationLocationIsNil applies the IsNil predicate on the "installationLocation" field.
+// InstallationLocationIsNil applies the IsNil predicate on the "installation_location" field.
 func InstallationLocationIsNil() predicate.Gateway {
 	return predicate.Gateway(func(s *sql.Selector) {
 		s.Where(sql.IsNull(s.C(FieldInstallationLocation)))
 	})
 }
 
-// InstallationLocationNotNil applies the NotNil predicate on the "installationLocation" field.
+// InstallationLocationNotNil applies the NotNil predicate on the "installation_location" field.
 func InstallationLocationNotNil() predicate.Gateway {
 	return predicate.Gateway(func(s *sql.Selector) {
 		s.Where(sql.NotNull(s.C(FieldInstallationLocation)))
 	})
 }
 
-// InstallationLocationEqualFold applies the EqualFold predicate on the "installationLocation" field.
+// InstallationLocationEqualFold applies the EqualFold predicate on the "installation_location" field.
 func InstallationLocationEqualFold(v string) predicate.Gateway {
 	return predicate.Gateway(func(s *sql.Selector) {
 		s.Where(sql.EqualFold(s.C(FieldInstallationLocation), v))
 	})
 }
 
-// InstallationLocationContainsFold applies the ContainsFold predicate on the "installationLocation" field.
+// InstallationLocationContainsFold applies the ContainsFold predicate on the "installation_location" field.
 func InstallationLocationContainsFold(v string) predicate.Gateway {
 	return predicate.Gateway(func(s *sql.Selector) {
 		s.Where(sql.ContainsFold(s.C(FieldInstallationLocation), v))
@@ -717,49 +717,49 @@ func OnlineNotNil() predicate.Gateway {
 	})
 }
 
-// DeleteFlagEQ applies the EQ predicate on the "DeleteFlag" field.
+// DeleteFlagEQ applies the EQ predicate on the "delete_flag" field.
 func DeleteFlagEQ(v bool) predicate.Gateway {
 	return predicate.Gateway(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldDeleteFlag), v))
 	})
 }
 
-// DeleteFlagNEQ applies the NEQ predicate on the "DeleteFlag" field.
+// DeleteFlagNEQ applies the NEQ predicate on the "delete_flag" field.
 func DeleteFlagNEQ(v bool) predicate.Gateway {
 	return predicate.Gateway(func(s *sql.Selector) {
 		s.Where(sql.NEQ(s.C(FieldDeleteFlag), v))
 	})
 }
 
-// DeleteFlagIsNil applies the IsNil predicate on the "DeleteFlag" field.
+// DeleteFlagIsNil applies the IsNil predicate on the "delete_flag" field.
 func DeleteFlagIsNil() predicate.Gateway {
 	return predicate.Gateway(func(s *sql.Selector) {
 		s.Where(sql.IsNull(s.C(FieldDeleteFlag)))
 	})
 }
 
-// DeleteFlagNotNil applies the NotNil predicate on the "DeleteFlag" field.
+// DeleteFlagNotNil applies the NotNil predicate on the "delete_flag" field.
 func DeleteFlagNotNil() predicate.Gateway {
 	return predicate.Gateway(func(s *sql.Selector) {
 		s.Where(sql.NotNull(s.C(FieldDeleteFlag)))
 	})
 }
 
-// UpIntervalEQ applies the EQ predicate on the "upInterval" field.
+// UpIntervalEQ applies the EQ predicate on the "up_interval" field.
 func UpIntervalEQ(v int) predicate.Gateway {
 	return predicate.Gateway(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldUpInterval), v))
 	})
 }
 
-// UpIntervalNEQ applies the NEQ predicate on the "upInterval" field.
+// UpIntervalNEQ applies the NEQ predicate on the "up_interval" field.
 func UpIntervalNEQ(v int) predicate.Gateway {
 	return predicate.Gateway(func(s *sql.Selector) {
 		s.Where(sql.NEQ(s.C(FieldUpInterval), v))
 	})
 }
 
-// UpIntervalIn applies the In predicate on the "upInterval" field.
+// UpIntervalIn applies the In predicate on the "up_interval" field.
 func UpIntervalIn(vs ...int) predicate.Gateway {
 	v := make([]interface{}, len(vs))
 	for i := range v {
@@ -770,7 +770,7 @@ func UpIntervalIn(vs ...int) predicate.Gateway {
 	})
 }
 
-// UpIntervalNotIn applies the NotIn predicate on the "upInterval" field.
+// UpIntervalNotIn applies the NotIn predicate on the "up_interval" field.
 func UpIntervalNotIn(vs ...int) predicate.Gateway {
 	v := make([]interface{}, len(vs))
 	for i := range v {
@@ -781,28 +781,28 @@ func UpIntervalNotIn(vs ...int) predicate.Gateway {
 	})
 }
 
-// UpIntervalGT applies the GT predicate on the "upInterval" field.
+// UpIntervalGT applies the GT predicate on the "up_interval" field.
 func UpIntervalGT(v int) predicate.Gateway {
 	return predicate.Gateway(func(s *sql.Selector) {
 		s.Where(sql.GT(s.C(FieldUpInterval), v))
 	})
 }
 
-// UpIntervalGTE applies the GTE predicate on the "upInterval" field.
+// UpIntervalGTE applies the GTE predicate on the "up_interval" field.
 func UpIntervalGTE(v int) predicate.Gateway {
 	return predicate.Gateway(func(s *sql.Selector) {
 		s.Where(sql.GTE(s.C(FieldUpInterval), v))
 	})
 }
 
-// UpIntervalLT applies the LT predicate on the "upInterval" field.
+// UpIntervalLT applies the LT predicate on the "up_interval" field.
 func UpIntervalLT(v int) predicate.Gateway {
 	return predicate.Gateway(func(s *sql.Selector) {
 		s.Where(sql.LT(s.C(FieldUpInterval), v))
 	})
 }
 
-// UpIntervalLTE applies the LTE predicate on the "upInterval" field.
+// UpIntervalLTE applies the LTE predicate on the "up_interval" field.
 func UpIntervalLTE(v int) predicate.Gateway {
 	return predicate.Gateway(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldUpInterval), v))

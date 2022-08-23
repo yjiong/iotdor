@@ -13,7 +13,8 @@ import (
 	"github.com/yjiong/iotdor/ent/device"
 	"github.com/yjiong/iotdor/ent/gateway"
 	"github.com/yjiong/iotdor/ent/group"
-	"github.com/yjiong/iotdor/ent/organization"
+	"github.com/yjiong/iotdor/ent/organizationposition"
+	"github.com/yjiong/iotdor/ent/organizationtree"
 	"github.com/yjiong/iotdor/ent/user"
 )
 
@@ -35,11 +36,12 @@ type OrderFunc func(*sql.Selector)
 // columnChecker returns a function indicates if the column exists in the given column.
 func columnChecker(table string) func(string) error {
 	checks := map[string]func(string) bool{
-		device.Table:       device.ValidColumn,
-		gateway.Table:      gateway.ValidColumn,
-		group.Table:        group.ValidColumn,
-		organization.Table: organization.ValidColumn,
-		user.Table:         user.ValidColumn,
+		device.Table:               device.ValidColumn,
+		gateway.Table:              gateway.ValidColumn,
+		group.Table:                group.ValidColumn,
+		organizationposition.Table: organizationposition.ValidColumn,
+		organizationtree.Table:     organizationtree.ValidColumn,
+		user.Table:                 user.ValidColumn,
 	}
 	check, ok := checks[table]
 	if !ok {

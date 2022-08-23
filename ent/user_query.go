@@ -12,7 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/yjiong/iotdor/ent/group"
-	"github.com/yjiong/iotdor/ent/organization"
+	"github.com/yjiong/iotdor/ent/organizationposition"
 	"github.com/yjiong/iotdor/ent/predicate"
 	"github.com/yjiong/iotdor/ent/user"
 )
@@ -28,7 +28,7 @@ type UserQuery struct {
 	predicates        []predicate.User
 	withGroups        *GroupQuery
 	withAdmins        *GroupQuery
-	withPersonCharges *OrganizationQuery
+	withPersonCharges *OrganizationPositionQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -109,9 +109,9 @@ func (uq *UserQuery) QueryAdmins() *GroupQuery {
 	return query
 }
 
-// QueryPersonCharges chains the current query on the "personCharges" edge.
-func (uq *UserQuery) QueryPersonCharges() *OrganizationQuery {
-	query := &OrganizationQuery{config: uq.config}
+// QueryPersonCharges chains the current query on the "person_charges" edge.
+func (uq *UserQuery) QueryPersonCharges() *OrganizationPositionQuery {
+	query := &OrganizationPositionQuery{config: uq.config}
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := uq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -122,7 +122,7 @@ func (uq *UserQuery) QueryPersonCharges() *OrganizationQuery {
 		}
 		step := sqlgraph.NewStep(
 			sqlgraph.From(user.Table, user.FieldID, selector),
-			sqlgraph.To(organization.Table, organization.FieldID),
+			sqlgraph.To(organizationposition.Table, organizationposition.FieldID),
 			sqlgraph.Edge(sqlgraph.M2M, true, user.PersonChargesTable, user.PersonChargesPrimaryKey...),
 		)
 		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
@@ -345,9 +345,9 @@ func (uq *UserQuery) WithAdmins(opts ...func(*GroupQuery)) *UserQuery {
 }
 
 // WithPersonCharges tells the query-builder to eager-load the nodes that are connected to
-// the "personCharges" edge. The optional arguments are used to configure the query builder of the edge.
-func (uq *UserQuery) WithPersonCharges(opts ...func(*OrganizationQuery)) *UserQuery {
-	query := &OrganizationQuery{config: uq.config}
+// the "person_charges" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithPersonCharges(opts ...func(*OrganizationPositionQuery)) *UserQuery {
+	query := &OrganizationPositionQuery{config: uq.config}
 	for _, opt := range opts {
 		opt(query)
 	}
@@ -465,8 +465,8 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 	}
 	if query := uq.withPersonCharges; query != nil {
 		if err := uq.loadPersonCharges(ctx, query, nodes,
-			func(n *User) { n.Edges.PersonCharges = []*Organization{} },
-			func(n *User, e *Organization) { n.Edges.PersonCharges = append(n.Edges.PersonCharges, e) }); err != nil {
+			func(n *User) { n.Edges.PersonCharges = []*OrganizationPosition{} },
+			func(n *User, e *OrganizationPosition) { n.Edges.PersonCharges = append(n.Edges.PersonCharges, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -589,7 +589,7 @@ func (uq *UserQuery) loadAdmins(ctx context.Context, query *GroupQuery, nodes []
 	}
 	return nil
 }
-func (uq *UserQuery) loadPersonCharges(ctx context.Context, query *OrganizationQuery, nodes []*User, init func(*User), assign func(*User, *Organization)) error {
+func (uq *UserQuery) loadPersonCharges(ctx context.Context, query *OrganizationPositionQuery, nodes []*User, init func(*User), assign func(*User, *OrganizationPosition)) error {
 	edgeIDs := make([]driver.Value, len(nodes))
 	byID := make(map[int]*User)
 	nids := make(map[int]map[*User]struct{})
@@ -602,7 +602,7 @@ func (uq *UserQuery) loadPersonCharges(ctx context.Context, query *OrganizationQ
 	}
 	query.Where(func(s *sql.Selector) {
 		joinT := sql.Table(user.PersonChargesTable)
-		s.Join(joinT).On(s.C(organization.FieldID), joinT.C(user.PersonChargesPrimaryKey[0]))
+		s.Join(joinT).On(s.C(organizationposition.FieldID), joinT.C(user.PersonChargesPrimaryKey[0]))
 		s.Where(sql.InValues(joinT.C(user.PersonChargesPrimaryKey[1]), edgeIDs...))
 		columns := s.SelectedColumns()
 		s.Select(joinT.C(user.PersonChargesPrimaryKey[1]))
@@ -639,7 +639,7 @@ func (uq *UserQuery) loadPersonCharges(ctx context.Context, query *OrganizationQ
 	for _, n := range neighbors {
 		nodes, ok := nids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected "personCharges" node returned %v`, n.ID)
+			return fmt.Errorf(`unexpected "person_charges" node returned %v`, n.ID)
 		}
 		for kn := range nodes {
 			assign(kn, n)

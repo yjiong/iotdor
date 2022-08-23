@@ -816,7 +816,7 @@ func HasAdminsWith(preds ...predicate.Group) predicate.User {
 	})
 }
 
-// HasPersonCharges applies the HasEdge predicate on the "personCharges" edge.
+// HasPersonCharges applies the HasEdge predicate on the "person_charges" edge.
 func HasPersonCharges() predicate.User {
 	return predicate.User(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
@@ -828,8 +828,8 @@ func HasPersonCharges() predicate.User {
 	})
 }
 
-// HasPersonChargesWith applies the HasEdge predicate on the "personCharges" edge with a given conditions (other predicates).
-func HasPersonChargesWith(preds ...predicate.Organization) predicate.User {
+// HasPersonChargesWith applies the HasEdge predicate on the "person_charges" edge with a given conditions (other predicates).
+func HasPersonChargesWith(preds ...predicate.OrganizationPosition) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),

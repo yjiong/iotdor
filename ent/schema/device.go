@@ -16,14 +16,14 @@ type Device struct {
 // Fields of the Device.
 func (Device) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("devID").
+		field.String("dev_id").
 			Unique(),
-		field.String("devType"),
-		field.String("devAddr"),
+		field.String("dev_type"),
+		field.String("dev_addr"),
 		field.String("conn"),
 		field.String("name").
 			Optional(),
-		field.Bool("deleteFlag").
+		field.Bool("delete_flag").
 			Optional(),
 		field.String("summary").
 			Optional(),
@@ -33,7 +33,7 @@ func (Device) Fields() []ent.Field {
 // Edges of the Device.
 func (Device) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.From("Organization", Organization.Type).
+		edge.From("organization_position", OrganizationPosition.Type).
 			Ref("devices").
 			Unique(),
 		edge.From("gateway", Gateway.Type).
@@ -52,6 +52,6 @@ func (Device) Mixin() []ent.Mixin {
 // Indexes of the Device
 func (Device) Indexes() []ent.Index {
 	return []ent.Index{
-		index.Fields("devID"),
+		index.Fields("dev_id"),
 	}
 }

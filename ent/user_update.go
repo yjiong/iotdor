@@ -12,7 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/yjiong/iotdor/ent/group"
-	"github.com/yjiong/iotdor/ent/organization"
+	"github.com/yjiong/iotdor/ent/organizationposition"
 	"github.com/yjiong/iotdor/ent/predicate"
 	"github.com/yjiong/iotdor/ent/user"
 )
@@ -138,14 +138,14 @@ func (uu *UserUpdate) AddAdmins(g ...*Group) *UserUpdate {
 	return uu.AddAdminIDs(ids...)
 }
 
-// AddPersonChargeIDs adds the "personCharges" edge to the Organization entity by IDs.
+// AddPersonChargeIDs adds the "person_charges" edge to the OrganizationPosition entity by IDs.
 func (uu *UserUpdate) AddPersonChargeIDs(ids ...int) *UserUpdate {
 	uu.mutation.AddPersonChargeIDs(ids...)
 	return uu
 }
 
-// AddPersonCharges adds the "personCharges" edges to the Organization entity.
-func (uu *UserUpdate) AddPersonCharges(o ...*Organization) *UserUpdate {
+// AddPersonCharges adds the "person_charges" edges to the OrganizationPosition entity.
+func (uu *UserUpdate) AddPersonCharges(o ...*OrganizationPosition) *UserUpdate {
 	ids := make([]int, len(o))
 	for i := range o {
 		ids[i] = o[i].ID
@@ -200,20 +200,20 @@ func (uu *UserUpdate) RemoveAdmins(g ...*Group) *UserUpdate {
 	return uu.RemoveAdminIDs(ids...)
 }
 
-// ClearPersonCharges clears all "personCharges" edges to the Organization entity.
+// ClearPersonCharges clears all "person_charges" edges to the OrganizationPosition entity.
 func (uu *UserUpdate) ClearPersonCharges() *UserUpdate {
 	uu.mutation.ClearPersonCharges()
 	return uu
 }
 
-// RemovePersonChargeIDs removes the "personCharges" edge to Organization entities by IDs.
+// RemovePersonChargeIDs removes the "person_charges" edge to OrganizationPosition entities by IDs.
 func (uu *UserUpdate) RemovePersonChargeIDs(ids ...int) *UserUpdate {
 	uu.mutation.RemovePersonChargeIDs(ids...)
 	return uu
 }
 
-// RemovePersonCharges removes "personCharges" edges to Organization entities.
-func (uu *UserUpdate) RemovePersonCharges(o ...*Organization) *UserUpdate {
+// RemovePersonCharges removes "person_charges" edges to OrganizationPosition entities.
+func (uu *UserUpdate) RemovePersonCharges(o ...*OrganizationPosition) *UserUpdate {
 	ids := make([]int, len(o))
 	for i := range o {
 		ids[i] = o[i].ID
@@ -480,7 +480,7 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: organization.FieldID,
+					Column: organizationposition.FieldID,
 				},
 			},
 		}
@@ -496,7 +496,7 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: organization.FieldID,
+					Column: organizationposition.FieldID,
 				},
 			},
 		}
@@ -515,7 +515,7 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: organization.FieldID,
+					Column: organizationposition.FieldID,
 				},
 			},
 		}
@@ -651,14 +651,14 @@ func (uuo *UserUpdateOne) AddAdmins(g ...*Group) *UserUpdateOne {
 	return uuo.AddAdminIDs(ids...)
 }
 
-// AddPersonChargeIDs adds the "personCharges" edge to the Organization entity by IDs.
+// AddPersonChargeIDs adds the "person_charges" edge to the OrganizationPosition entity by IDs.
 func (uuo *UserUpdateOne) AddPersonChargeIDs(ids ...int) *UserUpdateOne {
 	uuo.mutation.AddPersonChargeIDs(ids...)
 	return uuo
 }
 
-// AddPersonCharges adds the "personCharges" edges to the Organization entity.
-func (uuo *UserUpdateOne) AddPersonCharges(o ...*Organization) *UserUpdateOne {
+// AddPersonCharges adds the "person_charges" edges to the OrganizationPosition entity.
+func (uuo *UserUpdateOne) AddPersonCharges(o ...*OrganizationPosition) *UserUpdateOne {
 	ids := make([]int, len(o))
 	for i := range o {
 		ids[i] = o[i].ID
@@ -713,20 +713,20 @@ func (uuo *UserUpdateOne) RemoveAdmins(g ...*Group) *UserUpdateOne {
 	return uuo.RemoveAdminIDs(ids...)
 }
 
-// ClearPersonCharges clears all "personCharges" edges to the Organization entity.
+// ClearPersonCharges clears all "person_charges" edges to the OrganizationPosition entity.
 func (uuo *UserUpdateOne) ClearPersonCharges() *UserUpdateOne {
 	uuo.mutation.ClearPersonCharges()
 	return uuo
 }
 
-// RemovePersonChargeIDs removes the "personCharges" edge to Organization entities by IDs.
+// RemovePersonChargeIDs removes the "person_charges" edge to OrganizationPosition entities by IDs.
 func (uuo *UserUpdateOne) RemovePersonChargeIDs(ids ...int) *UserUpdateOne {
 	uuo.mutation.RemovePersonChargeIDs(ids...)
 	return uuo
 }
 
-// RemovePersonCharges removes "personCharges" edges to Organization entities.
-func (uuo *UserUpdateOne) RemovePersonCharges(o ...*Organization) *UserUpdateOne {
+// RemovePersonCharges removes "person_charges" edges to OrganizationPosition entities.
+func (uuo *UserUpdateOne) RemovePersonCharges(o ...*OrganizationPosition) *UserUpdateOne {
 	ids := make([]int, len(o))
 	for i := range o {
 		ids[i] = o[i].ID
@@ -1023,7 +1023,7 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: organization.FieldID,
+					Column: organizationposition.FieldID,
 				},
 			},
 		}
@@ -1039,7 +1039,7 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: organization.FieldID,
+					Column: organizationposition.FieldID,
 				},
 			},
 		}
@@ -1058,7 +1058,7 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: organization.FieldID,
+					Column: organizationposition.FieldID,
 				},
 			},
 		}

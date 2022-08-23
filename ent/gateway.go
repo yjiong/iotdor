@@ -27,14 +27,14 @@ type Gateway struct {
 	Svrid string `json:"svrid,omitempty"`
 	// Broker holds the value of the "broker" field.
 	Broker string `json:"broker,omitempty"`
-	// InstallationLocation holds the value of the "installationLocation" field.
-	InstallationLocation string `json:"installationLocation,omitempty"`
+	// InstallationLocation holds the value of the "installation_location" field.
+	InstallationLocation string `json:"installation_location,omitempty"`
 	// Online holds the value of the "online" field.
 	Online bool `json:"online,omitempty"`
-	// DeleteFlag holds the value of the "DeleteFlag" field.
-	DeleteFlag bool `json:"DeleteFlag,omitempty"`
-	// UpInterval holds the value of the "upInterval" field.
-	UpInterval int `json:"upInterval,omitempty"`
+	// DeleteFlag holds the value of the "delete_flag" field.
+	DeleteFlag bool `json:"delete_flag,omitempty"`
+	// UpInterval holds the value of the "up_interval" field.
+	UpInterval int `json:"up_interval,omitempty"`
 	// Summary holds the value of the "summary" field.
 	Summary string `json:"summary,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -144,7 +144,7 @@ func (ga *Gateway) assignValues(columns []string, values []interface{}) error {
 			}
 		case gateway.FieldInstallationLocation:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field installationLocation", values[i])
+				return fmt.Errorf("unexpected type %T for field installation_location", values[i])
 			} else if value.Valid {
 				ga.InstallationLocation = value.String
 			}
@@ -156,13 +156,13 @@ func (ga *Gateway) assignValues(columns []string, values []interface{}) error {
 			}
 		case gateway.FieldDeleteFlag:
 			if value, ok := values[i].(*sql.NullBool); !ok {
-				return fmt.Errorf("unexpected type %T for field DeleteFlag", values[i])
+				return fmt.Errorf("unexpected type %T for field delete_flag", values[i])
 			} else if value.Valid {
 				ga.DeleteFlag = value.Bool
 			}
 		case gateway.FieldUpInterval:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field upInterval", values[i])
+				return fmt.Errorf("unexpected type %T for field up_interval", values[i])
 			} else if value.Valid {
 				ga.UpInterval = int(value.Int64)
 			}
@@ -232,16 +232,16 @@ func (ga *Gateway) String() string {
 	builder.WriteString("broker=")
 	builder.WriteString(ga.Broker)
 	builder.WriteString(", ")
-	builder.WriteString("installationLocation=")
+	builder.WriteString("installation_location=")
 	builder.WriteString(ga.InstallationLocation)
 	builder.WriteString(", ")
 	builder.WriteString("online=")
 	builder.WriteString(fmt.Sprintf("%v", ga.Online))
 	builder.WriteString(", ")
-	builder.WriteString("DeleteFlag=")
+	builder.WriteString("delete_flag=")
 	builder.WriteString(fmt.Sprintf("%v", ga.DeleteFlag))
 	builder.WriteString(", ")
-	builder.WriteString("upInterval=")
+	builder.WriteString("up_interval=")
 	builder.WriteString(fmt.Sprintf("%v", ga.UpInterval))
 	builder.WriteString(", ")
 	builder.WriteString("summary=")

@@ -15,8 +15,11 @@ type Gateway func(*sql.Selector)
 // Group is the predicate function for group builders.
 type Group func(*sql.Selector)
 
-// Organization is the predicate function for organization builders.
-type Organization func(*sql.Selector)
+// OrganizationPosition is the predicate function for organizationposition builders.
+type OrganizationPosition func(*sql.Selector)
+
+// OrganizationTree is the predicate function for organizationtree builders.
+type OrganizationTree func(*sql.Selector)
 
 // User is the predicate function for user builders.
 type User func(*sql.Selector)

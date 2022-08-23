@@ -41,8 +41,8 @@ type UserEdges struct {
 	Groups []*Group `json:"groups,omitempty"`
 	// Admins holds the value of the admins edge.
 	Admins []*Group `json:"admins,omitempty"`
-	// PersonCharges holds the value of the personCharges edge.
-	PersonCharges []*Organization `json:"personCharges,omitempty"`
+	// PersonCharges holds the value of the person_charges edge.
+	PersonCharges []*OrganizationPosition `json:"person_charges,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [3]bool
@@ -68,11 +68,11 @@ func (e UserEdges) AdminsOrErr() ([]*Group, error) {
 
 // PersonChargesOrErr returns the PersonCharges value or an error if the edge
 // was not loaded in eager-loading.
-func (e UserEdges) PersonChargesOrErr() ([]*Organization, error) {
+func (e UserEdges) PersonChargesOrErr() ([]*OrganizationPosition, error) {
 	if e.loadedTypes[2] {
 		return e.PersonCharges, nil
 	}
-	return nil, &NotLoadedError{edge: "personCharges"}
+	return nil, &NotLoadedError{edge: "person_charges"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -164,8 +164,8 @@ func (u *User) QueryAdmins() *GroupQuery {
 	return (&UserClient{config: u.config}).QueryAdmins(u)
 }
 
-// QueryPersonCharges queries the "personCharges" edge of the User entity.
-func (u *User) QueryPersonCharges() *OrganizationQuery {
+// QueryPersonCharges queries the "person_charges" edge of the User entity.
+func (u *User) QueryPersonCharges() *OrganizationPositionQuery {
 	return (&UserClient{config: u.config}).QueryPersonCharges(u)
 }
 

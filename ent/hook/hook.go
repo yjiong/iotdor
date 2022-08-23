@@ -48,15 +48,28 @@ func (f GroupFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error
 	return f(ctx, mv)
 }
 
-// The OrganizationFunc type is an adapter to allow the use of ordinary
-// function as Organization mutator.
-type OrganizationFunc func(context.Context, *ent.OrganizationMutation) (ent.Value, error)
+// The OrganizationPositionFunc type is an adapter to allow the use of ordinary
+// function as OrganizationPosition mutator.
+type OrganizationPositionFunc func(context.Context, *ent.OrganizationPositionMutation) (ent.Value, error)
 
 // Mutate calls f(ctx, m).
-func (f OrganizationFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	mv, ok := m.(*ent.OrganizationMutation)
+func (f OrganizationPositionFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.OrganizationPositionMutation)
 	if !ok {
-		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.OrganizationMutation", m)
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.OrganizationPositionMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The OrganizationTreeFunc type is an adapter to allow the use of ordinary
+// function as OrganizationTree mutator.
+type OrganizationTreeFunc func(context.Context, *ent.OrganizationTreeMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f OrganizationTreeFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.OrganizationTreeMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.OrganizationTreeMutation", m)
 	}
 	return f(ctx, mv)
 }

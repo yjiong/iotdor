@@ -54,13 +54,13 @@ func (gu *GatewayUpdate) SetBroker(s string) *GatewayUpdate {
 	return gu
 }
 
-// SetInstallationLocation sets the "installationLocation" field.
+// SetInstallationLocation sets the "installation_location" field.
 func (gu *GatewayUpdate) SetInstallationLocation(s string) *GatewayUpdate {
 	gu.mutation.SetInstallationLocation(s)
 	return gu
 }
 
-// SetNillableInstallationLocation sets the "installationLocation" field if the given value is not nil.
+// SetNillableInstallationLocation sets the "installation_location" field if the given value is not nil.
 func (gu *GatewayUpdate) SetNillableInstallationLocation(s *string) *GatewayUpdate {
 	if s != nil {
 		gu.SetInstallationLocation(*s)
@@ -68,7 +68,7 @@ func (gu *GatewayUpdate) SetNillableInstallationLocation(s *string) *GatewayUpda
 	return gu
 }
 
-// ClearInstallationLocation clears the value of the "installationLocation" field.
+// ClearInstallationLocation clears the value of the "installation_location" field.
 func (gu *GatewayUpdate) ClearInstallationLocation() *GatewayUpdate {
 	gu.mutation.ClearInstallationLocation()
 	return gu
@@ -94,13 +94,13 @@ func (gu *GatewayUpdate) ClearOnline() *GatewayUpdate {
 	return gu
 }
 
-// SetDeleteFlag sets the "DeleteFlag" field.
+// SetDeleteFlag sets the "delete_flag" field.
 func (gu *GatewayUpdate) SetDeleteFlag(b bool) *GatewayUpdate {
 	gu.mutation.SetDeleteFlag(b)
 	return gu
 }
 
-// SetNillableDeleteFlag sets the "DeleteFlag" field if the given value is not nil.
+// SetNillableDeleteFlag sets the "delete_flag" field if the given value is not nil.
 func (gu *GatewayUpdate) SetNillableDeleteFlag(b *bool) *GatewayUpdate {
 	if b != nil {
 		gu.SetDeleteFlag(*b)
@@ -108,20 +108,20 @@ func (gu *GatewayUpdate) SetNillableDeleteFlag(b *bool) *GatewayUpdate {
 	return gu
 }
 
-// ClearDeleteFlag clears the value of the "DeleteFlag" field.
+// ClearDeleteFlag clears the value of the "delete_flag" field.
 func (gu *GatewayUpdate) ClearDeleteFlag() *GatewayUpdate {
 	gu.mutation.ClearDeleteFlag()
 	return gu
 }
 
-// SetUpInterval sets the "upInterval" field.
+// SetUpInterval sets the "up_interval" field.
 func (gu *GatewayUpdate) SetUpInterval(i int) *GatewayUpdate {
 	gu.mutation.ResetUpInterval()
 	gu.mutation.SetUpInterval(i)
 	return gu
 }
 
-// SetNillableUpInterval sets the "upInterval" field if the given value is not nil.
+// SetNillableUpInterval sets the "up_interval" field if the given value is not nil.
 func (gu *GatewayUpdate) SetNillableUpInterval(i *int) *GatewayUpdate {
 	if i != nil {
 		gu.SetUpInterval(*i)
@@ -129,7 +129,7 @@ func (gu *GatewayUpdate) SetNillableUpInterval(i *int) *GatewayUpdate {
 	return gu
 }
 
-// AddUpInterval adds i to the "upInterval" field.
+// AddUpInterval adds i to the "up_interval" field.
 func (gu *GatewayUpdate) AddUpInterval(i int) *GatewayUpdate {
 	gu.mutation.AddUpInterval(i)
 	return gu
@@ -528,13 +528,13 @@ func (guo *GatewayUpdateOne) SetBroker(s string) *GatewayUpdateOne {
 	return guo
 }
 
-// SetInstallationLocation sets the "installationLocation" field.
+// SetInstallationLocation sets the "installation_location" field.
 func (guo *GatewayUpdateOne) SetInstallationLocation(s string) *GatewayUpdateOne {
 	guo.mutation.SetInstallationLocation(s)
 	return guo
 }
 
-// SetNillableInstallationLocation sets the "installationLocation" field if the given value is not nil.
+// SetNillableInstallationLocation sets the "installation_location" field if the given value is not nil.
 func (guo *GatewayUpdateOne) SetNillableInstallationLocation(s *string) *GatewayUpdateOne {
 	if s != nil {
 		guo.SetInstallationLocation(*s)
@@ -542,7 +542,7 @@ func (guo *GatewayUpdateOne) SetNillableInstallationLocation(s *string) *Gateway
 	return guo
 }
 
-// ClearInstallationLocation clears the value of the "installationLocation" field.
+// ClearInstallationLocation clears the value of the "installation_location" field.
 func (guo *GatewayUpdateOne) ClearInstallationLocation() *GatewayUpdateOne {
 	guo.mutation.ClearInstallationLocation()
 	return guo
@@ -568,13 +568,13 @@ func (guo *GatewayUpdateOne) ClearOnline() *GatewayUpdateOne {
 	return guo
 }
 
-// SetDeleteFlag sets the "DeleteFlag" field.
+// SetDeleteFlag sets the "delete_flag" field.
 func (guo *GatewayUpdateOne) SetDeleteFlag(b bool) *GatewayUpdateOne {
 	guo.mutation.SetDeleteFlag(b)
 	return guo
 }
 
-// SetNillableDeleteFlag sets the "DeleteFlag" field if the given value is not nil.
+// SetNillableDeleteFlag sets the "delete_flag" field if the given value is not nil.
 func (guo *GatewayUpdateOne) SetNillableDeleteFlag(b *bool) *GatewayUpdateOne {
 	if b != nil {
 		guo.SetDeleteFlag(*b)
@@ -582,20 +582,20 @@ func (guo *GatewayUpdateOne) SetNillableDeleteFlag(b *bool) *GatewayUpdateOne {
 	return guo
 }
 
-// ClearDeleteFlag clears the value of the "DeleteFlag" field.
+// ClearDeleteFlag clears the value of the "delete_flag" field.
 func (guo *GatewayUpdateOne) ClearDeleteFlag() *GatewayUpdateOne {
 	guo.mutation.ClearDeleteFlag()
 	return guo
 }
 
-// SetUpInterval sets the "upInterval" field.
+// SetUpInterval sets the "up_interval" field.
 func (guo *GatewayUpdateOne) SetUpInterval(i int) *GatewayUpdateOne {
 	guo.mutation.ResetUpInterval()
 	guo.mutation.SetUpInterval(i)
 	return guo
 }
 
-// SetNillableUpInterval sets the "upInterval" field if the given value is not nil.
+// SetNillableUpInterval sets the "up_interval" field if the given value is not nil.
 func (guo *GatewayUpdateOne) SetNillableUpInterval(i *int) *GatewayUpdateOne {
 	if i != nil {
 		guo.SetUpInterval(*i)
@@ -603,7 +603,7 @@ func (guo *GatewayUpdateOne) SetNillableUpInterval(i *int) *GatewayUpdateOne {
 	return guo
 }
 
-// AddUpInterval adds i to the "upInterval" field.
+// AddUpInterval adds i to the "up_interval" field.
 func (guo *GatewayUpdateOne) AddUpInterval(i int) *GatewayUpdateOne {
 	guo.mutation.AddUpInterval(i)
 	return guo

@@ -24,13 +24,13 @@ type ManageAPI interface {
 	DeviceRealTimeValue(devid string) map[string]string
 	UpdateUserLoginInfo(uName, lip string) error
 	// organization ....
-	OrganizationInfo() ([]*ent.Organization, error)
-	AddOrganization(o ent.Organization) error
-	UpdateOrganization(oName string, o ent.Organization) error
-	DeleteOrganization(oName string) error
-	BeRelatedDeviceToOrganization(oName, devid string) error
-	RemoveDeviceFromOrganization(devid string) error
-	QueryOrganizationDevices(oName string) ([]string, error)
+	OrganizationPositionInfo() ([]*ent.OrganizationPosition, error)
+	AddOrganizationPosition(o ent.OrganizationPosition) error
+	UpdateOrganizationPosition(oName string, o ent.OrganizationPosition) error
+	DeleteOrganizationPosition(oName string) error
+	BeRelatedDeviceToOrganizationPosition(oName, devid string) error
+	RemoveDeviceFromOrganizationPosition(devid string) error
+	QueryOrganizationPositionDevices(oName string) ([]string, error)
 }
 
 func (dtr *IotdorTran) userInfo(w http.ResponseWriter, r *http.Request) {

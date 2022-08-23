@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/yjiong/iotdor/ent"
-	"github.com/yjiong/iotdor/ent/organization"
+	"github.com/yjiong/iotdor/ent/organizationposition"
 	"github.com/yjiong/iotdor/ent/user"
 )
 
@@ -86,43 +86,43 @@ func (m *Manage) UserAdminFlag(uname string) bool {
 	return userAdminFlag(m.ctx, u, uname)
 }
 
-// OrganizationInfo ...
-func (m *Manage) OrganizationInfo() ([]*ent.Organization, error) {
-	return m.entC.Organization.Query().All(m.ctx)
+// OrganizationPositionInfo ...
+func (m *Manage) OrganizationPositionInfo() ([]*ent.OrganizationPosition, error) {
+	return m.entC.OrganizationPosition.Query().All(m.ctx)
 }
 
-// AddOrganization .....
-func (m *Manage) AddOrganization(o ent.Organization) error {
-	return m.entC.Organization.Create().
-		SetFloor(o.Floor).
-		SetAddress(o.Address).
-		SetName(o.Name).
-		SetUnitNo(o.UnitNo).
-		SetLongitudeAndLatituude(o.LongitudeAndLatituude).
-		SetSummary(o.Summary).Exec(m.ctx)
-}
-
-// UpdateOrganization .....
-func (m *Manage) UpdateOrganization(name string, o ent.Organization) error {
-	return m.entC.Organization.Update().
-		Where(organization.Name(name)).
+// AddOrganizationPosition .....
+func (m *Manage) AddOrganizationPosition(o ent.OrganizationPosition) error {
+	return m.entC.OrganizationPosition.Create().
+		SetPositionID(o.PositionID).
 		SetFloor(o.Floor).
 		SetAddress(o.Address).
 		SetUnitNo(o.UnitNo).
-		SetLongitudeAndLatituude(o.LongitudeAndLatituude).
+		SetLongitudeAndLatitude(o.LongitudeAndLatitude).
 		SetSummary(o.Summary).Exec(m.ctx)
 }
 
-// DeleteOrganization .....
-func (m *Manage) DeleteOrganization(name string) error {
-	_, err := m.entC.Organization.Delete().Where(organization.Name(name)).Exec(m.ctx)
+// UpdateOrganizationPosition .....
+func (m *Manage) UpdateOrganizationPosition(posid string, o ent.OrganizationPosition) error {
+	return m.entC.OrganizationPosition.Update().
+		Where(organizationposition.PositionID(o.PositionID)).
+		SetFloor(o.Floor).
+		SetAddress(o.Address).
+		SetUnitNo(o.UnitNo).
+		SetLongitudeAndLatitude(o.LongitudeAndLatitude).
+		SetSummary(o.Summary).Exec(m.ctx)
+}
+
+// DeleteOrganizationPosition .....
+func (m *Manage) DeleteOrganizationPosition(posid string) error {
+	_, err := m.entC.OrganizationPosition.Delete().Where(organizationposition.PositionID(posid)).Exec(m.ctx)
 	return err
 }
 
-// QueryOrganizationDevices ....
-func (m *Manage) QueryOrganizationDevices(name string) (ds []string, err error) {
-	var o *ent.Organization
-	o, err = m.entC.Organization.Query().Where(organization.Name(name)).Only(m.ctx)
+// QueryOrganizationPositionDevices ....
+func (m *Manage) QueryOrganizationPositionDevices(posid string) (ds []string, err error) {
+	var o *ent.OrganizationPosition
+	o, err = m.entC.OrganizationPosition.Query().Where(organizationposition.PositionID(posid)).Only(m.ctx)
 	if err == nil {
 		eds, _ := o.QueryDevices().All(m.ctx)
 		if len(eds) > 0 {
@@ -134,14 +134,14 @@ func (m *Manage) QueryOrganizationDevices(name string) (ds []string, err error) 
 	return
 }
 
-// BeRelatedDeviceToOrganization .....
-func (m *Manage) BeRelatedDeviceToOrganization(name, devid string) error {
+// BeRelatedDeviceToOrganizationPosition .....
+func (m *Manage) BeRelatedDeviceToOrganizationPosition(name, devid string) error {
 	var rerr error
-	o, oerr := m.entC.Organization.Query().Where(organization.Name(name)).Only(m.ctx)
+	o, oerr := m.entC.OrganizationPosition.Query().Where(organizationposition.PositionID(name)).Only(m.ctx)
 	if oerr == nil {
 		d, derr := queryDeviceByDevID(m.ctx, m.entC, devid)
 		if derr == nil {
-			rerr = d.Update().SetOrganization(o).Exec(m.ctx)
+			rerr = d.Update().SetOrganizationPosition(o).Exec(m.ctx)
 		} else {
 			rerr = derr
 		}
@@ -151,21 +151,21 @@ func (m *Manage) BeRelatedDeviceToOrganization(name, devid string) error {
 	return rerr
 }
 
-// RemoveDeviceFromOrganization .....
-func (m *Manage) RemoveDeviceFromOrganization(devid string) error {
+// RemoveDeviceFromOrganizationPosition .....
+func (m *Manage) RemoveDeviceFromOrganizationPosition(devid string) error {
 	var rerr error
 	d, derr := queryDeviceByDevID(m.ctx, m.entC, devid)
 	if derr == nil {
-		rerr = d.Update().ClearOrganization().Exec(m.ctx)
+		rerr = d.Update().ClearOrganizationPosition().Exec(m.ctx)
 	} else {
 		rerr = derr
 	}
 	return rerr
 }
 
-// SetPersonChargeWithOrganization .....
-func (m *Manage) SetPersonChargeWithOrganization(oname, uname string) error {
-	o, oerr := m.entC.Organization.Query().Where(organization.Name(oname)).Only(m.ctx)
+// SetPersonChargeWithOrganizationPosition .....
+func (m *Manage) SetPersonChargeWithOrganizationPosition(posid, uname string) error {
+	o, oerr := m.entC.OrganizationPosition.Query().Where(organizationposition.PositionID(posid)).Only(m.ctx)
 	u, uerr := m.entC.User.Query().Where(user.Name(uname)).Only(m.ctx)
 	if oerr == nil && uerr == nil {
 		return u.Update().AddPersonCharges(o).Exec(m.ctx)
@@ -173,9 +173,9 @@ func (m *Manage) SetPersonChargeWithOrganization(oname, uname string) error {
 	return fmt.Errorf("%v-%v", oerr, uerr)
 }
 
-// RemovePersonChargeWithOrganization .....
-func (m *Manage) RemovePersonChargeWithOrganization(oname, uname string) error {
-	o, oerr := m.entC.Organization.Query().Where(organization.Name(oname)).Only(m.ctx)
+// RemovePersonChargeWithOrganizationPosition .....
+func (m *Manage) RemovePersonChargeWithOrganizationPosition(posid, uname string) error {
+	o, oerr := m.entC.OrganizationPosition.Query().Where(organizationposition.PositionID(posid)).Only(m.ctx)
 	u, uerr := m.entC.User.Query().Where(user.Name(uname)).Only(m.ctx)
 	if oerr == nil && uerr == nil {
 		return o.Update().RemovePersonCharges(u).Exec(m.ctx)

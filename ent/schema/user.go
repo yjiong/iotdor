@@ -36,8 +36,8 @@ func (User) Edges() []ent.Edge {
 			Ref("users"),
 		edge.From("admins", Group.Type).
 			Ref("admins"),
-		edge.From("personCharges", Organization.Type).
-			Ref("personCharges"),
+		edge.From("person_charges", OrganizationPosition.Type).
+			Ref("person_charges"),
 	}
 }
 

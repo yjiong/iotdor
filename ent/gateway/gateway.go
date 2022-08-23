@@ -21,13 +21,13 @@ const (
 	FieldSvrid = "svrid"
 	// FieldBroker holds the string denoting the broker field in the database.
 	FieldBroker = "broker"
-	// FieldInstallationLocation holds the string denoting the installationlocation field in the database.
+	// FieldInstallationLocation holds the string denoting the installation_location field in the database.
 	FieldInstallationLocation = "installation_location"
 	// FieldOnline holds the string denoting the online field in the database.
 	FieldOnline = "online"
-	// FieldDeleteFlag holds the string denoting the deleteflag field in the database.
+	// FieldDeleteFlag holds the string denoting the delete_flag field in the database.
 	FieldDeleteFlag = "delete_flag"
-	// FieldUpInterval holds the string denoting the upinterval field in the database.
+	// FieldUpInterval holds the string denoting the up_interval field in the database.
 	FieldUpInterval = "up_interval"
 	// FieldSummary holds the string denoting the summary field in the database.
 	FieldSummary = "summary"
@@ -96,6 +96,6 @@ var (
 	DefaultUpdateTime func() time.Time
 	// UpdateDefaultUpdateTime holds the default value on update for the "update_time" field.
 	UpdateDefaultUpdateTime func() time.Time
-	// DefaultUpInterval holds the default value on creation for the "upInterval" field.
+	// DefaultUpInterval holds the default value on creation for the "up_interval" field.
 	DefaultUpInterval int
 )

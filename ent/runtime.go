@@ -8,7 +8,8 @@ import (
 	"github.com/yjiong/iotdor/ent/device"
 	"github.com/yjiong/iotdor/ent/gateway"
 	"github.com/yjiong/iotdor/ent/group"
-	"github.com/yjiong/iotdor/ent/organization"
+	"github.com/yjiong/iotdor/ent/organizationposition"
+	"github.com/yjiong/iotdor/ent/organizationtree"
 	"github.com/yjiong/iotdor/ent/schema"
 	"github.com/yjiong/iotdor/ent/user"
 )
@@ -47,9 +48,9 @@ func init() {
 	gateway.DefaultUpdateTime = gatewayDescUpdateTime.Default.(func() time.Time)
 	// gateway.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
 	gateway.UpdateDefaultUpdateTime = gatewayDescUpdateTime.UpdateDefault.(func() time.Time)
-	// gatewayDescUpInterval is the schema descriptor for upInterval field.
+	// gatewayDescUpInterval is the schema descriptor for up_interval field.
 	gatewayDescUpInterval := gatewayFields[6].Descriptor()
-	// gateway.DefaultUpInterval holds the default value on creation for the upInterval field.
+	// gateway.DefaultUpInterval holds the default value on creation for the up_interval field.
 	gateway.DefaultUpInterval = gatewayDescUpInterval.Default.(int)
 	groupFields := schema.Group{}.Fields()
 	_ = groupFields
@@ -57,21 +58,36 @@ func init() {
 	groupDescName := groupFields[0].Descriptor()
 	// group.NameValidator is a validator for the "name" field. It is called by the builders before save.
 	group.NameValidator = groupDescName.Validators[0].(func(string) error)
-	organizationMixin := schema.Organization{}.Mixin()
-	organizationMixinFields0 := organizationMixin[0].Fields()
-	_ = organizationMixinFields0
-	organizationFields := schema.Organization{}.Fields()
-	_ = organizationFields
-	// organizationDescCreateTime is the schema descriptor for create_time field.
-	organizationDescCreateTime := organizationMixinFields0[0].Descriptor()
-	// organization.DefaultCreateTime holds the default value on creation for the create_time field.
-	organization.DefaultCreateTime = organizationDescCreateTime.Default.(func() time.Time)
-	// organizationDescUpdateTime is the schema descriptor for update_time field.
-	organizationDescUpdateTime := organizationMixinFields0[1].Descriptor()
-	// organization.DefaultUpdateTime holds the default value on creation for the update_time field.
-	organization.DefaultUpdateTime = organizationDescUpdateTime.Default.(func() time.Time)
-	// organization.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
-	organization.UpdateDefaultUpdateTime = organizationDescUpdateTime.UpdateDefault.(func() time.Time)
+	organizationpositionMixin := schema.OrganizationPosition{}.Mixin()
+	organizationpositionMixinFields0 := organizationpositionMixin[0].Fields()
+	_ = organizationpositionMixinFields0
+	organizationpositionFields := schema.OrganizationPosition{}.Fields()
+	_ = organizationpositionFields
+	// organizationpositionDescCreateTime is the schema descriptor for create_time field.
+	organizationpositionDescCreateTime := organizationpositionMixinFields0[0].Descriptor()
+	// organizationposition.DefaultCreateTime holds the default value on creation for the create_time field.
+	organizationposition.DefaultCreateTime = organizationpositionDescCreateTime.Default.(func() time.Time)
+	// organizationpositionDescUpdateTime is the schema descriptor for update_time field.
+	organizationpositionDescUpdateTime := organizationpositionMixinFields0[1].Descriptor()
+	// organizationposition.DefaultUpdateTime holds the default value on creation for the update_time field.
+	organizationposition.DefaultUpdateTime = organizationpositionDescUpdateTime.Default.(func() time.Time)
+	// organizationposition.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
+	organizationposition.UpdateDefaultUpdateTime = organizationpositionDescUpdateTime.UpdateDefault.(func() time.Time)
+	organizationtreeMixin := schema.OrganizationTree{}.Mixin()
+	organizationtreeMixinFields0 := organizationtreeMixin[0].Fields()
+	_ = organizationtreeMixinFields0
+	organizationtreeFields := schema.OrganizationTree{}.Fields()
+	_ = organizationtreeFields
+	// organizationtreeDescCreateTime is the schema descriptor for create_time field.
+	organizationtreeDescCreateTime := organizationtreeMixinFields0[0].Descriptor()
+	// organizationtree.DefaultCreateTime holds the default value on creation for the create_time field.
+	organizationtree.DefaultCreateTime = organizationtreeDescCreateTime.Default.(func() time.Time)
+	// organizationtreeDescUpdateTime is the schema descriptor for update_time field.
+	organizationtreeDescUpdateTime := organizationtreeMixinFields0[1].Descriptor()
+	// organizationtree.DefaultUpdateTime holds the default value on creation for the update_time field.
+	organizationtree.DefaultUpdateTime = organizationtreeDescUpdateTime.Default.(func() time.Time)
+	// organizationtree.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
+	organizationtree.UpdateDefaultUpdateTime = organizationtreeDescUpdateTime.UpdateDefault.(func() time.Time)
 	userMixin := schema.User{}.Mixin()
 	userMixinFields0 := userMixin[0].Fields()
 	_ = userMixinFields0

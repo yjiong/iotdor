@@ -20,13 +20,13 @@ func (Gateway) Fields() []ent.Field {
 			Unique(),
 		field.String("svrid"),
 		field.String("broker"),
-		field.String("installationLocation").
+		field.String("installation_location").
 			Optional(),
 		field.Bool("online").
 			Optional(),
-		field.Bool("DeleteFlag").
+		field.Bool("delete_flag").
 			Optional(),
-		field.Int("upInterval").
+		field.Int("up_interval").
 			Default(60),
 		field.String("summary").
 			Optional(),

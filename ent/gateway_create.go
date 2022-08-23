@@ -68,13 +68,13 @@ func (gc *GatewayCreate) SetBroker(s string) *GatewayCreate {
 	return gc
 }
 
-// SetInstallationLocation sets the "installationLocation" field.
+// SetInstallationLocation sets the "installation_location" field.
 func (gc *GatewayCreate) SetInstallationLocation(s string) *GatewayCreate {
 	gc.mutation.SetInstallationLocation(s)
 	return gc
 }
 
-// SetNillableInstallationLocation sets the "installationLocation" field if the given value is not nil.
+// SetNillableInstallationLocation sets the "installation_location" field if the given value is not nil.
 func (gc *GatewayCreate) SetNillableInstallationLocation(s *string) *GatewayCreate {
 	if s != nil {
 		gc.SetInstallationLocation(*s)
@@ -96,13 +96,13 @@ func (gc *GatewayCreate) SetNillableOnline(b *bool) *GatewayCreate {
 	return gc
 }
 
-// SetDeleteFlag sets the "DeleteFlag" field.
+// SetDeleteFlag sets the "delete_flag" field.
 func (gc *GatewayCreate) SetDeleteFlag(b bool) *GatewayCreate {
 	gc.mutation.SetDeleteFlag(b)
 	return gc
 }
 
-// SetNillableDeleteFlag sets the "DeleteFlag" field if the given value is not nil.
+// SetNillableDeleteFlag sets the "delete_flag" field if the given value is not nil.
 func (gc *GatewayCreate) SetNillableDeleteFlag(b *bool) *GatewayCreate {
 	if b != nil {
 		gc.SetDeleteFlag(*b)
@@ -110,13 +110,13 @@ func (gc *GatewayCreate) SetNillableDeleteFlag(b *bool) *GatewayCreate {
 	return gc
 }
 
-// SetUpInterval sets the "upInterval" field.
+// SetUpInterval sets the "up_interval" field.
 func (gc *GatewayCreate) SetUpInterval(i int) *GatewayCreate {
 	gc.mutation.SetUpInterval(i)
 	return gc
 }
 
-// SetNillableUpInterval sets the "upInterval" field if the given value is not nil.
+// SetNillableUpInterval sets the "up_interval" field if the given value is not nil.
 func (gc *GatewayCreate) SetNillableUpInterval(i *int) *GatewayCreate {
 	if i != nil {
 		gc.SetUpInterval(*i)
@@ -281,7 +281,7 @@ func (gc *GatewayCreate) check() error {
 		return &ValidationError{Name: "broker", err: errors.New(`ent: missing required field "Gateway.broker"`)}
 	}
 	if _, ok := gc.mutation.UpInterval(); !ok {
-		return &ValidationError{Name: "upInterval", err: errors.New(`ent: missing required field "Gateway.upInterval"`)}
+		return &ValidationError{Name: "up_interval", err: errors.New(`ent: missing required field "Gateway.up_interval"`)}
 	}
 	return nil
 }

@@ -21,7 +21,7 @@ var (
 		{Name: "delete_flag", Type: field.TypeBool, Nullable: true},
 		{Name: "summary", Type: field.TypeString, Nullable: true},
 		{Name: "gateway_devices", Type: field.TypeInt, Nullable: true},
-		{Name: "organization_devices", Type: field.TypeInt, Nullable: true},
+		{Name: "organization_position_devices", Type: field.TypeInt, Nullable: true},
 	}
 	// DevicesTable holds the schema information for the "devices" table.
 	DevicesTable = &schema.Table{
@@ -36,9 +36,9 @@ var (
 				OnDelete:   schema.SetNull,
 			},
 			{
-				Symbol:     "devices_organizations_devices",
+				Symbol:     "devices_organization_positions_devices",
 				Columns:    []*schema.Column{DevicesColumns[11]},
-				RefColumns: []*schema.Column{OrganizationsColumns[0]},
+				RefColumns: []*schema.Column{OrganizationPositionsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 		},
@@ -98,28 +98,54 @@ var (
 		Columns:    GroupsColumns,
 		PrimaryKey: []*schema.Column{GroupsColumns[0]},
 	}
-	// OrganizationsColumns holds the columns for the "organizations" table.
-	OrganizationsColumns = []*schema.Column{
+	// OrganizationPositionsColumns holds the columns for the "organization_positions" table.
+	OrganizationPositionsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "position_id", Type: field.TypeString, Unique: true},
+		{Name: "address", Type: field.TypeString},
+		{Name: "floor", Type: field.TypeString, Nullable: true},
+		{Name: "unit_no", Type: field.TypeString, Nullable: true},
+		{Name: "longitude_and_latitude", Type: field.TypeString},
+		{Name: "summary", Type: field.TypeString, Nullable: true},
+	}
+	// OrganizationPositionsTable holds the schema information for the "organization_positions" table.
+	OrganizationPositionsTable = &schema.Table{
+		Name:       "organization_positions",
+		Columns:    OrganizationPositionsColumns,
+		PrimaryKey: []*schema.Column{OrganizationPositionsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "organizationposition_position_id",
+				Unique:  false,
+				Columns: []*schema.Column{OrganizationPositionsColumns[3]},
+			},
+		},
+	}
+	// OrganizationTreesColumns holds the columns for the "organization_trees" table.
+	OrganizationTreesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime},
 		{Name: "name", Type: field.TypeString, Unique: true},
-		{Name: "address", Type: field.TypeString},
-		{Name: "floor", Type: field.TypeString, Nullable: true},
-		{Name: "unit_no", Type: field.TypeString, Nullable: true},
-		{Name: "longitude_and_latituude", Type: field.TypeString},
-		{Name: "summary", Type: field.TypeString, Nullable: true},
+		{Name: "parent_id", Type: field.TypeInt, Unique: true},
+		{Name: "left", Type: field.TypeInt, Unique: true},
+		{Name: "right", Type: field.TypeInt, Unique: true},
+		{Name: "level", Type: field.TypeInt, Unique: true},
+		{Name: "organization_tree_organization_positions", Type: field.TypeInt},
 	}
-	// OrganizationsTable holds the schema information for the "organizations" table.
-	OrganizationsTable = &schema.Table{
-		Name:       "organizations",
-		Columns:    OrganizationsColumns,
-		PrimaryKey: []*schema.Column{OrganizationsColumns[0]},
-		Indexes: []*schema.Index{
+	// OrganizationTreesTable holds the schema information for the "organization_trees" table.
+	OrganizationTreesTable = &schema.Table{
+		Name:       "organization_trees",
+		Columns:    OrganizationTreesColumns,
+		PrimaryKey: []*schema.Column{OrganizationTreesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
 			{
-				Name:    "organization_name",
-				Unique:  false,
-				Columns: []*schema.Column{OrganizationsColumns[3]},
+				Symbol:     "organization_trees_organization_positions_organization_positions",
+				Columns:    []*schema.Column{OrganizationTreesColumns[8]},
+				RefColumns: []*schema.Column{OrganizationPositionsColumns[0]},
+				OnDelete:   schema.NoAction,
 			},
 		},
 	}
@@ -190,26 +216,26 @@ var (
 			},
 		},
 	}
-	// OrganizationPersonChargesColumns holds the columns for the "organization_personCharges" table.
-	OrganizationPersonChargesColumns = []*schema.Column{
-		{Name: "organization_id", Type: field.TypeInt},
+	// OrganizationPositionPersonChargesColumns holds the columns for the "organization_position_person_charges" table.
+	OrganizationPositionPersonChargesColumns = []*schema.Column{
+		{Name: "organization_position_id", Type: field.TypeInt},
 		{Name: "user_id", Type: field.TypeInt},
 	}
-	// OrganizationPersonChargesTable holds the schema information for the "organization_personCharges" table.
-	OrganizationPersonChargesTable = &schema.Table{
-		Name:       "organization_personCharges",
-		Columns:    OrganizationPersonChargesColumns,
-		PrimaryKey: []*schema.Column{OrganizationPersonChargesColumns[0], OrganizationPersonChargesColumns[1]},
+	// OrganizationPositionPersonChargesTable holds the schema information for the "organization_position_person_charges" table.
+	OrganizationPositionPersonChargesTable = &schema.Table{
+		Name:       "organization_position_person_charges",
+		Columns:    OrganizationPositionPersonChargesColumns,
+		PrimaryKey: []*schema.Column{OrganizationPositionPersonChargesColumns[0], OrganizationPositionPersonChargesColumns[1]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "organization_personCharges_organization_id",
-				Columns:    []*schema.Column{OrganizationPersonChargesColumns[0]},
-				RefColumns: []*schema.Column{OrganizationsColumns[0]},
+				Symbol:     "organization_position_person_charges_organization_position_id",
+				Columns:    []*schema.Column{OrganizationPositionPersonChargesColumns[0]},
+				RefColumns: []*schema.Column{OrganizationPositionsColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
 			{
-				Symbol:     "organization_personCharges_user_id",
-				Columns:    []*schema.Column{OrganizationPersonChargesColumns[1]},
+				Symbol:     "organization_position_person_charges_user_id",
+				Columns:    []*schema.Column{OrganizationPositionPersonChargesColumns[1]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
@@ -220,22 +246,24 @@ var (
 		DevicesTable,
 		GatewaysTable,
 		GroupsTable,
-		OrganizationsTable,
+		OrganizationPositionsTable,
+		OrganizationTreesTable,
 		UsersTable,
 		GroupUsersTable,
 		GroupAdminsTable,
-		OrganizationPersonChargesTable,
+		OrganizationPositionPersonChargesTable,
 	}
 )
 
 func init() {
 	DevicesTable.ForeignKeys[0].RefTable = GatewaysTable
-	DevicesTable.ForeignKeys[1].RefTable = OrganizationsTable
+	DevicesTable.ForeignKeys[1].RefTable = OrganizationPositionsTable
 	GatewaysTable.ForeignKeys[0].RefTable = GroupsTable
+	OrganizationTreesTable.ForeignKeys[0].RefTable = OrganizationPositionsTable
 	GroupUsersTable.ForeignKeys[0].RefTable = GroupsTable
 	GroupUsersTable.ForeignKeys[1].RefTable = UsersTable
 	GroupAdminsTable.ForeignKeys[0].RefTable = GroupsTable
 	GroupAdminsTable.ForeignKeys[1].RefTable = UsersTable
-	OrganizationPersonChargesTable.ForeignKeys[0].RefTable = OrganizationsTable
-	OrganizationPersonChargesTable.ForeignKeys[1].RefTable = UsersTable
+	OrganizationPositionPersonChargesTable.ForeignKeys[0].RefTable = OrganizationPositionsTable
+	OrganizationPositionPersonChargesTable.ForeignKeys[1].RefTable = UsersTable
 }

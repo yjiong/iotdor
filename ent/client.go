@@ -13,7 +13,8 @@ import (
 	"github.com/yjiong/iotdor/ent/device"
 	"github.com/yjiong/iotdor/ent/gateway"
 	"github.com/yjiong/iotdor/ent/group"
-	"github.com/yjiong/iotdor/ent/organization"
+	"github.com/yjiong/iotdor/ent/organizationposition"
+	"github.com/yjiong/iotdor/ent/organizationtree"
 	"github.com/yjiong/iotdor/ent/user"
 
 	"entgo.io/ent/dialect"
@@ -32,8 +33,10 @@ type Client struct {
 	Gateway *GatewayClient
 	// Group is the client for interacting with the Group builders.
 	Group *GroupClient
-	// Organization is the client for interacting with the Organization builders.
-	Organization *OrganizationClient
+	// OrganizationPosition is the client for interacting with the OrganizationPosition builders.
+	OrganizationPosition *OrganizationPositionClient
+	// OrganizationTree is the client for interacting with the OrganizationTree builders.
+	OrganizationTree *OrganizationTreeClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
 }
@@ -52,7 +55,8 @@ func (c *Client) init() {
 	c.Device = NewDeviceClient(c.config)
 	c.Gateway = NewGatewayClient(c.config)
 	c.Group = NewGroupClient(c.config)
-	c.Organization = NewOrganizationClient(c.config)
+	c.OrganizationPosition = NewOrganizationPositionClient(c.config)
+	c.OrganizationTree = NewOrganizationTreeClient(c.config)
 	c.User = NewUserClient(c.config)
 }
 
@@ -85,13 +89,14 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	cfg := c.config
 	cfg.driver = tx
 	return &Tx{
-		ctx:          ctx,
-		config:       cfg,
-		Device:       NewDeviceClient(cfg),
-		Gateway:      NewGatewayClient(cfg),
-		Group:        NewGroupClient(cfg),
-		Organization: NewOrganizationClient(cfg),
-		User:         NewUserClient(cfg),
+		ctx:                  ctx,
+		config:               cfg,
+		Device:               NewDeviceClient(cfg),
+		Gateway:              NewGatewayClient(cfg),
+		Group:                NewGroupClient(cfg),
+		OrganizationPosition: NewOrganizationPositionClient(cfg),
+		OrganizationTree:     NewOrganizationTreeClient(cfg),
+		User:                 NewUserClient(cfg),
 	}, nil
 }
 
@@ -109,13 +114,14 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	cfg := c.config
 	cfg.driver = &txDriver{tx: tx, drv: c.driver}
 	return &Tx{
-		ctx:          ctx,
-		config:       cfg,
-		Device:       NewDeviceClient(cfg),
-		Gateway:      NewGatewayClient(cfg),
-		Group:        NewGroupClient(cfg),
-		Organization: NewOrganizationClient(cfg),
-		User:         NewUserClient(cfg),
+		ctx:                  ctx,
+		config:               cfg,
+		Device:               NewDeviceClient(cfg),
+		Gateway:              NewGatewayClient(cfg),
+		Group:                NewGroupClient(cfg),
+		OrganizationPosition: NewOrganizationPositionClient(cfg),
+		OrganizationTree:     NewOrganizationTreeClient(cfg),
+		User:                 NewUserClient(cfg),
 	}, nil
 }
 
@@ -148,7 +154,8 @@ func (c *Client) Use(hooks ...Hook) {
 	c.Device.Use(hooks...)
 	c.Gateway.Use(hooks...)
 	c.Group.Use(hooks...)
-	c.Organization.Use(hooks...)
+	c.OrganizationPosition.Use(hooks...)
+	c.OrganizationTree.Use(hooks...)
 	c.User.Use(hooks...)
 }
 
@@ -237,15 +244,15 @@ func (c *DeviceClient) GetX(ctx context.Context, id int) *Device {
 	return obj
 }
 
-// QueryOrganization queries the Organization edge of a Device.
-func (c *DeviceClient) QueryOrganization(d *Device) *OrganizationQuery {
-	query := &OrganizationQuery{config: c.config}
+// QueryOrganizationPosition queries the organization_position edge of a Device.
+func (c *DeviceClient) QueryOrganizationPosition(d *Device) *OrganizationPositionQuery {
+	query := &OrganizationPositionQuery{config: c.config}
 	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
 		id := d.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(device.Table, device.FieldID, id),
-			sqlgraph.To(organization.Table, organization.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, device.OrganizationTable, device.OrganizationColumn),
+			sqlgraph.To(organizationposition.Table, organizationposition.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, device.OrganizationPositionTable, device.OrganizationPositionColumn),
 		)
 		fromV = sqlgraph.Neighbors(d.driver.Dialect(), step)
 		return fromV, nil
@@ -534,84 +541,84 @@ func (c *GroupClient) Hooks() []Hook {
 	return c.hooks.Group
 }
 
-// OrganizationClient is a client for the Organization schema.
-type OrganizationClient struct {
+// OrganizationPositionClient is a client for the OrganizationPosition schema.
+type OrganizationPositionClient struct {
 	config
 }
 
-// NewOrganizationClient returns a client for the Organization from the given config.
-func NewOrganizationClient(c config) *OrganizationClient {
-	return &OrganizationClient{config: c}
+// NewOrganizationPositionClient returns a client for the OrganizationPosition from the given config.
+func NewOrganizationPositionClient(c config) *OrganizationPositionClient {
+	return &OrganizationPositionClient{config: c}
 }
 
 // Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `organization.Hooks(f(g(h())))`.
-func (c *OrganizationClient) Use(hooks ...Hook) {
-	c.hooks.Organization = append(c.hooks.Organization, hooks...)
+// A call to `Use(f, g, h)` equals to `organizationposition.Hooks(f(g(h())))`.
+func (c *OrganizationPositionClient) Use(hooks ...Hook) {
+	c.hooks.OrganizationPosition = append(c.hooks.OrganizationPosition, hooks...)
 }
 
-// Create returns a builder for creating a Organization entity.
-func (c *OrganizationClient) Create() *OrganizationCreate {
-	mutation := newOrganizationMutation(c.config, OpCreate)
-	return &OrganizationCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Create returns a builder for creating a OrganizationPosition entity.
+func (c *OrganizationPositionClient) Create() *OrganizationPositionCreate {
+	mutation := newOrganizationPositionMutation(c.config, OpCreate)
+	return &OrganizationPositionCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// CreateBulk returns a builder for creating a bulk of Organization entities.
-func (c *OrganizationClient) CreateBulk(builders ...*OrganizationCreate) *OrganizationCreateBulk {
-	return &OrganizationCreateBulk{config: c.config, builders: builders}
+// CreateBulk returns a builder for creating a bulk of OrganizationPosition entities.
+func (c *OrganizationPositionClient) CreateBulk(builders ...*OrganizationPositionCreate) *OrganizationPositionCreateBulk {
+	return &OrganizationPositionCreateBulk{config: c.config, builders: builders}
 }
 
-// Update returns an update builder for Organization.
-func (c *OrganizationClient) Update() *OrganizationUpdate {
-	mutation := newOrganizationMutation(c.config, OpUpdate)
-	return &OrganizationUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Update returns an update builder for OrganizationPosition.
+func (c *OrganizationPositionClient) Update() *OrganizationPositionUpdate {
+	mutation := newOrganizationPositionMutation(c.config, OpUpdate)
+	return &OrganizationPositionUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // UpdateOne returns an update builder for the given entity.
-func (c *OrganizationClient) UpdateOne(o *Organization) *OrganizationUpdateOne {
-	mutation := newOrganizationMutation(c.config, OpUpdateOne, withOrganization(o))
-	return &OrganizationUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+func (c *OrganizationPositionClient) UpdateOne(op *OrganizationPosition) *OrganizationPositionUpdateOne {
+	mutation := newOrganizationPositionMutation(c.config, OpUpdateOne, withOrganizationPosition(op))
+	return &OrganizationPositionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *OrganizationClient) UpdateOneID(id int) *OrganizationUpdateOne {
-	mutation := newOrganizationMutation(c.config, OpUpdateOne, withOrganizationID(id))
-	return &OrganizationUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+func (c *OrganizationPositionClient) UpdateOneID(id int) *OrganizationPositionUpdateOne {
+	mutation := newOrganizationPositionMutation(c.config, OpUpdateOne, withOrganizationPositionID(id))
+	return &OrganizationPositionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// Delete returns a delete builder for Organization.
-func (c *OrganizationClient) Delete() *OrganizationDelete {
-	mutation := newOrganizationMutation(c.config, OpDelete)
-	return &OrganizationDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Delete returns a delete builder for OrganizationPosition.
+func (c *OrganizationPositionClient) Delete() *OrganizationPositionDelete {
+	mutation := newOrganizationPositionMutation(c.config, OpDelete)
+	return &OrganizationPositionDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // DeleteOne returns a builder for deleting the given entity.
-func (c *OrganizationClient) DeleteOne(o *Organization) *OrganizationDeleteOne {
-	return c.DeleteOneID(o.ID)
+func (c *OrganizationPositionClient) DeleteOne(op *OrganizationPosition) *OrganizationPositionDeleteOne {
+	return c.DeleteOneID(op.ID)
 }
 
 // DeleteOne returns a builder for deleting the given entity by its id.
-func (c *OrganizationClient) DeleteOneID(id int) *OrganizationDeleteOne {
-	builder := c.Delete().Where(organization.ID(id))
+func (c *OrganizationPositionClient) DeleteOneID(id int) *OrganizationPositionDeleteOne {
+	builder := c.Delete().Where(organizationposition.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
-	return &OrganizationDeleteOne{builder}
+	return &OrganizationPositionDeleteOne{builder}
 }
 
-// Query returns a query builder for Organization.
-func (c *OrganizationClient) Query() *OrganizationQuery {
-	return &OrganizationQuery{
+// Query returns a query builder for OrganizationPosition.
+func (c *OrganizationPositionClient) Query() *OrganizationPositionQuery {
+	return &OrganizationPositionQuery{
 		config: c.config,
 	}
 }
 
-// Get returns a Organization entity by its id.
-func (c *OrganizationClient) Get(ctx context.Context, id int) (*Organization, error) {
-	return c.Query().Where(organization.ID(id)).Only(ctx)
+// Get returns a OrganizationPosition entity by its id.
+func (c *OrganizationPositionClient) Get(ctx context.Context, id int) (*OrganizationPosition, error) {
+	return c.Query().Where(organizationposition.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *OrganizationClient) GetX(ctx context.Context, id int) *Organization {
+func (c *OrganizationPositionClient) GetX(ctx context.Context, id int) *OrganizationPosition {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -619,41 +626,163 @@ func (c *OrganizationClient) GetX(ctx context.Context, id int) *Organization {
 	return obj
 }
 
-// QueryDevices queries the devices edge of a Organization.
-func (c *OrganizationClient) QueryDevices(o *Organization) *DeviceQuery {
+// QueryDevices queries the devices edge of a OrganizationPosition.
+func (c *OrganizationPositionClient) QueryDevices(op *OrganizationPosition) *DeviceQuery {
 	query := &DeviceQuery{config: c.config}
 	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
-		id := o.ID
+		id := op.ID
 		step := sqlgraph.NewStep(
-			sqlgraph.From(organization.Table, organization.FieldID, id),
+			sqlgraph.From(organizationposition.Table, organizationposition.FieldID, id),
 			sqlgraph.To(device.Table, device.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, organization.DevicesTable, organization.DevicesColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, organizationposition.DevicesTable, organizationposition.DevicesColumn),
 		)
-		fromV = sqlgraph.Neighbors(o.driver.Dialect(), step)
+		fromV = sqlgraph.Neighbors(op.driver.Dialect(), step)
 		return fromV, nil
 	}
 	return query
 }
 
-// QueryPersonCharges queries the personCharges edge of a Organization.
-func (c *OrganizationClient) QueryPersonCharges(o *Organization) *UserQuery {
+// QueryPersonCharges queries the person_charges edge of a OrganizationPosition.
+func (c *OrganizationPositionClient) QueryPersonCharges(op *OrganizationPosition) *UserQuery {
 	query := &UserQuery{config: c.config}
 	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
-		id := o.ID
+		id := op.ID
 		step := sqlgraph.NewStep(
-			sqlgraph.From(organization.Table, organization.FieldID, id),
+			sqlgraph.From(organizationposition.Table, organizationposition.FieldID, id),
 			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, false, organization.PersonChargesTable, organization.PersonChargesPrimaryKey...),
+			sqlgraph.Edge(sqlgraph.M2M, false, organizationposition.PersonChargesTable, organizationposition.PersonChargesPrimaryKey...),
 		)
-		fromV = sqlgraph.Neighbors(o.driver.Dialect(), step)
+		fromV = sqlgraph.Neighbors(op.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryOrganizationTree queries the organization_tree edge of a OrganizationPosition.
+func (c *OrganizationPositionClient) QueryOrganizationTree(op *OrganizationPosition) *OrganizationTreeQuery {
+	query := &OrganizationTreeQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := op.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(organizationposition.Table, organizationposition.FieldID, id),
+			sqlgraph.To(organizationtree.Table, organizationtree.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, true, organizationposition.OrganizationTreeTable, organizationposition.OrganizationTreeColumn),
+		)
+		fromV = sqlgraph.Neighbors(op.driver.Dialect(), step)
 		return fromV, nil
 	}
 	return query
 }
 
 // Hooks returns the client hooks.
-func (c *OrganizationClient) Hooks() []Hook {
-	return c.hooks.Organization
+func (c *OrganizationPositionClient) Hooks() []Hook {
+	return c.hooks.OrganizationPosition
+}
+
+// OrganizationTreeClient is a client for the OrganizationTree schema.
+type OrganizationTreeClient struct {
+	config
+}
+
+// NewOrganizationTreeClient returns a client for the OrganizationTree from the given config.
+func NewOrganizationTreeClient(c config) *OrganizationTreeClient {
+	return &OrganizationTreeClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `organizationtree.Hooks(f(g(h())))`.
+func (c *OrganizationTreeClient) Use(hooks ...Hook) {
+	c.hooks.OrganizationTree = append(c.hooks.OrganizationTree, hooks...)
+}
+
+// Create returns a builder for creating a OrganizationTree entity.
+func (c *OrganizationTreeClient) Create() *OrganizationTreeCreate {
+	mutation := newOrganizationTreeMutation(c.config, OpCreate)
+	return &OrganizationTreeCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of OrganizationTree entities.
+func (c *OrganizationTreeClient) CreateBulk(builders ...*OrganizationTreeCreate) *OrganizationTreeCreateBulk {
+	return &OrganizationTreeCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for OrganizationTree.
+func (c *OrganizationTreeClient) Update() *OrganizationTreeUpdate {
+	mutation := newOrganizationTreeMutation(c.config, OpUpdate)
+	return &OrganizationTreeUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *OrganizationTreeClient) UpdateOne(ot *OrganizationTree) *OrganizationTreeUpdateOne {
+	mutation := newOrganizationTreeMutation(c.config, OpUpdateOne, withOrganizationTree(ot))
+	return &OrganizationTreeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *OrganizationTreeClient) UpdateOneID(id int) *OrganizationTreeUpdateOne {
+	mutation := newOrganizationTreeMutation(c.config, OpUpdateOne, withOrganizationTreeID(id))
+	return &OrganizationTreeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for OrganizationTree.
+func (c *OrganizationTreeClient) Delete() *OrganizationTreeDelete {
+	mutation := newOrganizationTreeMutation(c.config, OpDelete)
+	return &OrganizationTreeDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *OrganizationTreeClient) DeleteOne(ot *OrganizationTree) *OrganizationTreeDeleteOne {
+	return c.DeleteOneID(ot.ID)
+}
+
+// DeleteOne returns a builder for deleting the given entity by its id.
+func (c *OrganizationTreeClient) DeleteOneID(id int) *OrganizationTreeDeleteOne {
+	builder := c.Delete().Where(organizationtree.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &OrganizationTreeDeleteOne{builder}
+}
+
+// Query returns a query builder for OrganizationTree.
+func (c *OrganizationTreeClient) Query() *OrganizationTreeQuery {
+	return &OrganizationTreeQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a OrganizationTree entity by its id.
+func (c *OrganizationTreeClient) Get(ctx context.Context, id int) (*OrganizationTree, error) {
+	return c.Query().Where(organizationtree.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *OrganizationTreeClient) GetX(ctx context.Context, id int) *OrganizationTree {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryOrganizationPositions queries the organization_positions edge of a OrganizationTree.
+func (c *OrganizationTreeClient) QueryOrganizationPositions(ot *OrganizationTree) *OrganizationPositionQuery {
+	query := &OrganizationPositionQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := ot.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(organizationtree.Table, organizationtree.FieldID, id),
+			sqlgraph.To(organizationposition.Table, organizationposition.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, organizationtree.OrganizationPositionsTable, organizationtree.OrganizationPositionsColumn),
+		)
+		fromV = sqlgraph.Neighbors(ot.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *OrganizationTreeClient) Hooks() []Hook {
+	return c.hooks.OrganizationTree
 }
 
 // UserClient is a client for the User schema.
@@ -773,14 +902,14 @@ func (c *UserClient) QueryAdmins(u *User) *GroupQuery {
 	return query
 }
 
-// QueryPersonCharges queries the personCharges edge of a User.
-func (c *UserClient) QueryPersonCharges(u *User) *OrganizationQuery {
-	query := &OrganizationQuery{config: c.config}
+// QueryPersonCharges queries the person_charges edge of a User.
+func (c *UserClient) QueryPersonCharges(u *User) *OrganizationPositionQuery {
+	query := &OrganizationPositionQuery{config: c.config}
 	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
 		id := u.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(user.Table, user.FieldID, id),
-			sqlgraph.To(organization.Table, organization.FieldID),
+			sqlgraph.To(organizationposition.Table, organizationposition.FieldID),
 			sqlgraph.Edge(sqlgraph.M2M, true, user.PersonChargesTable, user.PersonChargesPrimaryKey...),
 		)
 		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)

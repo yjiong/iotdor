@@ -95,21 +95,21 @@ func UpdateTime(v time.Time) predicate.Device {
 	})
 }
 
-// DevID applies equality check predicate on the "devID" field. It's identical to DevIDEQ.
+// DevID applies equality check predicate on the "dev_id" field. It's identical to DevIDEQ.
 func DevID(v string) predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldDevID), v))
 	})
 }
 
-// DevType applies equality check predicate on the "devType" field. It's identical to DevTypeEQ.
+// DevType applies equality check predicate on the "dev_type" field. It's identical to DevTypeEQ.
 func DevType(v string) predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldDevType), v))
 	})
 }
 
-// DevAddr applies equality check predicate on the "devAddr" field. It's identical to DevAddrEQ.
+// DevAddr applies equality check predicate on the "dev_addr" field. It's identical to DevAddrEQ.
 func DevAddr(v string) predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldDevAddr), v))
@@ -130,7 +130,7 @@ func Name(v string) predicate.Device {
 	})
 }
 
-// DeleteFlag applies equality check predicate on the "deleteFlag" field. It's identical to DeleteFlagEQ.
+// DeleteFlag applies equality check predicate on the "delete_flag" field. It's identical to DeleteFlagEQ.
 func DeleteFlag(v bool) predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldDeleteFlag), v))
@@ -272,21 +272,21 @@ func UpdateTimeLTE(v time.Time) predicate.Device {
 	})
 }
 
-// DevIDEQ applies the EQ predicate on the "devID" field.
+// DevIDEQ applies the EQ predicate on the "dev_id" field.
 func DevIDEQ(v string) predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldDevID), v))
 	})
 }
 
-// DevIDNEQ applies the NEQ predicate on the "devID" field.
+// DevIDNEQ applies the NEQ predicate on the "dev_id" field.
 func DevIDNEQ(v string) predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
 		s.Where(sql.NEQ(s.C(FieldDevID), v))
 	})
 }
 
-// DevIDIn applies the In predicate on the "devID" field.
+// DevIDIn applies the In predicate on the "dev_id" field.
 func DevIDIn(vs ...string) predicate.Device {
 	v := make([]interface{}, len(vs))
 	for i := range v {
@@ -297,7 +297,7 @@ func DevIDIn(vs ...string) predicate.Device {
 	})
 }
 
-// DevIDNotIn applies the NotIn predicate on the "devID" field.
+// DevIDNotIn applies the NotIn predicate on the "dev_id" field.
 func DevIDNotIn(vs ...string) predicate.Device {
 	v := make([]interface{}, len(vs))
 	for i := range v {
@@ -308,84 +308,84 @@ func DevIDNotIn(vs ...string) predicate.Device {
 	})
 }
 
-// DevIDGT applies the GT predicate on the "devID" field.
+// DevIDGT applies the GT predicate on the "dev_id" field.
 func DevIDGT(v string) predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
 		s.Where(sql.GT(s.C(FieldDevID), v))
 	})
 }
 
-// DevIDGTE applies the GTE predicate on the "devID" field.
+// DevIDGTE applies the GTE predicate on the "dev_id" field.
 func DevIDGTE(v string) predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
 		s.Where(sql.GTE(s.C(FieldDevID), v))
 	})
 }
 
-// DevIDLT applies the LT predicate on the "devID" field.
+// DevIDLT applies the LT predicate on the "dev_id" field.
 func DevIDLT(v string) predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
 		s.Where(sql.LT(s.C(FieldDevID), v))
 	})
 }
 
-// DevIDLTE applies the LTE predicate on the "devID" field.
+// DevIDLTE applies the LTE predicate on the "dev_id" field.
 func DevIDLTE(v string) predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldDevID), v))
 	})
 }
 
-// DevIDContains applies the Contains predicate on the "devID" field.
+// DevIDContains applies the Contains predicate on the "dev_id" field.
 func DevIDContains(v string) predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
 		s.Where(sql.Contains(s.C(FieldDevID), v))
 	})
 }
 
-// DevIDHasPrefix applies the HasPrefix predicate on the "devID" field.
+// DevIDHasPrefix applies the HasPrefix predicate on the "dev_id" field.
 func DevIDHasPrefix(v string) predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
 		s.Where(sql.HasPrefix(s.C(FieldDevID), v))
 	})
 }
 
-// DevIDHasSuffix applies the HasSuffix predicate on the "devID" field.
+// DevIDHasSuffix applies the HasSuffix predicate on the "dev_id" field.
 func DevIDHasSuffix(v string) predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
 		s.Where(sql.HasSuffix(s.C(FieldDevID), v))
 	})
 }
 
-// DevIDEqualFold applies the EqualFold predicate on the "devID" field.
+// DevIDEqualFold applies the EqualFold predicate on the "dev_id" field.
 func DevIDEqualFold(v string) predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
 		s.Where(sql.EqualFold(s.C(FieldDevID), v))
 	})
 }
 
-// DevIDContainsFold applies the ContainsFold predicate on the "devID" field.
+// DevIDContainsFold applies the ContainsFold predicate on the "dev_id" field.
 func DevIDContainsFold(v string) predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
 		s.Where(sql.ContainsFold(s.C(FieldDevID), v))
 	})
 }
 
-// DevTypeEQ applies the EQ predicate on the "devType" field.
+// DevTypeEQ applies the EQ predicate on the "dev_type" field.
 func DevTypeEQ(v string) predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldDevType), v))
 	})
 }
 
-// DevTypeNEQ applies the NEQ predicate on the "devType" field.
+// DevTypeNEQ applies the NEQ predicate on the "dev_type" field.
 func DevTypeNEQ(v string) predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
 		s.Where(sql.NEQ(s.C(FieldDevType), v))
 	})
 }
 
-// DevTypeIn applies the In predicate on the "devType" field.
+// DevTypeIn applies the In predicate on the "dev_type" field.
 func DevTypeIn(vs ...string) predicate.Device {
 	v := make([]interface{}, len(vs))
 	for i := range v {
@@ -396,7 +396,7 @@ func DevTypeIn(vs ...string) predicate.Device {
 	})
 }
 
-// DevTypeNotIn applies the NotIn predicate on the "devType" field.
+// DevTypeNotIn applies the NotIn predicate on the "dev_type" field.
 func DevTypeNotIn(vs ...string) predicate.Device {
 	v := make([]interface{}, len(vs))
 	for i := range v {
@@ -407,84 +407,84 @@ func DevTypeNotIn(vs ...string) predicate.Device {
 	})
 }
 
-// DevTypeGT applies the GT predicate on the "devType" field.
+// DevTypeGT applies the GT predicate on the "dev_type" field.
 func DevTypeGT(v string) predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
 		s.Where(sql.GT(s.C(FieldDevType), v))
 	})
 }
 
-// DevTypeGTE applies the GTE predicate on the "devType" field.
+// DevTypeGTE applies the GTE predicate on the "dev_type" field.
 func DevTypeGTE(v string) predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
 		s.Where(sql.GTE(s.C(FieldDevType), v))
 	})
 }
 
-// DevTypeLT applies the LT predicate on the "devType" field.
+// DevTypeLT applies the LT predicate on the "dev_type" field.
 func DevTypeLT(v string) predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
 		s.Where(sql.LT(s.C(FieldDevType), v))
 	})
 }
 
-// DevTypeLTE applies the LTE predicate on the "devType" field.
+// DevTypeLTE applies the LTE predicate on the "dev_type" field.
 func DevTypeLTE(v string) predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldDevType), v))
 	})
 }
 
-// DevTypeContains applies the Contains predicate on the "devType" field.
+// DevTypeContains applies the Contains predicate on the "dev_type" field.
 func DevTypeContains(v string) predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
 		s.Where(sql.Contains(s.C(FieldDevType), v))
 	})
 }
 
-// DevTypeHasPrefix applies the HasPrefix predicate on the "devType" field.
+// DevTypeHasPrefix applies the HasPrefix predicate on the "dev_type" field.
 func DevTypeHasPrefix(v string) predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
 		s.Where(sql.HasPrefix(s.C(FieldDevType), v))
 	})
 }
 
-// DevTypeHasSuffix applies the HasSuffix predicate on the "devType" field.
+// DevTypeHasSuffix applies the HasSuffix predicate on the "dev_type" field.
 func DevTypeHasSuffix(v string) predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
 		s.Where(sql.HasSuffix(s.C(FieldDevType), v))
 	})
 }
 
-// DevTypeEqualFold applies the EqualFold predicate on the "devType" field.
+// DevTypeEqualFold applies the EqualFold predicate on the "dev_type" field.
 func DevTypeEqualFold(v string) predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
 		s.Where(sql.EqualFold(s.C(FieldDevType), v))
 	})
 }
 
-// DevTypeContainsFold applies the ContainsFold predicate on the "devType" field.
+// DevTypeContainsFold applies the ContainsFold predicate on the "dev_type" field.
 func DevTypeContainsFold(v string) predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
 		s.Where(sql.ContainsFold(s.C(FieldDevType), v))
 	})
 }
 
-// DevAddrEQ applies the EQ predicate on the "devAddr" field.
+// DevAddrEQ applies the EQ predicate on the "dev_addr" field.
 func DevAddrEQ(v string) predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldDevAddr), v))
 	})
 }
 
-// DevAddrNEQ applies the NEQ predicate on the "devAddr" field.
+// DevAddrNEQ applies the NEQ predicate on the "dev_addr" field.
 func DevAddrNEQ(v string) predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
 		s.Where(sql.NEQ(s.C(FieldDevAddr), v))
 	})
 }
 
-// DevAddrIn applies the In predicate on the "devAddr" field.
+// DevAddrIn applies the In predicate on the "dev_addr" field.
 func DevAddrIn(vs ...string) predicate.Device {
 	v := make([]interface{}, len(vs))
 	for i := range v {
@@ -495,7 +495,7 @@ func DevAddrIn(vs ...string) predicate.Device {
 	})
 }
 
-// DevAddrNotIn applies the NotIn predicate on the "devAddr" field.
+// DevAddrNotIn applies the NotIn predicate on the "dev_addr" field.
 func DevAddrNotIn(vs ...string) predicate.Device {
 	v := make([]interface{}, len(vs))
 	for i := range v {
@@ -506,63 +506,63 @@ func DevAddrNotIn(vs ...string) predicate.Device {
 	})
 }
 
-// DevAddrGT applies the GT predicate on the "devAddr" field.
+// DevAddrGT applies the GT predicate on the "dev_addr" field.
 func DevAddrGT(v string) predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
 		s.Where(sql.GT(s.C(FieldDevAddr), v))
 	})
 }
 
-// DevAddrGTE applies the GTE predicate on the "devAddr" field.
+// DevAddrGTE applies the GTE predicate on the "dev_addr" field.
 func DevAddrGTE(v string) predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
 		s.Where(sql.GTE(s.C(FieldDevAddr), v))
 	})
 }
 
-// DevAddrLT applies the LT predicate on the "devAddr" field.
+// DevAddrLT applies the LT predicate on the "dev_addr" field.
 func DevAddrLT(v string) predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
 		s.Where(sql.LT(s.C(FieldDevAddr), v))
 	})
 }
 
-// DevAddrLTE applies the LTE predicate on the "devAddr" field.
+// DevAddrLTE applies the LTE predicate on the "dev_addr" field.
 func DevAddrLTE(v string) predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldDevAddr), v))
 	})
 }
 
-// DevAddrContains applies the Contains predicate on the "devAddr" field.
+// DevAddrContains applies the Contains predicate on the "dev_addr" field.
 func DevAddrContains(v string) predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
 		s.Where(sql.Contains(s.C(FieldDevAddr), v))
 	})
 }
 
-// DevAddrHasPrefix applies the HasPrefix predicate on the "devAddr" field.
+// DevAddrHasPrefix applies the HasPrefix predicate on the "dev_addr" field.
 func DevAddrHasPrefix(v string) predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
 		s.Where(sql.HasPrefix(s.C(FieldDevAddr), v))
 	})
 }
 
-// DevAddrHasSuffix applies the HasSuffix predicate on the "devAddr" field.
+// DevAddrHasSuffix applies the HasSuffix predicate on the "dev_addr" field.
 func DevAddrHasSuffix(v string) predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
 		s.Where(sql.HasSuffix(s.C(FieldDevAddr), v))
 	})
 }
 
-// DevAddrEqualFold applies the EqualFold predicate on the "devAddr" field.
+// DevAddrEqualFold applies the EqualFold predicate on the "dev_addr" field.
 func DevAddrEqualFold(v string) predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
 		s.Where(sql.EqualFold(s.C(FieldDevAddr), v))
 	})
 }
 
-// DevAddrContainsFold applies the ContainsFold predicate on the "devAddr" field.
+// DevAddrContainsFold applies the ContainsFold predicate on the "dev_addr" field.
 func DevAddrContainsFold(v string) predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
 		s.Where(sql.ContainsFold(s.C(FieldDevAddr), v))
@@ -781,28 +781,28 @@ func NameContainsFold(v string) predicate.Device {
 	})
 }
 
-// DeleteFlagEQ applies the EQ predicate on the "deleteFlag" field.
+// DeleteFlagEQ applies the EQ predicate on the "delete_flag" field.
 func DeleteFlagEQ(v bool) predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldDeleteFlag), v))
 	})
 }
 
-// DeleteFlagNEQ applies the NEQ predicate on the "deleteFlag" field.
+// DeleteFlagNEQ applies the NEQ predicate on the "delete_flag" field.
 func DeleteFlagNEQ(v bool) predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
 		s.Where(sql.NEQ(s.C(FieldDeleteFlag), v))
 	})
 }
 
-// DeleteFlagIsNil applies the IsNil predicate on the "deleteFlag" field.
+// DeleteFlagIsNil applies the IsNil predicate on the "delete_flag" field.
 func DeleteFlagIsNil() predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
 		s.Where(sql.IsNull(s.C(FieldDeleteFlag)))
 	})
 }
 
-// DeleteFlagNotNil applies the NotNil predicate on the "deleteFlag" field.
+// DeleteFlagNotNil applies the NotNil predicate on the "delete_flag" field.
 func DeleteFlagNotNil() predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
 		s.Where(sql.NotNull(s.C(FieldDeleteFlag)))
@@ -922,25 +922,25 @@ func SummaryContainsFold(v string) predicate.Device {
 	})
 }
 
-// HasOrganization applies the HasEdge predicate on the "Organization" edge.
-func HasOrganization() predicate.Device {
+// HasOrganizationPosition applies the HasEdge predicate on the "organization_position" edge.
+func HasOrganizationPosition() predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(OrganizationTable, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, OrganizationTable, OrganizationColumn),
+			sqlgraph.To(OrganizationPositionTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, OrganizationPositionTable, OrganizationPositionColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasOrganizationWith applies the HasEdge predicate on the "Organization" edge with a given conditions (other predicates).
-func HasOrganizationWith(preds ...predicate.Organization) predicate.Device {
+// HasOrganizationPositionWith applies the HasEdge predicate on the "organization_position" edge with a given conditions (other predicates).
+func HasOrganizationPositionWith(preds ...predicate.OrganizationPosition) predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(OrganizationInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, OrganizationTable, OrganizationColumn),
+			sqlgraph.To(OrganizationPositionInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, OrganizationPositionTable, OrganizationPositionColumn),
 		)
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {

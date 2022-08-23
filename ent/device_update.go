@@ -13,7 +13,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/yjiong/iotdor/ent/device"
 	"github.com/yjiong/iotdor/ent/gateway"
-	"github.com/yjiong/iotdor/ent/organization"
+	"github.com/yjiong/iotdor/ent/organizationposition"
 	"github.com/yjiong/iotdor/ent/predicate"
 )
 
@@ -36,19 +36,19 @@ func (du *DeviceUpdate) SetUpdateTime(t time.Time) *DeviceUpdate {
 	return du
 }
 
-// SetDevID sets the "devID" field.
+// SetDevID sets the "dev_id" field.
 func (du *DeviceUpdate) SetDevID(s string) *DeviceUpdate {
 	du.mutation.SetDevID(s)
 	return du
 }
 
-// SetDevType sets the "devType" field.
+// SetDevType sets the "dev_type" field.
 func (du *DeviceUpdate) SetDevType(s string) *DeviceUpdate {
 	du.mutation.SetDevType(s)
 	return du
 }
 
-// SetDevAddr sets the "devAddr" field.
+// SetDevAddr sets the "dev_addr" field.
 func (du *DeviceUpdate) SetDevAddr(s string) *DeviceUpdate {
 	du.mutation.SetDevAddr(s)
 	return du
@@ -80,13 +80,13 @@ func (du *DeviceUpdate) ClearName() *DeviceUpdate {
 	return du
 }
 
-// SetDeleteFlag sets the "deleteFlag" field.
+// SetDeleteFlag sets the "delete_flag" field.
 func (du *DeviceUpdate) SetDeleteFlag(b bool) *DeviceUpdate {
 	du.mutation.SetDeleteFlag(b)
 	return du
 }
 
-// SetNillableDeleteFlag sets the "deleteFlag" field if the given value is not nil.
+// SetNillableDeleteFlag sets the "delete_flag" field if the given value is not nil.
 func (du *DeviceUpdate) SetNillableDeleteFlag(b *bool) *DeviceUpdate {
 	if b != nil {
 		du.SetDeleteFlag(*b)
@@ -94,7 +94,7 @@ func (du *DeviceUpdate) SetNillableDeleteFlag(b *bool) *DeviceUpdate {
 	return du
 }
 
-// ClearDeleteFlag clears the value of the "deleteFlag" field.
+// ClearDeleteFlag clears the value of the "delete_flag" field.
 func (du *DeviceUpdate) ClearDeleteFlag() *DeviceUpdate {
 	du.mutation.ClearDeleteFlag()
 	return du
@@ -120,23 +120,23 @@ func (du *DeviceUpdate) ClearSummary() *DeviceUpdate {
 	return du
 }
 
-// SetOrganizationID sets the "Organization" edge to the Organization entity by ID.
-func (du *DeviceUpdate) SetOrganizationID(id int) *DeviceUpdate {
-	du.mutation.SetOrganizationID(id)
+// SetOrganizationPositionID sets the "organization_position" edge to the OrganizationPosition entity by ID.
+func (du *DeviceUpdate) SetOrganizationPositionID(id int) *DeviceUpdate {
+	du.mutation.SetOrganizationPositionID(id)
 	return du
 }
 
-// SetNillableOrganizationID sets the "Organization" edge to the Organization entity by ID if the given value is not nil.
-func (du *DeviceUpdate) SetNillableOrganizationID(id *int) *DeviceUpdate {
+// SetNillableOrganizationPositionID sets the "organization_position" edge to the OrganizationPosition entity by ID if the given value is not nil.
+func (du *DeviceUpdate) SetNillableOrganizationPositionID(id *int) *DeviceUpdate {
 	if id != nil {
-		du = du.SetOrganizationID(*id)
+		du = du.SetOrganizationPositionID(*id)
 	}
 	return du
 }
 
-// SetOrganization sets the "Organization" edge to the Organization entity.
-func (du *DeviceUpdate) SetOrganization(o *Organization) *DeviceUpdate {
-	return du.SetOrganizationID(o.ID)
+// SetOrganizationPosition sets the "organization_position" edge to the OrganizationPosition entity.
+func (du *DeviceUpdate) SetOrganizationPosition(o *OrganizationPosition) *DeviceUpdate {
+	return du.SetOrganizationPositionID(o.ID)
 }
 
 // SetGatewayID sets the "gateway" edge to the Gateway entity by ID.
@@ -163,9 +163,9 @@ func (du *DeviceUpdate) Mutation() *DeviceMutation {
 	return du.mutation
 }
 
-// ClearOrganization clears the "Organization" edge to the Organization entity.
-func (du *DeviceUpdate) ClearOrganization() *DeviceUpdate {
-	du.mutation.ClearOrganization()
+// ClearOrganizationPosition clears the "organization_position" edge to the OrganizationPosition entity.
+func (du *DeviceUpdate) ClearOrganizationPosition() *DeviceUpdate {
+	du.mutation.ClearOrganizationPosition()
 	return du
 }
 
@@ -330,33 +330,33 @@ func (du *DeviceUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: device.FieldSummary,
 		})
 	}
-	if du.mutation.OrganizationCleared() {
+	if du.mutation.OrganizationPositionCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   device.OrganizationTable,
-			Columns: []string{device.OrganizationColumn},
+			Table:   device.OrganizationPositionTable,
+			Columns: []string{device.OrganizationPositionColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: organization.FieldID,
+					Column: organizationposition.FieldID,
 				},
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := du.mutation.OrganizationIDs(); len(nodes) > 0 {
+	if nodes := du.mutation.OrganizationPositionIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   device.OrganizationTable,
-			Columns: []string{device.OrganizationColumn},
+			Table:   device.OrganizationPositionTable,
+			Columns: []string{device.OrganizationPositionColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: organization.FieldID,
+					Column: organizationposition.FieldID,
 				},
 			},
 		}
@@ -425,19 +425,19 @@ func (duo *DeviceUpdateOne) SetUpdateTime(t time.Time) *DeviceUpdateOne {
 	return duo
 }
 
-// SetDevID sets the "devID" field.
+// SetDevID sets the "dev_id" field.
 func (duo *DeviceUpdateOne) SetDevID(s string) *DeviceUpdateOne {
 	duo.mutation.SetDevID(s)
 	return duo
 }
 
-// SetDevType sets the "devType" field.
+// SetDevType sets the "dev_type" field.
 func (duo *DeviceUpdateOne) SetDevType(s string) *DeviceUpdateOne {
 	duo.mutation.SetDevType(s)
 	return duo
 }
 
-// SetDevAddr sets the "devAddr" field.
+// SetDevAddr sets the "dev_addr" field.
 func (duo *DeviceUpdateOne) SetDevAddr(s string) *DeviceUpdateOne {
 	duo.mutation.SetDevAddr(s)
 	return duo
@@ -469,13 +469,13 @@ func (duo *DeviceUpdateOne) ClearName() *DeviceUpdateOne {
 	return duo
 }
 
-// SetDeleteFlag sets the "deleteFlag" field.
+// SetDeleteFlag sets the "delete_flag" field.
 func (duo *DeviceUpdateOne) SetDeleteFlag(b bool) *DeviceUpdateOne {
 	duo.mutation.SetDeleteFlag(b)
 	return duo
 }
 
-// SetNillableDeleteFlag sets the "deleteFlag" field if the given value is not nil.
+// SetNillableDeleteFlag sets the "delete_flag" field if the given value is not nil.
 func (duo *DeviceUpdateOne) SetNillableDeleteFlag(b *bool) *DeviceUpdateOne {
 	if b != nil {
 		duo.SetDeleteFlag(*b)
@@ -483,7 +483,7 @@ func (duo *DeviceUpdateOne) SetNillableDeleteFlag(b *bool) *DeviceUpdateOne {
 	return duo
 }
 
-// ClearDeleteFlag clears the value of the "deleteFlag" field.
+// ClearDeleteFlag clears the value of the "delete_flag" field.
 func (duo *DeviceUpdateOne) ClearDeleteFlag() *DeviceUpdateOne {
 	duo.mutation.ClearDeleteFlag()
 	return duo
@@ -509,23 +509,23 @@ func (duo *DeviceUpdateOne) ClearSummary() *DeviceUpdateOne {
 	return duo
 }
 
-// SetOrganizationID sets the "Organization" edge to the Organization entity by ID.
-func (duo *DeviceUpdateOne) SetOrganizationID(id int) *DeviceUpdateOne {
-	duo.mutation.SetOrganizationID(id)
+// SetOrganizationPositionID sets the "organization_position" edge to the OrganizationPosition entity by ID.
+func (duo *DeviceUpdateOne) SetOrganizationPositionID(id int) *DeviceUpdateOne {
+	duo.mutation.SetOrganizationPositionID(id)
 	return duo
 }
 
-// SetNillableOrganizationID sets the "Organization" edge to the Organization entity by ID if the given value is not nil.
-func (duo *DeviceUpdateOne) SetNillableOrganizationID(id *int) *DeviceUpdateOne {
+// SetNillableOrganizationPositionID sets the "organization_position" edge to the OrganizationPosition entity by ID if the given value is not nil.
+func (duo *DeviceUpdateOne) SetNillableOrganizationPositionID(id *int) *DeviceUpdateOne {
 	if id != nil {
-		duo = duo.SetOrganizationID(*id)
+		duo = duo.SetOrganizationPositionID(*id)
 	}
 	return duo
 }
 
-// SetOrganization sets the "Organization" edge to the Organization entity.
-func (duo *DeviceUpdateOne) SetOrganization(o *Organization) *DeviceUpdateOne {
-	return duo.SetOrganizationID(o.ID)
+// SetOrganizationPosition sets the "organization_position" edge to the OrganizationPosition entity.
+func (duo *DeviceUpdateOne) SetOrganizationPosition(o *OrganizationPosition) *DeviceUpdateOne {
+	return duo.SetOrganizationPositionID(o.ID)
 }
 
 // SetGatewayID sets the "gateway" edge to the Gateway entity by ID.
@@ -552,9 +552,9 @@ func (duo *DeviceUpdateOne) Mutation() *DeviceMutation {
 	return duo.mutation
 }
 
-// ClearOrganization clears the "Organization" edge to the Organization entity.
-func (duo *DeviceUpdateOne) ClearOrganization() *DeviceUpdateOne {
-	duo.mutation.ClearOrganization()
+// ClearOrganizationPosition clears the "organization_position" edge to the OrganizationPosition entity.
+func (duo *DeviceUpdateOne) ClearOrganizationPosition() *DeviceUpdateOne {
+	duo.mutation.ClearOrganizationPosition()
 	return duo
 }
 
@@ -749,33 +749,33 @@ func (duo *DeviceUpdateOne) sqlSave(ctx context.Context) (_node *Device, err err
 			Column: device.FieldSummary,
 		})
 	}
-	if duo.mutation.OrganizationCleared() {
+	if duo.mutation.OrganizationPositionCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   device.OrganizationTable,
-			Columns: []string{device.OrganizationColumn},
+			Table:   device.OrganizationPositionTable,
+			Columns: []string{device.OrganizationPositionColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: organization.FieldID,
+					Column: organizationposition.FieldID,
 				},
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := duo.mutation.OrganizationIDs(); len(nodes) > 0 {
+	if nodes := duo.mutation.OrganizationPositionIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   device.OrganizationTable,
-			Columns: []string{device.OrganizationColumn},
+			Table:   device.OrganizationPositionTable,
+			Columns: []string{device.OrganizationPositionColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: organization.FieldID,
+					Column: organizationposition.FieldID,
 				},
 			},
 		}

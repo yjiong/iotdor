@@ -12,7 +12,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/yjiong/iotdor/ent/device"
 	"github.com/yjiong/iotdor/ent/gateway"
-	"github.com/yjiong/iotdor/ent/organization"
+	"github.com/yjiong/iotdor/ent/organizationposition"
 )
 
 // DeviceCreate is the builder for creating a Device entity.
@@ -50,19 +50,19 @@ func (dc *DeviceCreate) SetNillableUpdateTime(t *time.Time) *DeviceCreate {
 	return dc
 }
 
-// SetDevID sets the "devID" field.
+// SetDevID sets the "dev_id" field.
 func (dc *DeviceCreate) SetDevID(s string) *DeviceCreate {
 	dc.mutation.SetDevID(s)
 	return dc
 }
 
-// SetDevType sets the "devType" field.
+// SetDevType sets the "dev_type" field.
 func (dc *DeviceCreate) SetDevType(s string) *DeviceCreate {
 	dc.mutation.SetDevType(s)
 	return dc
 }
 
-// SetDevAddr sets the "devAddr" field.
+// SetDevAddr sets the "dev_addr" field.
 func (dc *DeviceCreate) SetDevAddr(s string) *DeviceCreate {
 	dc.mutation.SetDevAddr(s)
 	return dc
@@ -88,13 +88,13 @@ func (dc *DeviceCreate) SetNillableName(s *string) *DeviceCreate {
 	return dc
 }
 
-// SetDeleteFlag sets the "deleteFlag" field.
+// SetDeleteFlag sets the "delete_flag" field.
 func (dc *DeviceCreate) SetDeleteFlag(b bool) *DeviceCreate {
 	dc.mutation.SetDeleteFlag(b)
 	return dc
 }
 
-// SetNillableDeleteFlag sets the "deleteFlag" field if the given value is not nil.
+// SetNillableDeleteFlag sets the "delete_flag" field if the given value is not nil.
 func (dc *DeviceCreate) SetNillableDeleteFlag(b *bool) *DeviceCreate {
 	if b != nil {
 		dc.SetDeleteFlag(*b)
@@ -116,23 +116,23 @@ func (dc *DeviceCreate) SetNillableSummary(s *string) *DeviceCreate {
 	return dc
 }
 
-// SetOrganizationID sets the "Organization" edge to the Organization entity by ID.
-func (dc *DeviceCreate) SetOrganizationID(id int) *DeviceCreate {
-	dc.mutation.SetOrganizationID(id)
+// SetOrganizationPositionID sets the "organization_position" edge to the OrganizationPosition entity by ID.
+func (dc *DeviceCreate) SetOrganizationPositionID(id int) *DeviceCreate {
+	dc.mutation.SetOrganizationPositionID(id)
 	return dc
 }
 
-// SetNillableOrganizationID sets the "Organization" edge to the Organization entity by ID if the given value is not nil.
-func (dc *DeviceCreate) SetNillableOrganizationID(id *int) *DeviceCreate {
+// SetNillableOrganizationPositionID sets the "organization_position" edge to the OrganizationPosition entity by ID if the given value is not nil.
+func (dc *DeviceCreate) SetNillableOrganizationPositionID(id *int) *DeviceCreate {
 	if id != nil {
-		dc = dc.SetOrganizationID(*id)
+		dc = dc.SetOrganizationPositionID(*id)
 	}
 	return dc
 }
 
-// SetOrganization sets the "Organization" edge to the Organization entity.
-func (dc *DeviceCreate) SetOrganization(o *Organization) *DeviceCreate {
-	return dc.SetOrganizationID(o.ID)
+// SetOrganizationPosition sets the "organization_position" edge to the OrganizationPosition entity.
+func (dc *DeviceCreate) SetOrganizationPosition(o *OrganizationPosition) *DeviceCreate {
+	return dc.SetOrganizationPositionID(o.ID)
 }
 
 // SetGatewayID sets the "gateway" edge to the Gateway entity by ID.
@@ -250,13 +250,13 @@ func (dc *DeviceCreate) check() error {
 		return &ValidationError{Name: "update_time", err: errors.New(`ent: missing required field "Device.update_time"`)}
 	}
 	if _, ok := dc.mutation.DevID(); !ok {
-		return &ValidationError{Name: "devID", err: errors.New(`ent: missing required field "Device.devID"`)}
+		return &ValidationError{Name: "dev_id", err: errors.New(`ent: missing required field "Device.dev_id"`)}
 	}
 	if _, ok := dc.mutation.DevType(); !ok {
-		return &ValidationError{Name: "devType", err: errors.New(`ent: missing required field "Device.devType"`)}
+		return &ValidationError{Name: "dev_type", err: errors.New(`ent: missing required field "Device.dev_type"`)}
 	}
 	if _, ok := dc.mutation.DevAddr(); !ok {
-		return &ValidationError{Name: "devAddr", err: errors.New(`ent: missing required field "Device.devAddr"`)}
+		return &ValidationError{Name: "dev_addr", err: errors.New(`ent: missing required field "Device.dev_addr"`)}
 	}
 	if _, ok := dc.mutation.Conn(); !ok {
 		return &ValidationError{Name: "conn", err: errors.New(`ent: missing required field "Device.conn"`)}
@@ -360,24 +360,24 @@ func (dc *DeviceCreate) createSpec() (*Device, *sqlgraph.CreateSpec) {
 		})
 		_node.Summary = value
 	}
-	if nodes := dc.mutation.OrganizationIDs(); len(nodes) > 0 {
+	if nodes := dc.mutation.OrganizationPositionIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   device.OrganizationTable,
-			Columns: []string{device.OrganizationColumn},
+			Table:   device.OrganizationPositionTable,
+			Columns: []string{device.OrganizationPositionColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: organization.FieldID,
+					Column: organizationposition.FieldID,
 				},
 			},
 		}
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.organization_devices = &nodes[0]
+		_node.organization_position_devices = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := dc.mutation.GatewayIDs(); len(nodes) > 0 {

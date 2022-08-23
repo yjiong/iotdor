@@ -11,7 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/yjiong/iotdor/ent/group"
-	"github.com/yjiong/iotdor/ent/organization"
+	"github.com/yjiong/iotdor/ent/organizationposition"
 	"github.com/yjiong/iotdor/ent/user"
 )
 
@@ -134,14 +134,14 @@ func (uc *UserCreate) AddAdmins(g ...*Group) *UserCreate {
 	return uc.AddAdminIDs(ids...)
 }
 
-// AddPersonChargeIDs adds the "personCharges" edge to the Organization entity by IDs.
+// AddPersonChargeIDs adds the "person_charges" edge to the OrganizationPosition entity by IDs.
 func (uc *UserCreate) AddPersonChargeIDs(ids ...int) *UserCreate {
 	uc.mutation.AddPersonChargeIDs(ids...)
 	return uc
 }
 
-// AddPersonCharges adds the "personCharges" edges to the Organization entity.
-func (uc *UserCreate) AddPersonCharges(o ...*Organization) *UserCreate {
+// AddPersonCharges adds the "person_charges" edges to the OrganizationPosition entity.
+func (uc *UserCreate) AddPersonCharges(o ...*OrganizationPosition) *UserCreate {
 	ids := make([]int, len(o))
 	for i := range o {
 		ids[i] = o[i].ID
@@ -381,7 +381,7 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: organization.FieldID,
+					Column: organizationposition.FieldID,
 				},
 			},
 		}

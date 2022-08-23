@@ -10,7 +10,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"github.com/yjiong/iotdor/ent/device"
 	"github.com/yjiong/iotdor/ent/gateway"
-	"github.com/yjiong/iotdor/ent/organization"
+	"github.com/yjiong/iotdor/ent/organizationposition"
 )
 
 // Device is the model entity for the Device schema.
@@ -22,31 +22,31 @@ type Device struct {
 	CreateTime time.Time `json:"create_time,omitempty"`
 	// UpdateTime holds the value of the "update_time" field.
 	UpdateTime time.Time `json:"update_time,omitempty"`
-	// DevID holds the value of the "devID" field.
-	DevID string `json:"devID,omitempty"`
-	// DevType holds the value of the "devType" field.
-	DevType string `json:"devType,omitempty"`
-	// DevAddr holds the value of the "devAddr" field.
-	DevAddr string `json:"devAddr,omitempty"`
+	// DevID holds the value of the "dev_id" field.
+	DevID string `json:"dev_id,omitempty"`
+	// DevType holds the value of the "dev_type" field.
+	DevType string `json:"dev_type,omitempty"`
+	// DevAddr holds the value of the "dev_addr" field.
+	DevAddr string `json:"dev_addr,omitempty"`
 	// Conn holds the value of the "conn" field.
 	Conn string `json:"conn,omitempty"`
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
-	// DeleteFlag holds the value of the "deleteFlag" field.
-	DeleteFlag bool `json:"deleteFlag,omitempty"`
+	// DeleteFlag holds the value of the "delete_flag" field.
+	DeleteFlag bool `json:"delete_flag,omitempty"`
 	// Summary holds the value of the "summary" field.
 	Summary string `json:"summary,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the DeviceQuery when eager-loading is set.
-	Edges                DeviceEdges `json:"edges"`
-	gateway_devices      *int
-	organization_devices *int
+	Edges                         DeviceEdges `json:"edges"`
+	gateway_devices               *int
+	organization_position_devices *int
 }
 
 // DeviceEdges holds the relations/edges for other nodes in the graph.
 type DeviceEdges struct {
-	// Organization holds the value of the Organization edge.
-	Organization *Organization `json:"Organization,omitempty"`
+	// OrganizationPosition holds the value of the organization_position edge.
+	OrganizationPosition *OrganizationPosition `json:"organization_position,omitempty"`
 	// Gateway holds the value of the gateway edge.
 	Gateway *Gateway `json:"gateway,omitempty"`
 	// loadedTypes holds the information for reporting if a
@@ -54,17 +54,17 @@ type DeviceEdges struct {
 	loadedTypes [2]bool
 }
 
-// OrganizationOrErr returns the Organization value or an error if the edge
+// OrganizationPositionOrErr returns the OrganizationPosition value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
-func (e DeviceEdges) OrganizationOrErr() (*Organization, error) {
+func (e DeviceEdges) OrganizationPositionOrErr() (*OrganizationPosition, error) {
 	if e.loadedTypes[0] {
-		if e.Organization == nil {
+		if e.OrganizationPosition == nil {
 			// Edge was loaded but was not found.
-			return nil, &NotFoundError{label: organization.Label}
+			return nil, &NotFoundError{label: organizationposition.Label}
 		}
-		return e.Organization, nil
+		return e.OrganizationPosition, nil
 	}
-	return nil, &NotLoadedError{edge: "Organization"}
+	return nil, &NotLoadedError{edge: "organization_position"}
 }
 
 // GatewayOrErr returns the Gateway value or an error if the edge
@@ -95,7 +95,7 @@ func (*Device) scanValues(columns []string) ([]interface{}, error) {
 			values[i] = new(sql.NullTime)
 		case device.ForeignKeys[0]: // gateway_devices
 			values[i] = new(sql.NullInt64)
-		case device.ForeignKeys[1]: // organization_devices
+		case device.ForeignKeys[1]: // organization_position_devices
 			values[i] = new(sql.NullInt64)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type Device", columns[i])
@@ -132,19 +132,19 @@ func (d *Device) assignValues(columns []string, values []interface{}) error {
 			}
 		case device.FieldDevID:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field devID", values[i])
+				return fmt.Errorf("unexpected type %T for field dev_id", values[i])
 			} else if value.Valid {
 				d.DevID = value.String
 			}
 		case device.FieldDevType:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field devType", values[i])
+				return fmt.Errorf("unexpected type %T for field dev_type", values[i])
 			} else if value.Valid {
 				d.DevType = value.String
 			}
 		case device.FieldDevAddr:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field devAddr", values[i])
+				return fmt.Errorf("unexpected type %T for field dev_addr", values[i])
 			} else if value.Valid {
 				d.DevAddr = value.String
 			}
@@ -162,7 +162,7 @@ func (d *Device) assignValues(columns []string, values []interface{}) error {
 			}
 		case device.FieldDeleteFlag:
 			if value, ok := values[i].(*sql.NullBool); !ok {
-				return fmt.Errorf("unexpected type %T for field deleteFlag", values[i])
+				return fmt.Errorf("unexpected type %T for field delete_flag", values[i])
 			} else if value.Valid {
 				d.DeleteFlag = value.Bool
 			}
@@ -181,19 +181,19 @@ func (d *Device) assignValues(columns []string, values []interface{}) error {
 			}
 		case device.ForeignKeys[1]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for edge-field organization_devices", value)
+				return fmt.Errorf("unexpected type %T for edge-field organization_position_devices", value)
 			} else if value.Valid {
-				d.organization_devices = new(int)
-				*d.organization_devices = int(value.Int64)
+				d.organization_position_devices = new(int)
+				*d.organization_position_devices = int(value.Int64)
 			}
 		}
 	}
 	return nil
 }
 
-// QueryOrganization queries the "Organization" edge of the Device entity.
-func (d *Device) QueryOrganization() *OrganizationQuery {
-	return (&DeviceClient{config: d.config}).QueryOrganization(d)
+// QueryOrganizationPosition queries the "organization_position" edge of the Device entity.
+func (d *Device) QueryOrganizationPosition() *OrganizationPositionQuery {
+	return (&DeviceClient{config: d.config}).QueryOrganizationPosition(d)
 }
 
 // QueryGateway queries the "gateway" edge of the Device entity.
@@ -230,13 +230,13 @@ func (d *Device) String() string {
 	builder.WriteString("update_time=")
 	builder.WriteString(d.UpdateTime.Format(time.ANSIC))
 	builder.WriteString(", ")
-	builder.WriteString("devID=")
+	builder.WriteString("dev_id=")
 	builder.WriteString(d.DevID)
 	builder.WriteString(", ")
-	builder.WriteString("devType=")
+	builder.WriteString("dev_type=")
 	builder.WriteString(d.DevType)
 	builder.WriteString(", ")
-	builder.WriteString("devAddr=")
+	builder.WriteString("dev_addr=")
 	builder.WriteString(d.DevAddr)
 	builder.WriteString(", ")
 	builder.WriteString("conn=")
@@ -245,7 +245,7 @@ func (d *Device) String() string {
 	builder.WriteString("name=")
 	builder.WriteString(d.Name)
 	builder.WriteString(", ")
-	builder.WriteString("deleteFlag=")
+	builder.WriteString("delete_flag=")
 	builder.WriteString(fmt.Sprintf("%v", d.DeleteFlag))
 	builder.WriteString(", ")
 	builder.WriteString("summary=")

@@ -15,33 +15,33 @@ const (
 	FieldCreateTime = "create_time"
 	// FieldUpdateTime holds the string denoting the update_time field in the database.
 	FieldUpdateTime = "update_time"
-	// FieldDevID holds the string denoting the devid field in the database.
+	// FieldDevID holds the string denoting the dev_id field in the database.
 	FieldDevID = "dev_id"
-	// FieldDevType holds the string denoting the devtype field in the database.
+	// FieldDevType holds the string denoting the dev_type field in the database.
 	FieldDevType = "dev_type"
-	// FieldDevAddr holds the string denoting the devaddr field in the database.
+	// FieldDevAddr holds the string denoting the dev_addr field in the database.
 	FieldDevAddr = "dev_addr"
 	// FieldConn holds the string denoting the conn field in the database.
 	FieldConn = "conn"
 	// FieldName holds the string denoting the name field in the database.
 	FieldName = "name"
-	// FieldDeleteFlag holds the string denoting the deleteflag field in the database.
+	// FieldDeleteFlag holds the string denoting the delete_flag field in the database.
 	FieldDeleteFlag = "delete_flag"
 	// FieldSummary holds the string denoting the summary field in the database.
 	FieldSummary = "summary"
-	// EdgeOrganization holds the string denoting the organization edge name in mutations.
-	EdgeOrganization = "Organization"
+	// EdgeOrganizationPosition holds the string denoting the organization_position edge name in mutations.
+	EdgeOrganizationPosition = "organization_position"
 	// EdgeGateway holds the string denoting the gateway edge name in mutations.
 	EdgeGateway = "gateway"
 	// Table holds the table name of the device in the database.
 	Table = "devices"
-	// OrganizationTable is the table that holds the Organization relation/edge.
-	OrganizationTable = "devices"
-	// OrganizationInverseTable is the table name for the Organization entity.
-	// It exists in this package in order to avoid circular dependency with the "organization" package.
-	OrganizationInverseTable = "organizations"
-	// OrganizationColumn is the table column denoting the Organization relation/edge.
-	OrganizationColumn = "organization_devices"
+	// OrganizationPositionTable is the table that holds the organization_position relation/edge.
+	OrganizationPositionTable = "devices"
+	// OrganizationPositionInverseTable is the table name for the OrganizationPosition entity.
+	// It exists in this package in order to avoid circular dependency with the "organizationposition" package.
+	OrganizationPositionInverseTable = "organization_positions"
+	// OrganizationPositionColumn is the table column denoting the organization_position relation/edge.
+	OrganizationPositionColumn = "organization_position_devices"
 	// GatewayTable is the table that holds the gateway relation/edge.
 	GatewayTable = "devices"
 	// GatewayInverseTable is the table name for the Gateway entity.
@@ -69,7 +69,7 @@ var Columns = []string{
 // table and are not defined as standalone fields in the schema.
 var ForeignKeys = []string{
 	"gateway_devices",
-	"organization_devices",
+	"organization_position_devices",
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
