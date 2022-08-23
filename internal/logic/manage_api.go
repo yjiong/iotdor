@@ -135,9 +135,9 @@ func (m *Manage) QueryOrganizationPositionDevices(posid string) (ds []string, er
 }
 
 // BeRelatedDeviceToOrganizationPosition .....
-func (m *Manage) BeRelatedDeviceToOrganizationPosition(name, devid string) error {
+func (m *Manage) BeRelatedDeviceToOrganizationPosition(posid, devid string) error {
 	var rerr error
-	o, oerr := m.entC.OrganizationPosition.Query().Where(organizationposition.PositionID(name)).Only(m.ctx)
+	o, oerr := m.entC.OrganizationPosition.Query().Where(organizationposition.PositionID(posid)).Only(m.ctx)
 	if oerr == nil {
 		d, derr := queryDeviceByDevID(m.ctx, m.entC, devid)
 		if derr == nil {

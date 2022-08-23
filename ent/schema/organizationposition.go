@@ -19,7 +19,7 @@ func (OrganizationPosition) Fields() []ent.Field {
 		field.String("position_id").Unique(),
 		field.String("address"),
 		field.String("floor").Optional(),
-		field.String("unitNo").Optional(),
+		field.String("unit_no").Optional(),
 		field.String("longitude_and_latitude"),
 		field.String("summary").Optional(),
 	}

@@ -470,8 +470,8 @@ paths:
       consumes:
         - application/json
       tags:
-        - 系统组织结构关联信息
-      summary:  获取组织结构信息
+        - 系统组织结构地理位置与设备关联信息
+      summary:  获取组织结构地理位置信息
       responses:
         '200':
           description: ok
@@ -492,15 +492,15 @@ paths:
       consumes:
         - application/json
       tags:
-        - 系统组织结构关联信息
-      summary:  添加组织结构信息
+        - 系统组织结构地理位置与设备关联信息
+      summary:  添加组织结构地理位置信息
       requestBody:
         content:
           application/json:
             name: organization_info
             required: true
             schema:
-              $ref: '#/components/schemas/Organization'
+              $ref: '#/components/schemas/OrganizationPosition'
       responses:
         '200':
           description: ok
@@ -521,15 +521,15 @@ paths:
       consumes:
         - application/json
       tags:
-        - 系统组织结构关联信息
-      summary:  更新组织结构信息
+        - 系统组织结构地理位置与设备关联信息
+      summary:  更新组织结构地理位置信息
       requestBody:
         content:
           application/json:
             name: organization_info
             required: true
             schema:
-              $ref: '#/components/schemas/Organization'
+              $ref: '#/components/schemas/OrganizationPosition'
       responses:
         '200':
           description: ok
@@ -543,18 +543,18 @@ paths:
           description: add user failed
           schema:
             type: object
-  /config/sys/delete_organization/{oname}:
+  /config/sys/delete_organization/{posid}:
     delete:
       security:
         - api_key: []
       consumes:
         - application/json
       tags:
-        - 系统组织结构关联信息
-      summary:  删除组织结构信息
+        - 系统组织结构地理位置与设备关联信息
+      summary:  删除组织结构地理位置信息
       parameters:
-        description: 组织结构的名称
-        name: oname
+        description: 组织结构地理位置的名称
+        name: posid
         in: path
         required: true
       responses:
@@ -570,22 +570,22 @@ paths:
           description: add user failed
           schema:
             type: object
-  /config/sys/add_organization_person_charge/{oname}/{uname}:
+  /config/sys/add_organization_person_charge/{posid}/{uname}:
     post:
       security:
         - api_key: []
       consumes:
         - application/json
       tags:
-        - 系统组织结构关联信息
-      summary:  设置组织结构负责人
+        - 系统组织结构地理位置与设备关联信息
+      summary:  设置组织结构地理位置负责人
       parameters:
-        - description: 组织结构名
+        - description: 组织结构地理位置名
           type: string
-          name: oname
+          name: posid
           in: path
           required: true
-        - description: 设置组织结构负责人(需在用户内已经存在的)
+        - description: 设置组织结构地理位置负责人(需在用户内已经存在的)
           type: string
           name: uname
           in: path
@@ -610,10 +610,10 @@ paths:
       consumes:
         - application/json
       tags:
-        - 系统组织结构关联信息
-      summary:  删除组织结构负责人
+        - 系统组织结构地理位置与设备关联信息
+      summary:  删除组织结构地理位置负责人
       parameters:
-        - description: 删除组织结构负责人
+        - description: 删除组织结构地理位置负责人
           type: string
           name: uname
           in: path
@@ -631,17 +631,50 @@ paths:
           description: remove Organization person charge failed
           schema:
             type: object
-  /config/sys/add_organization_device/{devid}:
+  /config/sys/get_organization_device/{posid}:
+    get:
+      security:
+        - api_key: []
+      consumes:
+        - application/json
+      tags:
+        - 系统组织结构地理位置与设备关联信息
+      summary:  获取已关联组织结构地理位置的设备
+      parameters:
+        - description: 获取已关联组织结构地理位置的设备
+          type: string
+          name: posid
+          in: path
+          required: true
+      responses:
+        '200':
+          description: ok
+          schema:
+            type: object
+        '401':
+          description: access denided
+          schema:
+            type: object
+        '404':
+          description: get Organization device faied
+          schema:
+            type: object
+  /config/sys/add_organization_device/{posid}/{devid}:
     post:
       security:
         - api_key: []
       consumes:
         - application/json
       tags:
-        - 系统组织结构关联信息
-      summary:  关联组织结构的设备
+        - 系统组织结构地理位置与设备关联信息
+      summary:  关联组织结构地理位置的设备
       parameters:
-        - description: 关联组织结构的设备(需在设备列表内存在，并且尚未关联)
+        - description: 关联组织结构地理位置的ID(需存在)
+          type: string
+          name: posidj
+          in: path
+          required: true
+        - description: 关联组织结构地理位置的设备(需在设备列表内存在，并且尚未关联)
           type: string
           name: devid
           in: path
@@ -666,10 +699,10 @@ paths:
       consumes:
         - application/json
       tags:
-        - 系统组织结构关联信息
-      summary:  除移已关联组织结构的设备
+        - 系统组织结构地理位置与设备关联信息
+      summary:  除移已关联组织结构地理位置的设备
       parameters:
-        - description: 除移已关联组织结构的设备
+        - description: 除移已关联组织结构地理位置的设备
           type: string
           name: devid
           in: path
@@ -789,12 +822,12 @@ components:
           description: 是否设置为管理员
         phone:
           type: string
-    Organization:        
+    OrganizationPosition:        
       type: object
       properties:
-        name:
+        position_id:
           type: string
-          description: 组织结构的名称(需唯一)
+          description: 组织结构地理位置的名称(需唯一)
         address:
           type: string
           description: 详细地址
