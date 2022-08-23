@@ -47,6 +47,7 @@ run: build
 #debug:swagger FORCE
 debug:
 	@mkdir -p build
+	@${MKFILEPATH}/api/static/myyaml/catyaml.sh
 	@env $(ENV) go build $(DFLAGS) -o ./build/$(PROJECT) ./cmd/$(PROJECT)/main.go
 	@cd build && dlv exec ./$(PROJECT) -- -L 5
 
