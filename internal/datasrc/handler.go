@@ -6,4 +6,5 @@ type DSrcer interface {
 	SendData(topic string, paylosd interface{}) error // 发送上行数据
 	DataDownChan() chan DataDownPayload               // 返回订阅到的消息数据channel
 	IsConnected() bool
+	GetBrokerURL() string
 }

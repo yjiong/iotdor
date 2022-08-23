@@ -170,12 +170,14 @@ func delUserByID(ctx context.Context, c *ent.Client, id int) error {
 func addGateway(ctx context.Context,
 	c *ent.Client,
 	gwid, svrid, broker, installAt string,
+	stat bool,
 	upInterval int) (*ent.Gateway, error) {
 	return c.Gateway.Create().
 		SetGwid(gwid).
 		SetSvrid(svrid).
 		SetBroker(broker).
 		SetInstallationLocation(installAt).
+		SetOnline(stat).
 		SetUpInterval(upInterval).
 		Save(ctx)
 }
@@ -189,14 +191,15 @@ func queryGatewayByGWID(ctx context.Context, c *ent.Client, gwid string) (*ent.G
 }
 
 func updateGateway(ctx context.Context,
-	g *ent.Gateway,
+	c *ent.Client,
 	gwid, svrid, broker, installAt string,
+	stat bool,
 	upInterval int) error {
-	return g.Update().
-		SetGwid(gwid).
+	return c.Gateway.Update().Where(gateway.Gwid(gwid)).
 		SetSvrid(svrid).
 		SetBroker(broker).
 		SetInstallationLocation(installAt).
+		SetOnline(stat).
 		SetUpInterval(upInterval).
 		Exec(ctx)
 }
@@ -240,10 +243,6 @@ func addDevice(ctx context.Context,
 		Save(ctx)
 }
 
-func queryDevices(ctx context.Context, c *ent.Client) ([]*ent.Device, error) {
-	return c.Device.Query().All(ctx)
-}
-
 func queryDeviceByDevID(ctx context.Context, c *ent.Client, devid string) (*ent.Device, error) {
 	return c.Device.Query().Where(device.DevID(devid)).Only(ctx)
 }
@@ -252,11 +251,11 @@ func getGatewayByDevID(ctx context.Context, c *ent.Client, devid string) (*ent.G
 	return c.Device.Query().Where(device.DevID(devid)).QueryGateway().Only(ctx)
 }
 
-func updateDevice(ctx context.Context, d *ent.Device,
+func updateDevice(ctx context.Context, c *ent.Client,
 	did, dtype, daddr, conn, name string,
 	gw *ent.Gateway) error {
-	return d.Update().
-		SetDevID(did).
+	return c.Device.Update().
+		Where(device.DevID(did)).
 		SetDevType(dtype).
 		SetDevAddr(daddr).
 		SetConn(conn).
@@ -265,8 +264,8 @@ func updateDevice(ctx context.Context, d *ent.Device,
 		Exec(ctx)
 }
 
-func setDeviceDelFlag(ctx context.Context, d *ent.Device, flag bool) error {
-	return d.Update().
+func setDeviceDelFlag(ctx context.Context, c *ent.Client, flag bool) error {
+	return c.Device.Update().
 		SetDeleteFlag(flag).
 		Exec(ctx)
 }

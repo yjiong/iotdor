@@ -34,6 +34,7 @@ type MQTTDSrcer struct {
 	sqos         byte
 	retain       bool
 	SubTopic     string
+	BrokerURL    string
 }
 
 // NewMQTTDSrcer creates a new MQTTDSrcer.
@@ -43,7 +44,7 @@ func NewMQTTDSrcer(conm map[string]string) DSrcer {
 	}
 
 	opts := mqtt.NewClientOptions()
-	server := conm["url"]
+	h.BrokerURL = conm["url"]
 	h.Iotdname = conm["iotdname"]
 	log.Debugln(conm)
 	opts.SetUsername(conm["username"])
@@ -60,19 +61,19 @@ func NewMQTTDSrcer(conm map[string]string) DSrcer {
 	opts.SetKeepAlive(time.Duration(kplv) * time.Second)
 	rand := utils.GetSnowflakeID()
 	opts.SetClientID(fmt.Sprintf("%s-%s", h.Iotdname, rand))
-	optserver := "tcp://" + server
+	optserver := "tcp://" + h.BrokerURL
 	if conm["cafile"] != "" {
 		tlsconfig, err := newTLSConfig(conm)
 		if err != nil {
 			log.Errorf("Error with the mqtt CA certificate: %s", err)
 		} else {
 			opts.SetTLSConfig(tlsconfig)
-			optserver = "ssl://" + server
+			optserver = "ssl://" + h.BrokerURL
 		}
 	}
 	opts.AddBroker(optserver)
 
-	log.WithField("server", server).Info("handler/mqtt: connecting to mqtt broker")
+	log.WithField("server", h.BrokerURL).Info("handler/mqtt: connecting to mqtt broker")
 	h.conn = mqtt.NewClient(opts)
 	var counts int
 	for {
@@ -203,4 +204,9 @@ func (h *MQTTDSrcer) onConnectionLost(c mqtt.Client, reason error) {
 //IsConnected ..
 func (h *MQTTDSrcer) IsConnected() bool {
 	return h.conn.IsConnected()
+}
+
+//GetBrokerURL ...
+func (h *MQTTDSrcer) GetBrokerURL() string {
+	return h.BrokerURL
 }

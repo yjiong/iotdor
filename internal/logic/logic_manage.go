@@ -15,8 +15,11 @@ import (
 	"github.com/robfig/cron/v3"
 	log "github.com/sirupsen/logrus"
 	"github.com/yjiong/iotdor/ent"
+	"github.com/yjiong/iotdor/ent/gateway"
 	"github.com/yjiong/iotdor/internal/datasrc"
 )
+
+var gwStat = []bool{false, true}
 
 // Manage logic handle
 type Manage struct {
@@ -65,7 +68,13 @@ func (m *Manage) MsgHandle() {
 						}
 					}
 				case GwStat:
-					//stat := msg.Get("stat").MustUint64()
+					log.Infoln(msg)
+					stat := msg.Get("data").MustInt64()
+					if exist, _ := m.entC.Gateway.Query().Where(gateway.Gwid(gwID)).Exist(m.ctx); exist {
+						addGateway(m.ctx, m.entC, gwID, m.iotdName, m.GetBrokerURL(), "", gwStat[stat], 60)
+					} else {
+						updateGateway(m.ctx, m.entC, gwID, m.iotdName, m.GetBrokerURL(), "", gwStat[stat], 60)
+					}
 
 				}
 			}
