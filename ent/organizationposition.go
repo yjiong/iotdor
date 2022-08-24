@@ -26,8 +26,8 @@ type OrganizationPosition struct {
 	Address string `json:"address,omitempty"`
 	// Floor holds the value of the "floor" field.
 	Floor string `json:"floor,omitempty"`
-	// UnitNo holds the value of the "unitNo" field.
-	UnitNo string `json:"unitNo,omitempty"`
+	// UnitNo holds the value of the "unit_no" field.
+	UnitNo string `json:"unit_no,omitempty"`
 	// LongitudeAndLatitude holds the value of the "longitude_and_latitude" field.
 	LongitudeAndLatitude string `json:"longitude_and_latitude,omitempty"`
 	// Summary holds the value of the "summary" field.
@@ -141,7 +141,7 @@ func (op *OrganizationPosition) assignValues(columns []string, values []interfac
 			}
 		case organizationposition.FieldUnitNo:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field unitNo", values[i])
+				return fmt.Errorf("unexpected type %T for field unit_no", values[i])
 			} else if value.Valid {
 				op.UnitNo = value.String
 			}
@@ -215,7 +215,7 @@ func (op *OrganizationPosition) String() string {
 	builder.WriteString("floor=")
 	builder.WriteString(op.Floor)
 	builder.WriteString(", ")
-	builder.WriteString("unitNo=")
+	builder.WriteString("unit_no=")
 	builder.WriteString(op.UnitNo)
 	builder.WriteString(", ")
 	builder.WriteString("longitude_and_latitude=")

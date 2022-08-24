@@ -62,6 +62,7 @@ var (
 		{Name: "online", Type: field.TypeBool, Nullable: true},
 		{Name: "delete_flag", Type: field.TypeBool, Nullable: true},
 		{Name: "up_interval", Type: field.TypeInt, Default: 60},
+		{Name: "version", Type: field.TypeString, Nullable: true},
 		{Name: "summary", Type: field.TypeString, Nullable: true},
 		{Name: "group_gateways", Type: field.TypeInt, Nullable: true},
 	}
@@ -73,7 +74,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "gateways_groups_gateways",
-				Columns:    []*schema.Column{GatewaysColumns[11]},
+				Columns:    []*schema.Column{GatewaysColumns[12]},
 				RefColumns: []*schema.Column{GroupsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},

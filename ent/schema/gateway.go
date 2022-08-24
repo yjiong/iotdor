@@ -28,6 +28,8 @@ func (Gateway) Fields() []ent.Field {
 			Optional(),
 		field.Int("up_interval").
 			Default(60),
+		field.String("version").
+			Optional(),
 		field.String("summary").
 			Optional(),
 	}

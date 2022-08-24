@@ -984,6 +984,7 @@ type GatewayMutation struct {
 	delete_flag           *bool
 	up_interval           *int
 	addup_interval        *int
+	version               *string
 	summary               *string
 	clearedFields         map[string]struct{}
 	devices               map[int]struct{}
@@ -1477,6 +1478,55 @@ func (m *GatewayMutation) ResetUpInterval() {
 	m.addup_interval = nil
 }
 
+// SetVersion sets the "version" field.
+func (m *GatewayMutation) SetVersion(s string) {
+	m.version = &s
+}
+
+// Version returns the value of the "version" field in the mutation.
+func (m *GatewayMutation) Version() (r string, exists bool) {
+	v := m.version
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldVersion returns the old "version" field's value of the Gateway entity.
+// If the Gateway object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GatewayMutation) OldVersion(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldVersion is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldVersion requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldVersion: %w", err)
+	}
+	return oldValue.Version, nil
+}
+
+// ClearVersion clears the value of the "version" field.
+func (m *GatewayMutation) ClearVersion() {
+	m.version = nil
+	m.clearedFields[gateway.FieldVersion] = struct{}{}
+}
+
+// VersionCleared returns if the "version" field was cleared in this mutation.
+func (m *GatewayMutation) VersionCleared() bool {
+	_, ok := m.clearedFields[gateway.FieldVersion]
+	return ok
+}
+
+// ResetVersion resets all changes to the "version" field.
+func (m *GatewayMutation) ResetVersion() {
+	m.version = nil
+	delete(m.clearedFields, gateway.FieldVersion)
+}
+
 // SetSummary sets the "summary" field.
 func (m *GatewayMutation) SetSummary(s string) {
 	m.summary = &s
@@ -1638,7 +1688,7 @@ func (m *GatewayMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *GatewayMutation) Fields() []string {
-	fields := make([]string, 0, 10)
+	fields := make([]string, 0, 11)
 	if m.create_time != nil {
 		fields = append(fields, gateway.FieldCreateTime)
 	}
@@ -1665,6 +1715,9 @@ func (m *GatewayMutation) Fields() []string {
 	}
 	if m.up_interval != nil {
 		fields = append(fields, gateway.FieldUpInterval)
+	}
+	if m.version != nil {
+		fields = append(fields, gateway.FieldVersion)
 	}
 	if m.summary != nil {
 		fields = append(fields, gateway.FieldSummary)
@@ -1695,6 +1748,8 @@ func (m *GatewayMutation) Field(name string) (ent.Value, bool) {
 		return m.DeleteFlag()
 	case gateway.FieldUpInterval:
 		return m.UpInterval()
+	case gateway.FieldVersion:
+		return m.Version()
 	case gateway.FieldSummary:
 		return m.Summary()
 	}
@@ -1724,6 +1779,8 @@ func (m *GatewayMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldDeleteFlag(ctx)
 	case gateway.FieldUpInterval:
 		return m.OldUpInterval(ctx)
+	case gateway.FieldVersion:
+		return m.OldVersion(ctx)
 	case gateway.FieldSummary:
 		return m.OldSummary(ctx)
 	}
@@ -1798,6 +1855,13 @@ func (m *GatewayMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetUpInterval(v)
 		return nil
+	case gateway.FieldVersion:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetVersion(v)
+		return nil
 	case gateway.FieldSummary:
 		v, ok := value.(string)
 		if !ok {
@@ -1859,6 +1923,9 @@ func (m *GatewayMutation) ClearedFields() []string {
 	if m.FieldCleared(gateway.FieldDeleteFlag) {
 		fields = append(fields, gateway.FieldDeleteFlag)
 	}
+	if m.FieldCleared(gateway.FieldVersion) {
+		fields = append(fields, gateway.FieldVersion)
+	}
 	if m.FieldCleared(gateway.FieldSummary) {
 		fields = append(fields, gateway.FieldSummary)
 	}
@@ -1884,6 +1951,9 @@ func (m *GatewayMutation) ClearField(name string) error {
 		return nil
 	case gateway.FieldDeleteFlag:
 		m.ClearDeleteFlag()
+		return nil
+	case gateway.FieldVersion:
+		m.ClearVersion()
 		return nil
 	case gateway.FieldSummary:
 		m.ClearSummary()
@@ -1922,6 +1992,9 @@ func (m *GatewayMutation) ResetField(name string) error {
 		return nil
 	case gateway.FieldUpInterval:
 		m.ResetUpInterval()
+		return nil
+	case gateway.FieldVersion:
+		m.ResetVersion()
 		return nil
 	case gateway.FieldSummary:
 		m.ResetSummary()
@@ -2689,7 +2762,7 @@ type OrganizationPositionMutation struct {
 	position_id              *string
 	address                  *string
 	floor                    *string
-	unitNo                   *string
+	unit_no                  *string
 	longitude_and_latitude   *string
 	summary                  *string
 	clearedFields            map[string]struct{}
@@ -2998,21 +3071,21 @@ func (m *OrganizationPositionMutation) ResetFloor() {
 	delete(m.clearedFields, organizationposition.FieldFloor)
 }
 
-// SetUnitNo sets the "unitNo" field.
+// SetUnitNo sets the "unit_no" field.
 func (m *OrganizationPositionMutation) SetUnitNo(s string) {
-	m.unitNo = &s
+	m.unit_no = &s
 }
 
-// UnitNo returns the value of the "unitNo" field in the mutation.
+// UnitNo returns the value of the "unit_no" field in the mutation.
 func (m *OrganizationPositionMutation) UnitNo() (r string, exists bool) {
-	v := m.unitNo
+	v := m.unit_no
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldUnitNo returns the old "unitNo" field's value of the OrganizationPosition entity.
+// OldUnitNo returns the old "unit_no" field's value of the OrganizationPosition entity.
 // If the OrganizationPosition object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
 func (m *OrganizationPositionMutation) OldUnitNo(ctx context.Context) (v string, err error) {
@@ -3029,21 +3102,21 @@ func (m *OrganizationPositionMutation) OldUnitNo(ctx context.Context) (v string,
 	return oldValue.UnitNo, nil
 }
 
-// ClearUnitNo clears the value of the "unitNo" field.
+// ClearUnitNo clears the value of the "unit_no" field.
 func (m *OrganizationPositionMutation) ClearUnitNo() {
-	m.unitNo = nil
+	m.unit_no = nil
 	m.clearedFields[organizationposition.FieldUnitNo] = struct{}{}
 }
 
-// UnitNoCleared returns if the "unitNo" field was cleared in this mutation.
+// UnitNoCleared returns if the "unit_no" field was cleared in this mutation.
 func (m *OrganizationPositionMutation) UnitNoCleared() bool {
 	_, ok := m.clearedFields[organizationposition.FieldUnitNo]
 	return ok
 }
 
-// ResetUnitNo resets all changes to the "unitNo" field.
+// ResetUnitNo resets all changes to the "unit_no" field.
 func (m *OrganizationPositionMutation) ResetUnitNo() {
-	m.unitNo = nil
+	m.unit_no = nil
 	delete(m.clearedFields, organizationposition.FieldUnitNo)
 }
 
@@ -3329,7 +3402,7 @@ func (m *OrganizationPositionMutation) Fields() []string {
 	if m.floor != nil {
 		fields = append(fields, organizationposition.FieldFloor)
 	}
-	if m.unitNo != nil {
+	if m.unit_no != nil {
 		fields = append(fields, organizationposition.FieldUnitNo)
 	}
 	if m.longitude_and_latitude != nil {

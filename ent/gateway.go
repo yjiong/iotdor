@@ -35,6 +35,8 @@ type Gateway struct {
 	DeleteFlag bool `json:"delete_flag,omitempty"`
 	// UpInterval holds the value of the "up_interval" field.
 	UpInterval int `json:"up_interval,omitempty"`
+	// Version holds the value of the "version" field.
+	Version string `json:"version,omitempty"`
 	// Summary holds the value of the "summary" field.
 	Summary string `json:"summary,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -85,7 +87,7 @@ func (*Gateway) scanValues(columns []string) ([]interface{}, error) {
 			values[i] = new(sql.NullBool)
 		case gateway.FieldID, gateway.FieldUpInterval:
 			values[i] = new(sql.NullInt64)
-		case gateway.FieldGwid, gateway.FieldSvrid, gateway.FieldBroker, gateway.FieldInstallationLocation, gateway.FieldSummary:
+		case gateway.FieldGwid, gateway.FieldSvrid, gateway.FieldBroker, gateway.FieldInstallationLocation, gateway.FieldVersion, gateway.FieldSummary:
 			values[i] = new(sql.NullString)
 		case gateway.FieldCreateTime, gateway.FieldUpdateTime:
 			values[i] = new(sql.NullTime)
@@ -166,6 +168,12 @@ func (ga *Gateway) assignValues(columns []string, values []interface{}) error {
 			} else if value.Valid {
 				ga.UpInterval = int(value.Int64)
 			}
+		case gateway.FieldVersion:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field version", values[i])
+			} else if value.Valid {
+				ga.Version = value.String
+			}
 		case gateway.FieldSummary:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field summary", values[i])
@@ -243,6 +251,9 @@ func (ga *Gateway) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("up_interval=")
 	builder.WriteString(fmt.Sprintf("%v", ga.UpInterval))
+	builder.WriteString(", ")
+	builder.WriteString("version=")
+	builder.WriteString(ga.Version)
 	builder.WriteString(", ")
 	builder.WriteString("summary=")
 	builder.WriteString(ga.Summary)

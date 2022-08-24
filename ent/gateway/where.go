@@ -144,6 +144,13 @@ func UpInterval(v int) predicate.Gateway {
 	})
 }
 
+// Version applies equality check predicate on the "version" field. It's identical to VersionEQ.
+func Version(v string) predicate.Gateway {
+	return predicate.Gateway(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldVersion), v))
+	})
+}
+
 // Summary applies equality check predicate on the "summary" field. It's identical to SummaryEQ.
 func Summary(v string) predicate.Gateway {
 	return predicate.Gateway(func(s *sql.Selector) {
@@ -806,6 +813,119 @@ func UpIntervalLT(v int) predicate.Gateway {
 func UpIntervalLTE(v int) predicate.Gateway {
 	return predicate.Gateway(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldUpInterval), v))
+	})
+}
+
+// VersionEQ applies the EQ predicate on the "version" field.
+func VersionEQ(v string) predicate.Gateway {
+	return predicate.Gateway(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldVersion), v))
+	})
+}
+
+// VersionNEQ applies the NEQ predicate on the "version" field.
+func VersionNEQ(v string) predicate.Gateway {
+	return predicate.Gateway(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldVersion), v))
+	})
+}
+
+// VersionIn applies the In predicate on the "version" field.
+func VersionIn(vs ...string) predicate.Gateway {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Gateway(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldVersion), v...))
+	})
+}
+
+// VersionNotIn applies the NotIn predicate on the "version" field.
+func VersionNotIn(vs ...string) predicate.Gateway {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Gateway(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldVersion), v...))
+	})
+}
+
+// VersionGT applies the GT predicate on the "version" field.
+func VersionGT(v string) predicate.Gateway {
+	return predicate.Gateway(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldVersion), v))
+	})
+}
+
+// VersionGTE applies the GTE predicate on the "version" field.
+func VersionGTE(v string) predicate.Gateway {
+	return predicate.Gateway(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldVersion), v))
+	})
+}
+
+// VersionLT applies the LT predicate on the "version" field.
+func VersionLT(v string) predicate.Gateway {
+	return predicate.Gateway(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldVersion), v))
+	})
+}
+
+// VersionLTE applies the LTE predicate on the "version" field.
+func VersionLTE(v string) predicate.Gateway {
+	return predicate.Gateway(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldVersion), v))
+	})
+}
+
+// VersionContains applies the Contains predicate on the "version" field.
+func VersionContains(v string) predicate.Gateway {
+	return predicate.Gateway(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldVersion), v))
+	})
+}
+
+// VersionHasPrefix applies the HasPrefix predicate on the "version" field.
+func VersionHasPrefix(v string) predicate.Gateway {
+	return predicate.Gateway(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldVersion), v))
+	})
+}
+
+// VersionHasSuffix applies the HasSuffix predicate on the "version" field.
+func VersionHasSuffix(v string) predicate.Gateway {
+	return predicate.Gateway(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldVersion), v))
+	})
+}
+
+// VersionIsNil applies the IsNil predicate on the "version" field.
+func VersionIsNil() predicate.Gateway {
+	return predicate.Gateway(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldVersion)))
+	})
+}
+
+// VersionNotNil applies the NotNil predicate on the "version" field.
+func VersionNotNil() predicate.Gateway {
+	return predicate.Gateway(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldVersion)))
+	})
+}
+
+// VersionEqualFold applies the EqualFold predicate on the "version" field.
+func VersionEqualFold(v string) predicate.Gateway {
+	return predicate.Gateway(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldVersion), v))
+	})
+}
+
+// VersionContainsFold applies the ContainsFold predicate on the "version" field.
+func VersionContainsFold(v string) predicate.Gateway {
+	return predicate.Gateway(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldVersion), v))
 	})
 }
 

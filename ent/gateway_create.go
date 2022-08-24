@@ -124,6 +124,20 @@ func (gc *GatewayCreate) SetNillableUpInterval(i *int) *GatewayCreate {
 	return gc
 }
 
+// SetVersion sets the "version" field.
+func (gc *GatewayCreate) SetVersion(s string) *GatewayCreate {
+	gc.mutation.SetVersion(s)
+	return gc
+}
+
+// SetNillableVersion sets the "version" field if the given value is not nil.
+func (gc *GatewayCreate) SetNillableVersion(s *string) *GatewayCreate {
+	if s != nil {
+		gc.SetVersion(*s)
+	}
+	return gc
+}
+
 // SetSummary sets the "summary" field.
 func (gc *GatewayCreate) SetSummary(s string) *GatewayCreate {
 	gc.mutation.SetSummary(s)
@@ -381,6 +395,14 @@ func (gc *GatewayCreate) createSpec() (*Gateway, *sqlgraph.CreateSpec) {
 			Column: gateway.FieldUpInterval,
 		})
 		_node.UpInterval = value
+	}
+	if value, ok := gc.mutation.Version(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: gateway.FieldVersion,
+		})
+		_node.Version = value
 	}
 	if value, ok := gc.mutation.Summary(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{

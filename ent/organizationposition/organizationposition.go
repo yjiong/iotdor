@@ -21,7 +21,7 @@ const (
 	FieldAddress = "address"
 	// FieldFloor holds the string denoting the floor field in the database.
 	FieldFloor = "floor"
-	// FieldUnitNo holds the string denoting the unitno field in the database.
+	// FieldUnitNo holds the string denoting the unit_no field in the database.
 	FieldUnitNo = "unit_no"
 	// FieldLongitudeAndLatitude holds the string denoting the longitude_and_latitude field in the database.
 	FieldLongitudeAndLatitude = "longitude_and_latitude"

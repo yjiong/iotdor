@@ -192,7 +192,7 @@ func queryGatewayByGWID(ctx context.Context, c *ent.Client, gwid string) (*ent.G
 
 func updateGateway(ctx context.Context,
 	c *ent.Client,
-	gwid, svrid, broker, installAt string,
+	gwid, svrid, broker, installAt, ver string,
 	stat bool,
 	upInterval int) error {
 	return c.Gateway.Update().Where(gateway.Gwid(gwid)).
@@ -200,6 +200,7 @@ func updateGateway(ctx context.Context,
 		SetBroker(broker).
 		SetInstallationLocation(installAt).
 		SetOnline(stat).
+		SetVersion(ver).
 		SetUpInterval(upInterval).
 		Exec(ctx)
 }

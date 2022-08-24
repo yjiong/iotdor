@@ -135,6 +135,26 @@ func (gu *GatewayUpdate) AddUpInterval(i int) *GatewayUpdate {
 	return gu
 }
 
+// SetVersion sets the "version" field.
+func (gu *GatewayUpdate) SetVersion(s string) *GatewayUpdate {
+	gu.mutation.SetVersion(s)
+	return gu
+}
+
+// SetNillableVersion sets the "version" field if the given value is not nil.
+func (gu *GatewayUpdate) SetNillableVersion(s *string) *GatewayUpdate {
+	if s != nil {
+		gu.SetVersion(*s)
+	}
+	return gu
+}
+
+// ClearVersion clears the value of the "version" field.
+func (gu *GatewayUpdate) ClearVersion() *GatewayUpdate {
+	gu.mutation.ClearVersion()
+	return gu
+}
+
 // SetSummary sets the "summary" field.
 func (gu *GatewayUpdate) SetSummary(s string) *GatewayUpdate {
 	gu.mutation.SetSummary(s)
@@ -383,6 +403,19 @@ func (gu *GatewayUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: gateway.FieldUpInterval,
 		})
 	}
+	if value, ok := gu.mutation.Version(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: gateway.FieldVersion,
+		})
+	}
+	if gu.mutation.VersionCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: gateway.FieldVersion,
+		})
+	}
 	if value, ok := gu.mutation.Summary(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
@@ -606,6 +639,26 @@ func (guo *GatewayUpdateOne) SetNillableUpInterval(i *int) *GatewayUpdateOne {
 // AddUpInterval adds i to the "up_interval" field.
 func (guo *GatewayUpdateOne) AddUpInterval(i int) *GatewayUpdateOne {
 	guo.mutation.AddUpInterval(i)
+	return guo
+}
+
+// SetVersion sets the "version" field.
+func (guo *GatewayUpdateOne) SetVersion(s string) *GatewayUpdateOne {
+	guo.mutation.SetVersion(s)
+	return guo
+}
+
+// SetNillableVersion sets the "version" field if the given value is not nil.
+func (guo *GatewayUpdateOne) SetNillableVersion(s *string) *GatewayUpdateOne {
+	if s != nil {
+		guo.SetVersion(*s)
+	}
+	return guo
+}
+
+// ClearVersion clears the value of the "version" field.
+func (guo *GatewayUpdateOne) ClearVersion() *GatewayUpdateOne {
+	guo.mutation.ClearVersion()
 	return guo
 }
 
@@ -885,6 +938,19 @@ func (guo *GatewayUpdateOne) sqlSave(ctx context.Context) (_node *Gateway, err e
 			Type:   field.TypeInt,
 			Value:  value,
 			Column: gateway.FieldUpInterval,
+		})
+	}
+	if value, ok := guo.mutation.Version(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: gateway.FieldVersion,
+		})
+	}
+	if guo.mutation.VersionCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: gateway.FieldVersion,
 		})
 	}
 	if value, ok := guo.mutation.Summary(); ok {

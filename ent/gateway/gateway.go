@@ -29,6 +29,8 @@ const (
 	FieldDeleteFlag = "delete_flag"
 	// FieldUpInterval holds the string denoting the up_interval field in the database.
 	FieldUpInterval = "up_interval"
+	// FieldVersion holds the string denoting the version field in the database.
+	FieldVersion = "version"
 	// FieldSummary holds the string denoting the summary field in the database.
 	FieldSummary = "summary"
 	// EdgeDevices holds the string denoting the devices edge name in mutations.
@@ -65,6 +67,7 @@ var Columns = []string{
 	FieldOnline,
 	FieldDeleteFlag,
 	FieldUpInterval,
+	FieldVersion,
 	FieldSummary,
 }
 

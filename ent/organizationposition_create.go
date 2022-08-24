@@ -77,13 +77,13 @@ func (opc *OrganizationPositionCreate) SetNillableFloor(s *string) *Organization
 	return opc
 }
 
-// SetUnitNo sets the "unitNo" field.
+// SetUnitNo sets the "unit_no" field.
 func (opc *OrganizationPositionCreate) SetUnitNo(s string) *OrganizationPositionCreate {
 	opc.mutation.SetUnitNo(s)
 	return opc
 }
 
-// SetNillableUnitNo sets the "unitNo" field if the given value is not nil.
+// SetNillableUnitNo sets the "unit_no" field if the given value is not nil.
 func (opc *OrganizationPositionCreate) SetNillableUnitNo(s *string) *OrganizationPositionCreate {
 	if s != nil {
 		opc.SetUnitNo(*s)

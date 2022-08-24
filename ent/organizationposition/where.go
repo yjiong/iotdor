@@ -116,7 +116,7 @@ func Floor(v string) predicate.OrganizationPosition {
 	})
 }
 
-// UnitNo applies equality check predicate on the "unitNo" field. It's identical to UnitNoEQ.
+// UnitNo applies equality check predicate on the "unit_no" field. It's identical to UnitNoEQ.
 func UnitNo(v string) predicate.OrganizationPosition {
 	return predicate.OrganizationPosition(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldUnitNo), v))
@@ -576,21 +576,21 @@ func FloorContainsFold(v string) predicate.OrganizationPosition {
 	})
 }
 
-// UnitNoEQ applies the EQ predicate on the "unitNo" field.
+// UnitNoEQ applies the EQ predicate on the "unit_no" field.
 func UnitNoEQ(v string) predicate.OrganizationPosition {
 	return predicate.OrganizationPosition(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldUnitNo), v))
 	})
 }
 
-// UnitNoNEQ applies the NEQ predicate on the "unitNo" field.
+// UnitNoNEQ applies the NEQ predicate on the "unit_no" field.
 func UnitNoNEQ(v string) predicate.OrganizationPosition {
 	return predicate.OrganizationPosition(func(s *sql.Selector) {
 		s.Where(sql.NEQ(s.C(FieldUnitNo), v))
 	})
 }
 
-// UnitNoIn applies the In predicate on the "unitNo" field.
+// UnitNoIn applies the In predicate on the "unit_no" field.
 func UnitNoIn(vs ...string) predicate.OrganizationPosition {
 	v := make([]interface{}, len(vs))
 	for i := range v {
@@ -601,7 +601,7 @@ func UnitNoIn(vs ...string) predicate.OrganizationPosition {
 	})
 }
 
-// UnitNoNotIn applies the NotIn predicate on the "unitNo" field.
+// UnitNoNotIn applies the NotIn predicate on the "unit_no" field.
 func UnitNoNotIn(vs ...string) predicate.OrganizationPosition {
 	v := make([]interface{}, len(vs))
 	for i := range v {
@@ -612,77 +612,77 @@ func UnitNoNotIn(vs ...string) predicate.OrganizationPosition {
 	})
 }
 
-// UnitNoGT applies the GT predicate on the "unitNo" field.
+// UnitNoGT applies the GT predicate on the "unit_no" field.
 func UnitNoGT(v string) predicate.OrganizationPosition {
 	return predicate.OrganizationPosition(func(s *sql.Selector) {
 		s.Where(sql.GT(s.C(FieldUnitNo), v))
 	})
 }
 
-// UnitNoGTE applies the GTE predicate on the "unitNo" field.
+// UnitNoGTE applies the GTE predicate on the "unit_no" field.
 func UnitNoGTE(v string) predicate.OrganizationPosition {
 	return predicate.OrganizationPosition(func(s *sql.Selector) {
 		s.Where(sql.GTE(s.C(FieldUnitNo), v))
 	})
 }
 
-// UnitNoLT applies the LT predicate on the "unitNo" field.
+// UnitNoLT applies the LT predicate on the "unit_no" field.
 func UnitNoLT(v string) predicate.OrganizationPosition {
 	return predicate.OrganizationPosition(func(s *sql.Selector) {
 		s.Where(sql.LT(s.C(FieldUnitNo), v))
 	})
 }
 
-// UnitNoLTE applies the LTE predicate on the "unitNo" field.
+// UnitNoLTE applies the LTE predicate on the "unit_no" field.
 func UnitNoLTE(v string) predicate.OrganizationPosition {
 	return predicate.OrganizationPosition(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldUnitNo), v))
 	})
 }
 
-// UnitNoContains applies the Contains predicate on the "unitNo" field.
+// UnitNoContains applies the Contains predicate on the "unit_no" field.
 func UnitNoContains(v string) predicate.OrganizationPosition {
 	return predicate.OrganizationPosition(func(s *sql.Selector) {
 		s.Where(sql.Contains(s.C(FieldUnitNo), v))
 	})
 }
 
-// UnitNoHasPrefix applies the HasPrefix predicate on the "unitNo" field.
+// UnitNoHasPrefix applies the HasPrefix predicate on the "unit_no" field.
 func UnitNoHasPrefix(v string) predicate.OrganizationPosition {
 	return predicate.OrganizationPosition(func(s *sql.Selector) {
 		s.Where(sql.HasPrefix(s.C(FieldUnitNo), v))
 	})
 }
 
-// UnitNoHasSuffix applies the HasSuffix predicate on the "unitNo" field.
+// UnitNoHasSuffix applies the HasSuffix predicate on the "unit_no" field.
 func UnitNoHasSuffix(v string) predicate.OrganizationPosition {
 	return predicate.OrganizationPosition(func(s *sql.Selector) {
 		s.Where(sql.HasSuffix(s.C(FieldUnitNo), v))
 	})
 }
 
-// UnitNoIsNil applies the IsNil predicate on the "unitNo" field.
+// UnitNoIsNil applies the IsNil predicate on the "unit_no" field.
 func UnitNoIsNil() predicate.OrganizationPosition {
 	return predicate.OrganizationPosition(func(s *sql.Selector) {
 		s.Where(sql.IsNull(s.C(FieldUnitNo)))
 	})
 }
 
-// UnitNoNotNil applies the NotNil predicate on the "unitNo" field.
+// UnitNoNotNil applies the NotNil predicate on the "unit_no" field.
 func UnitNoNotNil() predicate.OrganizationPosition {
 	return predicate.OrganizationPosition(func(s *sql.Selector) {
 		s.Where(sql.NotNull(s.C(FieldUnitNo)))
 	})
 }
 
-// UnitNoEqualFold applies the EqualFold predicate on the "unitNo" field.
+// UnitNoEqualFold applies the EqualFold predicate on the "unit_no" field.
 func UnitNoEqualFold(v string) predicate.OrganizationPosition {
 	return predicate.OrganizationPosition(func(s *sql.Selector) {
 		s.Where(sql.EqualFold(s.C(FieldUnitNo), v))
 	})
 }
 
-// UnitNoContainsFold applies the ContainsFold predicate on the "unitNo" field.
+// UnitNoContainsFold applies the ContainsFold predicate on the "unit_no" field.
 func UnitNoContainsFold(v string) predicate.OrganizationPosition {
 	return predicate.OrganizationPosition(func(s *sql.Selector) {
 		s.Where(sql.ContainsFold(s.C(FieldUnitNo), v))

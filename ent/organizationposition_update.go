@@ -69,13 +69,13 @@ func (opu *OrganizationPositionUpdate) ClearFloor() *OrganizationPositionUpdate 
 	return opu
 }
 
-// SetUnitNo sets the "unitNo" field.
+// SetUnitNo sets the "unit_no" field.
 func (opu *OrganizationPositionUpdate) SetUnitNo(s string) *OrganizationPositionUpdate {
 	opu.mutation.SetUnitNo(s)
 	return opu
 }
 
-// SetNillableUnitNo sets the "unitNo" field if the given value is not nil.
+// SetNillableUnitNo sets the "unit_no" field if the given value is not nil.
 func (opu *OrganizationPositionUpdate) SetNillableUnitNo(s *string) *OrganizationPositionUpdate {
 	if s != nil {
 		opu.SetUnitNo(*s)
@@ -83,7 +83,7 @@ func (opu *OrganizationPositionUpdate) SetNillableUnitNo(s *string) *Organizatio
 	return opu
 }
 
-// ClearUnitNo clears the value of the "unitNo" field.
+// ClearUnitNo clears the value of the "unit_no" field.
 func (opu *OrganizationPositionUpdate) ClearUnitNo() *OrganizationPositionUpdate {
 	opu.mutation.ClearUnitNo()
 	return opu
@@ -595,13 +595,13 @@ func (opuo *OrganizationPositionUpdateOne) ClearFloor() *OrganizationPositionUpd
 	return opuo
 }
 
-// SetUnitNo sets the "unitNo" field.
+// SetUnitNo sets the "unit_no" field.
 func (opuo *OrganizationPositionUpdateOne) SetUnitNo(s string) *OrganizationPositionUpdateOne {
 	opuo.mutation.SetUnitNo(s)
 	return opuo
 }
 
-// SetNillableUnitNo sets the "unitNo" field if the given value is not nil.
+// SetNillableUnitNo sets the "unit_no" field if the given value is not nil.
 func (opuo *OrganizationPositionUpdateOne) SetNillableUnitNo(s *string) *OrganizationPositionUpdateOne {
 	if s != nil {
 		opuo.SetUnitNo(*s)
@@ -609,7 +609,7 @@ func (opuo *OrganizationPositionUpdateOne) SetNillableUnitNo(s *string) *Organiz
 	return opuo
 }
 
-// ClearUnitNo clears the value of the "unitNo" field.
+// ClearUnitNo clears the value of the "unit_no" field.
 func (opuo *OrganizationPositionUpdateOne) ClearUnitNo() *OrganizationPositionUpdateOne {
 	opuo.mutation.ClearUnitNo()
 	return opuo

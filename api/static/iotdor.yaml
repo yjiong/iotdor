@@ -33,7 +33,7 @@ paths:
   /gateway/list:
     get:
       tags:
-        - 网关列表
+        - 网关信息
       summary: 网关列表
       responses:
         '200':

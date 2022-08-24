@@ -15,11 +15,8 @@ import (
 	"github.com/robfig/cron/v3"
 	log "github.com/sirupsen/logrus"
 	"github.com/yjiong/iotdor/ent"
-	"github.com/yjiong/iotdor/ent/gateway"
 	"github.com/yjiong/iotdor/internal/datasrc"
 )
-
-var gwStat = []bool{false, true}
 
 // Manage logic handle
 type Manage struct {
@@ -69,15 +66,10 @@ func (m *Manage) MsgHandle() {
 						}
 					}
 				case GwStat:
-					stat := msg.Get("data").MustInt64()
-					if exist, _ := m.entC.Gateway.Query().Where(gateway.Gwid(gwID)).Exist(m.ctx); exist {
-						updateGateway(m.ctx, m.entC, gwID, m.iotdName, m.GetBrokerURL(), "", gwStat[stat], 60)
-					} else {
-						//m.SendData(fmt.Sprintf("%s/%s", gwID, m.iotdName)
-						addGateway(m.ctx, m.entC, gwID, m.iotdName, m.GetBrokerURL(), "", gwStat[stat], 60)
-					}
+					stat := msg.Get("data").MustInt()
+					go m.gatewayInfoHandle(gwID, stat)
 				default:
-					if mid := msg.Get("seq").MustString(); len(mid) > 0 {
+					if mid, _ := msg.Get("seq").String(); len(mid) > 0 {
 						m.mia.HandleReceive(mid, msg.Get("data").Interface())
 					}
 				}

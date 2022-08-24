@@ -51,6 +51,7 @@ func (mi *MsgInteractive) StartAndWaitRet(mid string, timeOut time.Duration) (in
 			cancel: tcancel,
 			rsp:    make(chan interface{}),
 		}
+		mi.mccs[mid] = mcc
 	}
 	mcc.mu.Lock()
 	defer mcc.cancel()
