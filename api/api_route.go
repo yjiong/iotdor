@@ -10,6 +10,7 @@ func configRoute(mr *mux.Router, dtr *IotdorTran) {
 	mrSysRt.PathPrefix("/add_user").HandlerFunc(dtr.addUpdateUser).Methods("POST")
 	mrSysRt.PathPrefix("/update_user").HandlerFunc(dtr.addUpdateUser).Methods("PUT")
 	mrSysRt.PathPrefix("/delete_user/{uname}").HandlerFunc(dtr.delUser).Methods("DELETE")
+	mrSysRt.PathPrefix("/organization_tree").HandlerFunc(dtr.organizationTree).Methods("GET", "POST", "PUT")
 }
 
 func gatewayRoute(mr *mux.Router, dtr *IotdorTran) {

@@ -25,8 +25,13 @@ type ManageAPI interface {
 	AllDevices() []string
 	DeviceRealTimeValue(devid string) map[string]string
 	UpdateUserLoginInfo(uName, lip string) error
-	// organization ....
-	OrganizationPositionInfo() ([]*ent.OrganizationPosition, error)
+	// OrganizationTree ....
+	OrganizationTree() ([]*ent.OrganizationTree, error)
+	AddOrganizationTree(o ent.OrganizationTree) error
+	//UpdateOrganizationTree(oName string, o ent.OrganizationTree) error
+	//DeleteOrganizationTree(oName string) error
+	// OrganizationPosition ....
+	OrganizationPosition() ([]*ent.OrganizationPosition, error)
 	AddOrganizationPosition(o ent.OrganizationPosition) error
 	UpdateOrganizationPosition(oName string, o ent.OrganizationPosition) error
 	DeleteOrganizationPosition(oName string) error
@@ -99,4 +104,18 @@ func (dtr *IotdorTran) deviceRealTimeValue(w http.ResponseWriter, r *http.Reques
 	} else {
 		respError(200, w, errors.New("devid not exist"))
 	}
+}
+
+func (dtr *IotdorTran) organizationTree(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case "GET":
+
+	case "POST":
+	case "PUT":
+	}
+	//{
+	////respJSON(w, dtr.)
+	//} else {
+	//respError(200, w, errors.New("devid not exist"))
+	//}
 }
