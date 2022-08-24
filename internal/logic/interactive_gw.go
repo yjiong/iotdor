@@ -26,6 +26,7 @@ func (m *Manage) gatewayInfoHandle(gwID string, stat int) {
 		}
 		if ret, err := m.mqttCmd(gwID, ListDevItems); err == nil {
 			log.Debugln(ret)
+			//TODO
 		}
 	}
 }

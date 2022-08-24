@@ -230,31 +230,21 @@ func setGwGroup(ctx context.Context, gw *ent.Gateway, g *ent.Group) error {
 /************************** crud gateway *********************/
 
 /************************** crud device *********************/
-func addDevice(ctx context.Context,
+func addOrUpdateDevice(ctx context.Context,
 	c *ent.Client,
 	did, dtype, daddr, conn, name string,
-	gw *ent.Gateway) (*ent.Device, error) {
-	return c.Device.Create().
-		SetDevID(did).
-		SetDevType(dtype).
-		SetDevAddr(daddr).
-		SetConn(conn).
-		SetName(name).
-		SetGateway(gw).
-		Save(ctx)
-}
-
-func queryDeviceByDevID(ctx context.Context, c *ent.Client, devid string) (*ent.Device, error) {
-	return c.Device.Query().Where(device.DevID(devid)).Only(ctx)
-}
-
-func getGatewayByDevID(ctx context.Context, c *ent.Client, devid string) (*ent.Gateway, error) {
-	return c.Device.Query().Where(device.DevID(devid)).QueryGateway().Only(ctx)
-}
-
-func updateDevice(ctx context.Context, c *ent.Client,
-	did, dtype, daddr, conn, name string,
 	gw *ent.Gateway) error {
+	exist, _ := c.Device.Query().Where(device.DevID(did)).Exist(ctx)
+	if !exist {
+		return c.Device.Create().
+			SetDevID(did).
+			SetDevType(dtype).
+			SetDevAddr(daddr).
+			SetConn(conn).
+			SetName(name).
+			SetGateway(gw).
+			Exec(ctx)
+	}
 	return c.Device.Update().
 		Where(device.DevID(did)).
 		SetDevType(dtype).
@@ -263,6 +253,14 @@ func updateDevice(ctx context.Context, c *ent.Client,
 		SetName(name).
 		SetGateway(gw).
 		Exec(ctx)
+}
+
+func queryDeviceByDevID(ctx context.Context, c *ent.Client, devid string) (*ent.Device, error) {
+	return c.Device.Query().Where(device.DevID(devid)).Only(ctx)
+}
+
+func getGatewayByDevID(ctx context.Context, c *ent.Client, devid string) (*ent.Gateway, error) {
+	return c.Device.Query().Where(device.DevID(devid)).QueryGateway().Only(ctx)
 }
 
 func setDeviceDelFlag(ctx context.Context, c *ent.Client, flag bool) error {

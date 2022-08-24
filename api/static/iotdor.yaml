@@ -463,7 +463,7 @@ paths:
           description: delete user failed
           schema:
             type: object
-  /config/sys/organization_tree_info:
+  /config/sys/organization_tree:
     get:
       security:
         - api_key: []
@@ -483,7 +483,6 @@ paths:
           description: get organization tree info failed
           schema:
             type: object
-  /config/sys/add_organization_tree:
     post:
       security:
         - api_key: []
@@ -512,7 +511,6 @@ paths:
           description: create organization tree info failed
           schema:
             type: object
-  /config/sys/update_organization_tree:
     put:
       security:
         - api_key: []
@@ -541,7 +539,7 @@ paths:
           description: update organization tree info failed
           schema:
             type: object
-  /config/sys/delete_organization_tree/{posid}:
+  /config/sys/organization_tree/{posid}:
     delete:
       security:
         - api_key: []
@@ -629,7 +627,7 @@ paths:
           description: remove organization position from tree failed
           schema:
             type: object
-  /config/sys/organization_position_info:
+  /config/sys/organization_position:
     get:
       security:
         - api_key: []
@@ -649,7 +647,6 @@ paths:
           description: get organization position info failed
           schema:
             type: object
-  /config/sys/add_organization_position:
     post:
       security:
         - api_key: []
@@ -678,7 +675,6 @@ paths:
           description: create organization position failed
           schema:
             type: object
-  /config/sys/update_organization_position:
     put:
       security:
         - api_key: []
@@ -795,7 +791,7 @@ paths:
           description: remove organization person charge failed
           schema:
             type: object
-  /config/sys/get_organization_position_device/{posid}:
+  /config/sys/organization_position_device/{posid}:
     get:
       security:
         - api_key: []
@@ -856,7 +852,7 @@ paths:
           description: add organization device
           schema:
             type: object
-  /config/sys/remove_device_from_organization_position/{devid}:
+  /config/sys/organization_position/{devid}:
     delete:
       security:
         - api_key: []
