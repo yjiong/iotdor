@@ -19,6 +19,8 @@ type ManageAPI interface {
 	UpdateUser(uName, passwd string, adminFlag bool, phone ...string) error
 	UserAdminFlag(uName string) bool
 	DelUser(uName string) error
+	// gateway ....
+	AllGateways() []ent.Gateway
 	// device ....
 	AllDevices() []string
 	DeviceRealTimeValue(devid string) map[string]string

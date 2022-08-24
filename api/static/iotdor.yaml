@@ -41,7 +41,7 @@ paths:
           schema:
             type: object
         '404':
-          description: Can not query history data
+          description: Can not get gateway list
           schema:
             type: object
       security:
@@ -331,7 +331,7 @@ paths:
           schema:
             type: object
         '404':
-          description: Can not get realtime data
+          description: Can not get device ID
           schema:
             type: object
   /device/realtime_data/{devid}:
@@ -375,7 +375,7 @@ paths:
           schema:
             type: object
         '404':
-          description: get user_info string error
+          description: get user_info error
           schema:
             type: object
   /config/sys/add_user:
@@ -480,7 +480,7 @@ paths:
           schema:
             type: object
         '404':
-          description: delete user failed
+          description: get organization tree info failed
           schema:
             type: object
   /config/sys/add_organization_tree:
@@ -509,7 +509,7 @@ paths:
           schema:
             type: object
         '404':
-          description: add user failed
+          description: create organization tree info failed
           schema:
             type: object
   /config/sys/update_organization_tree:
@@ -524,7 +524,7 @@ paths:
       requestBody:
         content:
           application/json:
-            name: organization_info
+            name: organization_tree_info
             required: true
             schema:
               $ref: '#/components/schemas/OrganizationTree'
@@ -538,7 +538,7 @@ paths:
           schema:
             type: object
         '404':
-          description: add user failed
+          description: update organization tree info failed
           schema:
             type: object
   /config/sys/delete_organization_tree/{posid}:
@@ -565,7 +565,7 @@ paths:
           schema:
             type: object
         '404':
-          description: add user failed
+          description: delete organization tree info failed
           schema:
             type: object
   /config/sys/join_position_to_organization_tree/{otname}/{posid}:
@@ -598,7 +598,7 @@ paths:
           schema:
             type: object
         '404':
-          description: add Organization device
+          description: join organization position to tree failed
           schema:
             type: object
   /config/sys/remove_position_from_organization_tree/{posid}:
@@ -626,15 +626,13 @@ paths:
           schema:
             type: object
         '404':
-          description: add Organization device
+          description: remove organization position from tree failed
           schema:
             type: object
-  /config/sys/organization_info:
+  /config/sys/organization_position_info:
     get:
       security:
         - api_key: []
-      consumes:
-        - application/json
       tags:
         - 系统组织结构地理位置与设备关联信息
       summary:  获取组织结构地理位置信息
@@ -648,7 +646,7 @@ paths:
           schema:
             type: object
         '404':
-          description: delete user failed
+          description: get organization position info failed
           schema:
             type: object
   /config/sys/add_organization_position:
@@ -666,7 +664,7 @@ paths:
             name: organization_position_info
             required: true
             schema:
-              $ref: '#/components/schemas/OrganizationPosition'
+              $ref: '#/components/schemas/organizationPosition'
       responses:
         '200':
           description: ok
@@ -677,7 +675,7 @@ paths:
           schema:
             type: object
         '404':
-          description: add user failed
+          description: create organization position failed
           schema:
             type: object
   /config/sys/update_organization_position:
@@ -695,7 +693,7 @@ paths:
             name: organization_info
             required: true
             schema:
-              $ref: '#/components/schemas/OrganizationPosition'
+              $ref: '#/components/schemas/organizationPosition'
       responses:
         '200':
           description: ok
@@ -706,7 +704,7 @@ paths:
           schema:
             type: object
         '404':
-          description: add user failed
+          description: update organization position info failed 
           schema:
             type: object
   /config/sys/delete_organization_position/{posid}:
@@ -733,7 +731,7 @@ paths:
           schema:
             type: object
         '404':
-          description: add user failed
+          description: remove organization position info failed 
           schema:
             type: object
   /config/sys/add_organization_position_person_charge/{posid}/{uname}:
@@ -766,7 +764,7 @@ paths:
           schema:
             type: object
         '404':
-          description: add Organization person charge failed
+          description: add organization person charge failed
           schema:
             type: object
   /config/sys/remove_organization_position_person_charge/{uname}:
@@ -794,7 +792,7 @@ paths:
           schema:
             type: object
         '404':
-          description: remove Organization person charge failed
+          description: remove organization person charge failed
           schema:
             type: object
   /config/sys/get_organization_position_device/{posid}:
@@ -822,7 +820,7 @@ paths:
           schema:
             type: object
         '404':
-          description: get Organization device faied
+          description: get organization device faied
           schema:
             type: object
   /config/sys/join_device_to_organization_position/{posid}/{devid}:
@@ -855,7 +853,7 @@ paths:
           schema:
             type: object
         '404':
-          description: add Organization device
+          description: add organization device
           schema:
             type: object
   /config/sys/remove_device_from_organization_position/{devid}:
@@ -883,7 +881,7 @@ paths:
           schema:
             type: object
         '404':
-          description: add Organization device
+          description: remove organization device
           schema:
             type: object
 components:

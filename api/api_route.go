@@ -14,7 +14,7 @@ func configRoute(mr *mux.Router, dtr *IotdorTran) {
 
 func gatewayRoute(mr *mux.Router, dtr *IotdorTran) {
 	mr.Use(dtr.validateToken)
-	mr.PathPrefix("/list").HandlerFunc(dtr.iotdorList)
+	mr.PathPrefix("/list").HandlerFunc(dtr.iotdorGWList)
 }
 
 func deviceRoute(mr *mux.Router, dtr *IotdorTran) {

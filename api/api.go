@@ -95,9 +95,10 @@ func (dtr *IotdorTran) SetTR(sn string, wsc *websocket.Conn) {
 	log.Infof("Iotdor %s conn on connected %s\n", sn, wsc.RemoteAddr().String())
 }
 
-func (dtr *IotdorTran) iotdorList(w http.ResponseWriter, r *http.Request) {
+func (dtr *IotdorTran) iotdorGWList(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	je, _ := json.Marshal(dtr.clist)
+	ret := dtr.AllGateways()
+	je, _ := json.Marshal(ret)
 	w.Write(je)
 }
 

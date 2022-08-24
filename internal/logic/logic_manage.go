@@ -25,6 +25,7 @@ var gwStat = []bool{false, true}
 type Manage struct {
 	ctx context.Context
 	datasrc.DSrcer
+	mia datasrc.SyncMSG
 	*sql.DB
 	entC     *ent.Client
 	redisC   *redis.Client
@@ -68,14 +69,17 @@ func (m *Manage) MsgHandle() {
 						}
 					}
 				case GwStat:
-					log.Infoln(msg)
 					stat := msg.Get("data").MustInt64()
 					if exist, _ := m.entC.Gateway.Query().Where(gateway.Gwid(gwID)).Exist(m.ctx); exist {
-						addGateway(m.ctx, m.entC, gwID, m.iotdName, m.GetBrokerURL(), "", gwStat[stat], 60)
-					} else {
 						updateGateway(m.ctx, m.entC, gwID, m.iotdName, m.GetBrokerURL(), "", gwStat[stat], 60)
+					} else {
+						//m.SendData(fmt.Sprintf("%s/%s", gwID, m.iotdName)
+						addGateway(m.ctx, m.entC, gwID, m.iotdName, m.GetBrokerURL(), "", gwStat[stat], 60)
 					}
-
+				default:
+					if mid := msg.Get("seq").MustString(); len(mid) > 0 {
+						m.mia.HandleReceive(mid, msg.Get("data").Interface())
+					}
 				}
 			}
 		}
@@ -105,6 +109,7 @@ func NewManage(ctx context.Context,
 		},
 	}
 	m.mInit()
+	m.mia = datasrc.NewMsgInteractive()
 	return m
 }
 

@@ -10,6 +10,15 @@ import (
 	"github.com/yjiong/iotdor/ent/user"
 )
 
+// AllGateways ....
+func (m *Manage) AllGateways() (gs []ent.Gateway) {
+	gws, _ := m.entC.Gateway.Query().All(m.ctx)
+	for _, gw := range gws {
+		gs = append(gs, *gw)
+	}
+	return
+}
+
 // AllDevices ....
 func (m *Manage) AllDevices() (ids []string) {
 	keys, _ := m.redisC.Keys(m.ctx, fmt.Sprintf("%s:*:%s", strings.ToUpper(m.iotdName), DeviceValue)).Result()
