@@ -131,7 +131,7 @@ var (
 		{Name: "update_time", Type: field.TypeTime},
 		{Name: "name", Type: field.TypeString, Unique: true},
 		{Name: "parent_id", Type: field.TypeInt},
-		{Name: "left", Type: field.TypeInt, Unique: true},
+		{Name: "left", Type: field.TypeInt},
 		{Name: "right", Type: field.TypeInt},
 		{Name: "level", Type: field.TypeInt},
 		{Name: "organization_tree_organization_positions", Type: field.TypeInt, Nullable: true},

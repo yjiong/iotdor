@@ -112,7 +112,7 @@ func (dtr *IotdorTran) organizationTree(w http.ResponseWriter, r *http.Request) 
 	case "GET":
 		var os []ent.OrganizationTree
 		if os, err = dtr.OrganizationTree(); err == nil {
-			rm := make([]map[string]interface{}, 1)
+			rm := make([]map[string]interface{}, 0)
 			for _, o := range os {
 				rm = append(rm, map[string]interface{}{
 					"ID":    o.ID,

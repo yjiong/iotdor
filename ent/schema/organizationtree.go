@@ -17,8 +17,8 @@ func (OrganizationTree) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("name").Unique(),
 		field.Int("parent_id"),
-		field.Int("left").Unique(),
-		field.Int("right").Unique(),
+		field.Int("left"),
+		field.Int("right"),
 		field.Int("level"),
 	}
 }
