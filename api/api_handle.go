@@ -20,18 +20,18 @@ type ManageAPI interface {
 	UserAdminFlag(uName string) bool
 	DelUser(uName string) error
 	// gateway ....
-	AllGateways() []ent.Gateway
+	AllGateways() []*ent.Gateway
 	// device ....
 	AllDevices() []string
 	DeviceRealTimeValue(devid string) map[string]string
 	UpdateUserLoginInfo(uName, lip string) error
 	// OrganizationTree ....
-	OrganizationTree() ([]*ent.OrganizationTree, error)
+	OrganizationTree() ([]ent.OrganizationTree, error)
 	AddOrganizationTree(o ent.OrganizationTree) error
 	//UpdateOrganizationTree(oName string, o ent.OrganizationTree) error
 	//DeleteOrganizationTree(oName string) error
 	// OrganizationPosition ....
-	OrganizationPosition() ([]*ent.OrganizationPosition, error)
+	//OrganizationPosition() ([]ent.OrganizationPosition, error)
 	AddOrganizationPosition(o ent.OrganizationPosition) error
 	UpdateOrganizationPosition(oName string, o ent.OrganizationPosition) error
 	DeleteOrganizationPosition(oName string) error
@@ -107,15 +107,36 @@ func (dtr *IotdorTran) deviceRealTimeValue(w http.ResponseWriter, r *http.Reques
 }
 
 func (dtr *IotdorTran) organizationTree(w http.ResponseWriter, r *http.Request) {
+	var err error
 	switch r.Method {
 	case "GET":
-
+		var os []ent.OrganizationTree
+		if os, err = dtr.OrganizationTree(); err == nil {
+			rm := make([]map[string]interface{}, 1)
+			for _, o := range os {
+				rm = append(rm, map[string]interface{}{
+					"ID":    o.ID,
+					"Name":  o.Name,
+					"Level": o.Level,
+				})
+			}
+			respJSON(w, rm)
+			return
+		}
 	case "POST":
+		var ot ent.OrganizationTree
+		decodeJSON(r, &ot)
+		if err = dtr.AddOrganizationTree(ot); err == nil {
+			respJSON(w, map[string]string{"msg": "create organizationtree successful"})
+			return
+		}
 	case "PUT":
+		respJSON(w, "TODO")
+		return
 	}
 	//{
 	////respJSON(w, dtr.)
 	//} else {
-	//respError(200, w, errors.New("devid not exist"))
+	respError(200, w, err)
 	//}
 }

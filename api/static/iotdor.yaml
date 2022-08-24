@@ -982,6 +982,15 @@ components:
           description: 是否设置为管理员
         phone:
           type: string
+    OrganizationTree:        
+      type: object
+      properties:
+        id:
+          type: integer
+          description: id(创建根的时候为0)创建的组织结构是该id层级的子层
+        name:
+          type: string
+          description: 组织结构目录树的名称
     OrganizationPosition:        
       type: object
       properties:

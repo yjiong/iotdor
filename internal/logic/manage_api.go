@@ -10,12 +10,9 @@ import (
 )
 
 // AllGateways ....
-func (m *Manage) AllGateways() (gs []ent.Gateway) {
+func (m *Manage) AllGateways() []*ent.Gateway {
 	gws, _ := m.entC.Gateway.Query().All(m.ctx)
-	for _, gw := range gws {
-		gs = append(gs, *gw)
-	}
-	return
+	return gws
 }
 
 // AllDevices ....

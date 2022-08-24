@@ -99,6 +99,14 @@ func (otu *OrganizationTreeUpdate) SetOrganizationPositionsID(id int) *Organizat
 	return otu
 }
 
+// SetNillableOrganizationPositionsID sets the "organization_positions" edge to the OrganizationPosition entity by ID if the given value is not nil.
+func (otu *OrganizationTreeUpdate) SetNillableOrganizationPositionsID(id *int) *OrganizationTreeUpdate {
+	if id != nil {
+		otu = otu.SetOrganizationPositionsID(*id)
+	}
+	return otu
+}
+
 // SetOrganizationPositions sets the "organization_positions" edge to the OrganizationPosition entity.
 func (otu *OrganizationTreeUpdate) SetOrganizationPositions(o *OrganizationPosition) *OrganizationTreeUpdate {
 	return otu.SetOrganizationPositionsID(o.ID)
@@ -123,18 +131,12 @@ func (otu *OrganizationTreeUpdate) Save(ctx context.Context) (int, error) {
 	)
 	otu.defaults()
 	if len(otu.hooks) == 0 {
-		if err = otu.check(); err != nil {
-			return 0, err
-		}
 		affected, err = otu.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*OrganizationTreeMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
-			}
-			if err = otu.check(); err != nil {
-				return 0, err
 			}
 			otu.mutation = mutation
 			affected, err = otu.sqlSave(ctx)
@@ -182,14 +184,6 @@ func (otu *OrganizationTreeUpdate) defaults() {
 		v := organizationtree.UpdateDefaultUpdateTime()
 		otu.mutation.SetUpdateTime(v)
 	}
-}
-
-// check runs all checks and user-defined validators on the builder.
-func (otu *OrganizationTreeUpdate) check() error {
-	if _, ok := otu.mutation.OrganizationPositionsID(); otu.mutation.OrganizationPositionsCleared() && !ok {
-		return errors.New(`ent: clearing a required unique edge "OrganizationTree.organization_positions"`)
-	}
-	return nil
 }
 
 func (otu *OrganizationTreeUpdate) sqlSave(ctx context.Context) (n int, err error) {
@@ -404,6 +398,14 @@ func (otuo *OrganizationTreeUpdateOne) SetOrganizationPositionsID(id int) *Organ
 	return otuo
 }
 
+// SetNillableOrganizationPositionsID sets the "organization_positions" edge to the OrganizationPosition entity by ID if the given value is not nil.
+func (otuo *OrganizationTreeUpdateOne) SetNillableOrganizationPositionsID(id *int) *OrganizationTreeUpdateOne {
+	if id != nil {
+		otuo = otuo.SetOrganizationPositionsID(*id)
+	}
+	return otuo
+}
+
 // SetOrganizationPositions sets the "organization_positions" edge to the OrganizationPosition entity.
 func (otuo *OrganizationTreeUpdateOne) SetOrganizationPositions(o *OrganizationPosition) *OrganizationTreeUpdateOne {
 	return otuo.SetOrganizationPositionsID(o.ID)
@@ -435,18 +437,12 @@ func (otuo *OrganizationTreeUpdateOne) Save(ctx context.Context) (*OrganizationT
 	)
 	otuo.defaults()
 	if len(otuo.hooks) == 0 {
-		if err = otuo.check(); err != nil {
-			return nil, err
-		}
 		node, err = otuo.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*OrganizationTreeMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
-			}
-			if err = otuo.check(); err != nil {
-				return nil, err
 			}
 			otuo.mutation = mutation
 			node, err = otuo.sqlSave(ctx)
@@ -500,14 +496,6 @@ func (otuo *OrganizationTreeUpdateOne) defaults() {
 		v := organizationtree.UpdateDefaultUpdateTime()
 		otuo.mutation.SetUpdateTime(v)
 	}
-}
-
-// check runs all checks and user-defined validators on the builder.
-func (otuo *OrganizationTreeUpdateOne) check() error {
-	if _, ok := otuo.mutation.OrganizationPositionsID(); otuo.mutation.OrganizationPositionsCleared() && !ok {
-		return errors.New(`ent: clearing a required unique edge "OrganizationTree.organization_positions"`)
-	}
-	return nil
 }
 
 func (otuo *OrganizationTreeUpdateOne) sqlSave(ctx context.Context) (_node *OrganizationTree, err error) {

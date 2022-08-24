@@ -7,9 +7,16 @@ import (
 	"github.com/yjiong/iotdor/ent/organizationtree"
 )
 
-// OrganizationTreeInfo ....
-func (m *Manage) OrganizationTree() ([]*ent.OrganizationTree, error) {
-	return m.entC.OrganizationTree.Query().All(m.ctx)
+// OrganizationTree ....
+func (m *Manage) OrganizationTree() (eos []ent.OrganizationTree, err error) {
+	e, er := m.entC.OrganizationTree.Query().All(m.ctx)
+	if er == nil {
+		for _, eo := range e {
+			eos = append(eos, *eo)
+		}
+	}
+	err = er
+	return
 }
 
 // AddOrganizationTree .....
@@ -18,41 +25,40 @@ func (m *Manage) AddOrganizationTree(o ent.OrganizationTree) error {
 	if err != nil {
 		return err
 	}
-	var left, right, level int
-	if o.ParentID == 0 {
-		left = 1
-		right = 2
-		level = 1
+	var left, level int
+	if o.ID == 0 {
+		level = 0
 	} else {
-		if op, err := m.entC.OrganizationTree.Query().
-			Where(organizationtree.ID(o.ParentID)).
+		if op, err := tx.OrganizationTree.Query().
+			Where(organizationtree.ID(o.ID)).
 			Only(m.ctx); err == nil {
 			left = op.Left
-			right = op.Right
 			level = op.Level
 		} else {
 			return err
 		}
 	}
-	if lerr := tx.OrganizationTree.Update().
-		Where(organizationtree.LeftGT(left)).
-		SetLeft(left + 2).
-		Exec(m.ctx); lerr != nil {
-		return rollback(tx, lerr)
-	}
-	if rerr := tx.OrganizationTree.Update().
-		Where(organizationtree.
-			RightGTE(right)).
-		SetRight(right + 0).
-		Exec(m.ctx); rerr != nil {
-		return rollback(tx, rerr)
+	if o.ID != 0 {
+		if lerr := tx.OrganizationTree.Update().
+			Where(organizationtree.LeftGT(left)).
+			AddLeft(2).
+			Exec(m.ctx); lerr != nil {
+			return rollback(tx, lerr)
+		}
+		if rerr := tx.OrganizationTree.Update().
+			Where(organizationtree.
+				RightGTE(left)).
+			AddRight(2).
+			Exec(m.ctx); rerr != nil {
+			return rollback(tx, rerr)
+		}
 	}
 	if err := tx.OrganizationTree.Create().
 		SetName(o.Name).
-		SetParentID(o.ParentID).
+		SetParentID(o.ID).
 		SetLeft(left + 1).
 		SetRight(left + 2).
-		SetLevel(level).
+		SetLevel(level + 1).
 		Exec(m.ctx); err != nil {
 		return rollback(tx, err)
 	}

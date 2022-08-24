@@ -28,6 +28,8 @@ func (m *Manage) gatewayInfoHandle(gwID string, stat int) {
 			log.Debugln(ret)
 			//TODO
 		}
+	} else {
+		m.entC.Gateway.Update().Where(gateway.Gwid(gwID)).SetOnline(false).Exec(m.ctx)
 	}
 }
 

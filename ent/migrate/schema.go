@@ -130,11 +130,11 @@ var (
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime},
 		{Name: "name", Type: field.TypeString, Unique: true},
-		{Name: "parent_id", Type: field.TypeInt, Unique: true},
+		{Name: "parent_id", Type: field.TypeInt},
 		{Name: "left", Type: field.TypeInt, Unique: true},
-		{Name: "right", Type: field.TypeInt, Unique: true},
-		{Name: "level", Type: field.TypeInt, Unique: true},
-		{Name: "organization_tree_organization_positions", Type: field.TypeInt},
+		{Name: "right", Type: field.TypeInt},
+		{Name: "level", Type: field.TypeInt},
+		{Name: "organization_tree_organization_positions", Type: field.TypeInt, Nullable: true},
 	}
 	// OrganizationTreesTable holds the schema information for the "organization_trees" table.
 	OrganizationTreesTable = &schema.Table{
@@ -146,7 +146,7 @@ var (
 				Symbol:     "organization_trees_organization_positions_organization_positions",
 				Columns:    []*schema.Column{OrganizationTreesColumns[8]},
 				RefColumns: []*schema.Column{OrganizationPositionsColumns[0]},
-				OnDelete:   schema.NoAction,
+				OnDelete:   schema.SetNull,
 			},
 		},
 	}

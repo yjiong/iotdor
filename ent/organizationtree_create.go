@@ -85,6 +85,14 @@ func (otc *OrganizationTreeCreate) SetOrganizationPositionsID(id int) *Organizat
 	return otc
 }
 
+// SetNillableOrganizationPositionsID sets the "organization_positions" edge to the OrganizationPosition entity by ID if the given value is not nil.
+func (otc *OrganizationTreeCreate) SetNillableOrganizationPositionsID(id *int) *OrganizationTreeCreate {
+	if id != nil {
+		otc = otc.SetOrganizationPositionsID(*id)
+	}
+	return otc
+}
+
 // SetOrganizationPositions sets the "organization_positions" edge to the OrganizationPosition entity.
 func (otc *OrganizationTreeCreate) SetOrganizationPositions(o *OrganizationPosition) *OrganizationTreeCreate {
 	return otc.SetOrganizationPositionsID(o.ID)
@@ -199,9 +207,6 @@ func (otc *OrganizationTreeCreate) check() error {
 	}
 	if _, ok := otc.mutation.Level(); !ok {
 		return &ValidationError{Name: "level", err: errors.New(`ent: missing required field "OrganizationTree.level"`)}
-	}
-	if _, ok := otc.mutation.OrganizationPositionsID(); !ok {
-		return &ValidationError{Name: "organization_positions", err: errors.New(`ent: missing required edge "OrganizationTree.organization_positions"`)}
 	}
 	return nil
 }

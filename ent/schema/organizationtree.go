@@ -16,10 +16,10 @@ type OrganizationTree struct {
 func (OrganizationTree) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("name").Unique(),
-		field.Int("parent_id").Unique(),
+		field.Int("parent_id"),
 		field.Int("left").Unique(),
 		field.Int("right").Unique(),
-		field.Int("level").Unique(),
+		field.Int("level"),
 	}
 }
 
@@ -27,7 +27,7 @@ func (OrganizationTree) Fields() []ent.Field {
 func (OrganizationTree) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("organization_positions", OrganizationPosition.Type).
-			Unique().Required(),
+			Unique(),
 	}
 }
 
