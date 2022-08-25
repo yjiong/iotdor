@@ -133,29 +133,39 @@ func InsertMap(db *sql.DB, tbname string, m map[string]string) (err error) {
 		value.String() + ";"
 	fmt.Println(strinsert)
 	stmt, err := db.Prepare(strinsert)
-	defer stmt.Close()
 	if err != nil {
+		log.Errorln(err)
 		return errors.Wrap(err, "get stmt error")
 	}
 	_, err = stmt.Exec()
+	stmt.Close()
 	return
 }
 
-func queryWithCondition(db *sql.DB, table, id, idname, startt, endt string, offset, limit int) ([]any, error) {
-	//thisoffset := offset * limit
-	queryString := fmt.Sprintf("select * from %s where %s='%s' and %s between ? and ?;", table, id, idname, "timestamp")
-	var err error
-	rows, _ := db.Query(queryString, startt, endt)
-	col, _ := rows.Columns()
-	vs := make([]any, len(col))
-	rawb := make([]sql.RawBytes, len(col))
-	for i := range rawb {
-		vs[i] = &rawb[i]
+// RawQuery ...
+func RawQuery(db *sql.DB, qstr string) (ret []string, err error) {
+	var rows *sql.Rows
+	if rows, err = db.Query(qstr); err == nil {
+		var col []string
+		if col, err = rows.Columns(); err == nil {
+			vs := make([]any, len(col))
+			rawb := make([][]byte, len(col))
+			for i := range rawb {
+				vs[i] = &rawb[i]
+			}
+			for rows.Next() {
+				rows.Scan(vs...)
+				bw := bytes.Buffer{}
+				for i, ra := range rawb {
+					bw.WriteString(fmt.Sprintf("%s:%s ", col[i], ra))
+				}
+				ret = append(ret, fmt.Sprintf("%s", bw.String()))
+			}
+		}
+		rows.Close()
 	}
-	for rows.Next() {
-		rows.Scan(vs...)
-		log.Infof("%s", rawb)
+	if err != nil {
+		log.Error(err)
 	}
-	rows.Close()
-	return nil, err
+	return ret, err
 }

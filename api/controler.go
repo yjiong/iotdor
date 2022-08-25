@@ -1,6 +1,9 @@
 package api
 
-import "github.com/yjiong/iotdor/ent"
+import (
+	"github.com/yjiong/iotdor/ent"
+	"github.com/yjiong/iotdor/utils"
+)
 
 // UserControler ....
 type UserControler interface {
@@ -22,7 +25,7 @@ type GatewayControler interface {
 type DeviceControler interface {
 	AllDevices() []string
 	DeviceRealTimeValue(devid string) map[string]string
-	DeviceHistoryValue(devid string) map[string]string
+	DeviceHistoryValue(devid string, qs utils.QuerySection) []string
 }
 
 // OrganiTreeControler ....

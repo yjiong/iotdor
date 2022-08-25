@@ -361,7 +361,7 @@ paths:
           schema:
             type: object
   /device/history_data/{devid}:
-    get:
+    post:
       security:
         - api_key: []
       consumes:
@@ -947,6 +947,7 @@ components:
         password:
           type: string
           example: "123456"
+          format: password
         username:
           type: string
           example: "iotd-AMMETER"
@@ -960,11 +961,13 @@ components:
           description: 第几页 （开始页为0）
           type: integer
         since:
-          description: '起始时间 (比如 "2021-01-02 15:04:05")'
+          description: '起始时间'
           type: string
+          format: date-time
         until:
-          description: '终止时间 (比如 "2021-01-03 15:04:05")'
+          description: '终止时间'
           type: string
+          format: date-time
     #SerialParams:
       #type: object
       #properties:

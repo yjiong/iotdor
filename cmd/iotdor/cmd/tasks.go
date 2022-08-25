@@ -101,6 +101,7 @@ func runLogicMsgHandle() error {
 		DB:       0, // use default DB
 	})
 	if err := redisClient.Ping(ctx).Err(); err != nil {
+		log.Error(err)
 		return err
 	}
 	lm = logic.NewManage(ctx,

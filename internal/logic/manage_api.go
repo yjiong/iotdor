@@ -7,6 +7,7 @@ import (
 
 	"github.com/yjiong/iotdor/ent"
 	"github.com/yjiong/iotdor/ent/user"
+	"github.com/yjiong/iotdor/utils"
 )
 
 // AllGateways ....
@@ -35,8 +36,13 @@ func (m *Manage) DeviceRealTimeValue(devid string) map[string]string {
 }
 
 // DeviceHistoryValue ....
-func (m *Manage) DeviceHistoryValue(devid string) map[string]string {
-	return nil
+func (m *Manage) DeviceHistoryValue(devid string, qs utils.QuerySection) []string {
+	qstr := fmt.Sprintf("select * from %s where devid='%s' and timestamp between '%s' and '%s' limit %d, %d;",
+		DEVICETABLE, devid, qs.Since.Local().Format(TFORMAT), qs.Until.Local().Format(TFORMAT), qs.PageSize*qs.PagesIndex, qs.PageSize)
+	//qstrPG := fmt.Sprintf("select * from %s where devid='%s' and timestamp between '%s' and '%s' limit %d offset %d;",
+	//DEVICETABLE, devid, qs.Since.Local().Format(TFORMAT), qs.Until.Local().Format(TFORMAT), qs.PageSize, qs.PageSize*qs.PagesIndex)
+	rets, _ := RawQuery(m.DB, qstr)
+	return rets
 }
 
 // UsersInfo for api

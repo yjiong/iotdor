@@ -3,13 +3,23 @@ package utils
 import (
 	"crypto/md5"
 	"encoding/hex"
-	"github.com/go-cmd/cmd"
-	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
 	"os"
 	"runtime"
 	"strings"
+	"time"
+
+	"github.com/go-cmd/cmd"
+	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
 )
+
+// QuerySection ....
+type QuerySection struct {
+	PageSize   int       `json:"page_size"`
+	PagesIndex int       `json:"pages_index"`
+	Since      time.Time `json:"since"`
+	Until      time.Time `json:"until"`
+}
 
 // UpdateSystemTime set system time
 func UpdateSystemTime(dt string) (err error) {

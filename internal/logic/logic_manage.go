@@ -153,11 +153,12 @@ func (m *Manage) storageDeviceValue() {
 	keys, err := m.redisC.Keys(m.ctx, fmt.Sprintf("*:%s", DeviceValue)).Result()
 	if err != nil {
 		log.Error(errors.Wrap(err, "get DEVICE_VALUE faild"))
+		return
 	}
 	for _, k := range keys {
 		vs := m.spool.Get().(map[string]string)
 		vs, _ = m.redisC.HGetAll(m.ctx, k).Result()
-		go InsertMap(m.DB, "ammeters", vs)
+		go InsertMap(m.DB, DEVICETABLE, vs)
 		m.spool.Put(vs)
 	}
 }

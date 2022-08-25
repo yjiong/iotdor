@@ -9,6 +9,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/pkg/errors"
 	"github.com/yjiong/iotdor/ent"
+	"github.com/yjiong/iotdor/utils"
 )
 
 func (dtr *IotdorTran) userInfo(w http.ResponseWriter, r *http.Request) {
@@ -80,7 +81,9 @@ func (dtr *IotdorTran) deviceRealTimeValue(w http.ResponseWriter, r *http.Reques
 func (dtr *IotdorTran) deviceHistoryValue(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	if devid, ok := params["devid"]; ok {
-		respJSON(w, dtr.DeviceHistoryValue(devid))
+		var qs utils.QuerySection
+		decodeJSON(r, &qs)
+		respJSON(w, dtr.DeviceHistoryValue(devid, qs))
 	} else {
 		respError(http.StatusOK, w, errors.New("devid not exist"))
 	}

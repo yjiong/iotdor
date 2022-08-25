@@ -29,6 +29,7 @@ func OpenRawDB(driveName, dns string) *sql.DB {
 	if err != nil {
 		log.Fatal(err)
 	}
+	log.Infoln(dns, ":connnect successful")
 	return rawdb
 }
 
@@ -54,6 +55,7 @@ func OpenMigrate(driverName, dns string) *ent.Client {
 		}
 		drive.Close()
 	}
+	log.Infof("ent client %s connected", dns)
 	return client
 }
 
