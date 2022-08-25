@@ -957,6 +957,7 @@ components:
         page_size:
           description: 每页记录数
           type: integer
+          example: 50
         pages_index:
           description: 第几页 （开始页为0）
           type: integer

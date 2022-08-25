@@ -37,11 +37,15 @@ func (m *Manage) DeviceRealTimeValue(devid string) map[string]string {
 
 // DeviceHistoryValue ....
 func (m *Manage) DeviceHistoryValue(devid string, qs utils.QuerySection) []string {
+	cstr := fmt.Sprintf("select count(*) from %s where devid='%s' and timestamp between '%s' and '%s';",
+		DEVICETABLE, devid, qs.Since.Local().Format(TFORMAT), qs.Until.Local().Format(TFORMAT))
+	counts, _ := RawQuery(m.DB, cstr)
 	qstr := fmt.Sprintf("select * from %s where devid='%s' and timestamp between '%s' and '%s' limit %d, %d;",
 		DEVICETABLE, devid, qs.Since.Local().Format(TFORMAT), qs.Until.Local().Format(TFORMAT), qs.PageSize*qs.PagesIndex, qs.PageSize)
 	//qstrPG := fmt.Sprintf("select * from %s where devid='%s' and timestamp between '%s' and '%s' limit %d offset %d;",
 	//DEVICETABLE, devid, qs.Since.Local().Format(TFORMAT), qs.Until.Local().Format(TFORMAT), qs.PageSize, qs.PageSize*qs.PagesIndex)
 	rets, _ := RawQuery(m.DB, qstr)
+	rets = append(rets, counts...)
 	return rets
 }
 
