@@ -3,6 +3,7 @@ package logic
 import (
 	"fmt"
 
+	"github.com/pkg/errors"
 	"github.com/yjiong/iotdor/ent"
 	"github.com/yjiong/iotdor/ent/organizationtree"
 )
@@ -27,6 +28,10 @@ func (m *Manage) AddOrganizationTree(o ent.OrganizationTree) error {
 	}
 	var left, level int
 	if o.ID == 0 {
+		if exist, _ := tx.OrganizationTree.Query().
+			Where(organizationtree.ID(o.ID)).Exist(m.ctx); exist {
+			return errors.New("ID=0 aleady exist")
+		}
 		level = 0
 	} else {
 		if op, err := tx.OrganizationTree.Query().

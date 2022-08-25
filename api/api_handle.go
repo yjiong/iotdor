@@ -10,36 +10,6 @@ import (
 	"github.com/yjiong/iotdor/ent"
 )
 
-// ManageAPI ...
-type ManageAPI interface {
-	// user ....
-	UsersInfo() ([]*ent.User, error)
-	UserInfo(uName string) (*ent.User, error)
-	AddUser(uName, passwd string, adminFlag bool, phone ...string) error
-	UpdateUser(uName, passwd string, adminFlag bool, phone ...string) error
-	UserAdminFlag(uName string) bool
-	DelUser(uName string) error
-	// gateway ....
-	AllGateways() []*ent.Gateway
-	// device ....
-	AllDevices() []string
-	DeviceRealTimeValue(devid string) map[string]string
-	UpdateUserLoginInfo(uName, lip string) error
-	// OrganizationTree ....
-	OrganizationTree() ([]ent.OrganizationTree, error)
-	AddOrganizationTree(o ent.OrganizationTree) error
-	//UpdateOrganizationTree(oName string, o ent.OrganizationTree) error
-	//DeleteOrganizationTree(oName string) error
-	// OrganizationPosition ....
-	//OrganizationPosition() ([]ent.OrganizationPosition, error)
-	AddOrganizationPosition(o ent.OrganizationPosition) error
-	UpdateOrganizationPosition(oName string, o ent.OrganizationPosition) error
-	DeleteOrganizationPosition(oName string) error
-	BeRelatedDeviceToOrganizationPosition(oName, devid string) error
-	RemoveDeviceFromOrganizationPosition(devid string) error
-	QueryOrganizationPositionDevices(oName string) ([]string, error)
-}
-
 func (dtr *IotdorTran) userInfo(w http.ResponseWriter, r *http.Request) {
 	loc, _ := time.LoadLocation("Local")
 	if usinfo, err := dtr.UsersInfo(); err == nil {
@@ -48,7 +18,7 @@ func (dtr *IotdorTran) userInfo(w http.ResponseWriter, r *http.Request) {
 			usis = append(usis, map[string]any{
 				"name":            uinfo.Name,
 				"phone":           uinfo.Phone,
-				"last_login_time": uinfo.LastLoginTime.In(loc).Format("2006-01-02 15:04:05"),
+				"last_login_time": uinfo.LastLoginTime.In(loc).Format("http.StatusOK6-01-02 15:04:05"),
 				"last_login_ip":   uinfo.LastLoginIP,
 				"admin_flag":      dtr.UserAdminFlag(uinfo.Name),
 			})
@@ -78,7 +48,7 @@ func (dtr *IotdorTran) addUpdateUser(w http.ResponseWriter, r *http.Request) {
 	if err == nil {
 		respJSON(w, map[string]string{"msg": fmt.Sprintf("%s user successful", parse)})
 	} else {
-		respError(200, w, err)
+		respError(http.StatusOK, w, err)
 	}
 }
 
@@ -88,7 +58,7 @@ func (dtr *IotdorTran) delUser(w http.ResponseWriter, r *http.Request) {
 		if err == nil {
 			respJSON(w, map[string]string{"msg": "delete user successful"})
 		} else {
-			respError(200, w, err)
+			respError(http.StatusOK, w, err)
 		}
 	}
 }
@@ -102,7 +72,7 @@ func (dtr *IotdorTran) deviceRealTimeValue(w http.ResponseWriter, r *http.Reques
 	if devid, ok := params["devid"]; ok {
 		respJSON(w, dtr.DeviceRealTimeValue(devid))
 	} else {
-		respError(200, w, errors.New("devid not exist"))
+		respError(http.StatusOK, w, errors.New("devid not exist"))
 	}
 }
 
@@ -115,9 +85,10 @@ func (dtr *IotdorTran) organizationTree(w http.ResponseWriter, r *http.Request) 
 			rm := make([]map[string]interface{}, 0)
 			for _, o := range os {
 				rm = append(rm, map[string]interface{}{
-					"ID":    o.ID,
-					"Name":  o.Name,
-					"Level": o.Level,
+					"ID":       o.ID,
+					"ParentID": o.ParentID,
+					"Name":     o.Name,
+					"Level":    o.Level,
 				})
 			}
 			respJSON(w, rm)
@@ -137,6 +108,6 @@ func (dtr *IotdorTran) organizationTree(w http.ResponseWriter, r *http.Request) 
 	//{
 	////respJSON(w, dtr.)
 	//} else {
-	respError(200, w, err)
+	respError(http.StatusOK, w, err)
 	//}
 }

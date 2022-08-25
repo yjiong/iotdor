@@ -18,8 +18,6 @@ import (
 	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
-	"github.com/gin-gonic/gin"
-	"github.com/gin-gonic/gin/render"
 	"github.com/pkg/errors"
 	"golang.org/x/crypto/bcrypt"
 
@@ -28,16 +26,11 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+// not for iotdor ignore it .....
 var subServerPort = "8888"
 
 // APIserver ....
 func APIserver(ma ManageAPI, port string) {
-	//log.SetReportCaller(true)
-	//log.SetFormatter(&log.TextFormatter{
-	//ForceColors:     true,
-	//FullTimestamp:   true,
-	//TimestampFormat: "2006/01/02 15:04:05",
-	//})
 	dtr := NewIotdorTran(ma, subServerPort)
 	router := mux.NewRouter()
 	router.PathPrefix("/api/login").HandlerFunc(dtr.rawlogin)
@@ -136,7 +129,15 @@ func (dtr *IotdorTran) request(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusInternalServerError)
 }
 
+// if use gin convert it....
+/****
+func (dtr *IotdorTran) xxxFunc(c *gin.Context) {
+	dtr.xxxFunc(c.Writer, c.Request)
+}
+****/
+
 // RequestGin ....
+/****
 func (dtr *IotdorTran) RequestGin(c *gin.Context) {
 	dtr.Mu.Lock()
 	defer dtr.Mu.Unlock()
@@ -167,7 +168,9 @@ func (dtr *IotdorTran) RequestGin(c *gin.Context) {
 	}
 	c.Status(http.StatusInternalServerError)
 }
+***/
 
+// not for iotdor ignore it .....
 func (dtr *IotdorTran) tranSport(w http.ResponseWriter, r *http.Request) {
 	sn := r.Header.Get("sn")
 	if sn == "" {
@@ -216,10 +219,6 @@ func (*WebuiFile) Readdir(count int) ([]fs.FileInfo, error) {
 var wus = &webui{
 	wuEmbed: wstatic,
 	path:    "static",
-}
-
-func (dtr *IotdorTran) login(c *gin.Context) {
-	dtr.rawlogin(c.Writer, c.Request)
 }
 
 func respError(code int, w http.ResponseWriter, err error) {
