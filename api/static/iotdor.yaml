@@ -360,6 +360,39 @@ paths:
           description: Can not get realtime data
           schema:
             type: object
+  /device/history_data/{devid}:
+    get:
+      security:
+        - api_key: []
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      tags:
+        - 历史数据与统计数据
+      summary: 获取设备历史数据
+      parameters:
+        - type: string
+          description: devid 设备ID
+          name: devid
+          in: path
+          requirkd: true
+      requestBody:
+        content:
+          application/json:
+            name: history_data
+            required: true
+            schema:
+              $ref: '#/components/schemas/QuerySection'
+      responses:
+        '200':
+          description: ok
+          schema:
+            type: object
+        '404':
+          description: Can not get realtime data
+          schema:
+            type: object
   /config/sys/user_info:
     get:
       security:
@@ -495,7 +528,7 @@ paths:
         - api_key: []
       tags:
         - 系统组织结构目录树信息
-      summary:  获取系统组织结构目录树信息
+      summary:  获取系统组织结构整个目录树信息
       responses:
         '200':
           description: ok
@@ -544,7 +577,7 @@ paths:
         - application/json
       tags:
         - 系统组织结构目录树信息
-      summary:  更新组织结构目录树信息
+      summary:  更新组织结构目录树信息(修改名称)
       requestBody:
         content:
           application/json:
@@ -687,7 +720,7 @@ paths:
             name: organization_position_info
             required: true
             schema:
-              $ref: '#/components/schemas/organizationPosition'
+              $ref: '#/components/schemas/OrganizationPosition'
       responses:
         '200':
           description: ok
@@ -715,7 +748,7 @@ paths:
             name: organization_info
             required: true
             schema:
-              $ref: '#/components/schemas/organizationPosition'
+              $ref: '#/components/schemas/OrganizationPosition'
       responses:
         '200':
           description: ok

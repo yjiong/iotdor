@@ -22,5 +22,6 @@ func gatewayRoute(mr *mux.Router, dtr *IotdorTran) {
 func deviceRoute(mr *mux.Router, dtr *IotdorTran) {
 	mr.Use(dtr.validateToken)
 	mr.PathPrefix("/realtime_data/{devid}").HandlerFunc(dtr.deviceRealTimeValue)
+	mr.PathPrefix("/history_data/{devid}").HandlerFunc(dtr.deviceHistoryValue)
 	mr.PathPrefix("/get_all_device_id").HandlerFunc(dtr.allDevices)
 }

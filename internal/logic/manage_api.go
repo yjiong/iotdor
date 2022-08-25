@@ -34,6 +34,11 @@ func (m *Manage) DeviceRealTimeValue(devid string) map[string]string {
 	return vs
 }
 
+// DeviceHistoryValue ....
+func (m *Manage) DeviceHistoryValue(devid string) map[string]string {
+	return nil
+}
+
 // UsersInfo for api
 func (m *Manage) UsersInfo() (us []*ent.User, e error) {
 	if eg, err := queryGroupByName(m.ctx, m.entC, m.iotdName); err != nil {

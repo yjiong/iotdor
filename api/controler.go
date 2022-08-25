@@ -22,6 +22,7 @@ type GatewayControler interface {
 type DeviceControler interface {
 	AllDevices() []string
 	DeviceRealTimeValue(devid string) map[string]string
+	DeviceHistoryValue(devid string) map[string]string
 }
 
 // OrganiTreeControler ....

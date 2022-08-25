@@ -77,6 +77,15 @@ func (dtr *IotdorTran) deviceRealTimeValue(w http.ResponseWriter, r *http.Reques
 	}
 }
 
+func (dtr *IotdorTran) deviceHistoryValue(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+	if devid, ok := params["devid"]; ok {
+		respJSON(w, dtr.DeviceHistoryValue(devid))
+	} else {
+		respError(http.StatusOK, w, errors.New("devid not exist"))
+	}
+}
+
 func (dtr *IotdorTran) organizationTree(w http.ResponseWriter, r *http.Request) {
 	var err error
 	switch r.Method {

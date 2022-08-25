@@ -140,3 +140,22 @@ func InsertMap(db *sql.DB, tbname string, m map[string]string) (err error) {
 	_, err = stmt.Exec()
 	return
 }
+
+func queryWithCondition(db *sql.DB, table, id, idname, startt, endt string, offset, limit int) ([]any, error) {
+	//thisoffset := offset * limit
+	queryString := fmt.Sprintf("select * from %s where %s='%s' and %s between ? and ?;", table, id, idname, "timestamp")
+	var err error
+	rows, _ := db.Query(queryString, startt, endt)
+	col, _ := rows.Columns()
+	vs := make([]any, len(col))
+	rawb := make([]sql.RawBytes, len(col))
+	for i := range rawb {
+		vs[i] = &rawb[i]
+	}
+	for rows.Next() {
+		rows.Scan(vs...)
+		log.Infof("%s", rawb)
+	}
+	rows.Close()
+	return nil, err
+}
