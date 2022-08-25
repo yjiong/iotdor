@@ -463,6 +463,32 @@ paths:
           description: delete user failed
           schema:
             type: object
+  /config/sys/organization_tree/{id}:
+    get:
+      security:
+        - api_key: []
+      tags:
+        - 系统组织结构目录树信息
+      summary:  获取系统组织结构目录某节点下的信息
+      parameters:
+        - type: integer
+          description: 节点id
+          name: id
+          in: path
+          required: true
+      responses:
+        '200':
+          description: ok
+          schema:
+            type: object
+        '401':
+          description: access denided
+          schema:
+            type: object
+        '404':
+          description: get organization tree info failed
+          schema:
+            type: object
   /config/sys/organization_tree:
     get:
       security:

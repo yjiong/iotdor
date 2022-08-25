@@ -9,15 +9,23 @@ import (
 )
 
 // OrganizationTree ....
-func (m *Manage) OrganizationTree() (eos []ent.OrganizationTree, err error) {
-	e, er := m.entC.OrganizationTree.Query().All(m.ctx)
-	if er == nil {
-		for _, eo := range e {
-			eos = append(eos, *eo)
-		}
+func (m *Manage) OrganizationTree() (eos []*ent.OrganizationTree, err error) {
+	return m.entC.OrganizationTree.Query().All(m.ctx)
+}
+
+// SubOrganizationFromID ....
+func (m *Manage) SubOrganizationFromID(id int) (eos []*ent.OrganizationTree, err error) {
+	var left, right int
+	if op, err := m.entC.OrganizationTree.Query().
+		Where(organizationtree.ID(id)).
+		Only(m.ctx); err == nil {
+		left = op.Left
+		right = op.Right
+	} else {
+		return nil, err
 	}
-	err = er
-	return
+	return m.entC.OrganizationTree.Query().
+		Where(organizationtree.LeftGT(left), organizationtree.RightLT(right)).All(m.ctx)
 }
 
 // AddOrganizationTree .....
@@ -70,7 +78,22 @@ func (m *Manage) AddOrganizationTree(o ent.OrganizationTree) error {
 	return tx.Commit()
 }
 
-// official example func
+// UpdateOrganizationTree ...
+func (m *Manage) UpdateOrganizationTree(o ent.OrganizationTree) error {
+	return m.entC.OrganizationTree.Update().
+		Where(organizationtree.ID(o.ID)).SetName(o.Name).Exec(m.ctx)
+}
+
+// DeleteOrganizationTree ...
+func (m *Manage) DeleteOrganizationTree(id int) error {
+	tx, err := m.entC.Tx(m.ctx)
+	if err != nil {
+		return err
+	}
+	return tx.Commit()
+}
+
+// official rollback example func
 func rollback(tx *ent.Tx, err error) error {
 	if rerr := tx.Rollback(); rerr != nil {
 		err = fmt.Errorf("%w: %v", err, rerr)

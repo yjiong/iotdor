@@ -3,6 +3,7 @@ package api
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -18,7 +19,7 @@ func (dtr *IotdorTran) userInfo(w http.ResponseWriter, r *http.Request) {
 			usis = append(usis, map[string]any{
 				"name":            uinfo.Name,
 				"phone":           uinfo.Phone,
-				"last_login_time": uinfo.LastLoginTime.In(loc).Format("http.StatusOK6-01-02 15:04:05"),
+				"last_login_time": uinfo.LastLoginTime.In(loc).Format("2006-01-02 15:04:05"),
 				"last_login_ip":   uinfo.LastLoginIP,
 				"admin_flag":      dtr.UserAdminFlag(uinfo.Name),
 			})
@@ -80,8 +81,14 @@ func (dtr *IotdorTran) organizationTree(w http.ResponseWriter, r *http.Request) 
 	var err error
 	switch r.Method {
 	case "GET":
-		var os []ent.OrganizationTree
-		if os, err = dtr.OrganizationTree(); err == nil {
+		var os []*ent.OrganizationTree
+		if ids, ok := mux.Vars(r)["id"]; ok {
+			idint, _ := strconv.Atoi(ids)
+			os, err = dtr.SubOrganizationFromID(idint)
+		} else {
+			os, err = dtr.OrganizationTree()
+		}
+		if err == nil {
 			rm := make([]map[string]interface{}, 0)
 			for _, o := range os {
 				rm = append(rm, map[string]interface{}{
@@ -102,12 +109,12 @@ func (dtr *IotdorTran) organizationTree(w http.ResponseWriter, r *http.Request) 
 			return
 		}
 	case "PUT":
-		respJSON(w, "TODO")
-		return
+		var ot ent.OrganizationTree
+		decodeJSON(r, &ot)
+		if err = dtr.UpdateOrganizationTree(ot); err == nil {
+			respJSON(w, map[string]string{"msg": "update organizationtree successful"})
+			return
+		}
 	}
-	//{
-	////respJSON(w, dtr.)
-	//} else {
 	respError(http.StatusOK, w, err)
-	//}
 }

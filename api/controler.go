@@ -26,10 +26,11 @@ type DeviceControler interface {
 
 // OrganiTreeControler ....
 type OrganiTreeControler interface {
-	OrganizationTree() ([]ent.OrganizationTree, error)
+	OrganizationTree() ([]*ent.OrganizationTree, error)
+	SubOrganizationFromID(id int) (eos []*ent.OrganizationTree, err error)
 	AddOrganizationTree(o ent.OrganizationTree) error
-	//UpdateOrganizationTree(oName string, o ent.OrganizationTree) error
-	//DeleteOrganizationTree(oName string) error
+	UpdateOrganizationTree(o ent.OrganizationTree) error
+	DeleteOrganizationTree(id int) error
 }
 
 // OrganiPositionControler ....
