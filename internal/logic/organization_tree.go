@@ -87,8 +87,34 @@ func (m *Manage) UpdateOrganizationTree(o ent.OrganizationTree) error {
 // DeleteOrganizationTree ...
 func (m *Manage) DeleteOrganizationTree(id int) error {
 	tx, err := m.entC.Tx(m.ctx)
+	var left, right int
 	if err != nil {
 		return err
+	}
+	if op, err := tx.OrganizationTree.Query().
+		Where(organizationtree.ID(id)).
+		Only(m.ctx); err == nil {
+		left = op.Left
+		right = op.Right
+	} else {
+		return err
+	}
+	if i, err := tx.OrganizationTree.Delete().
+		Where(organizationtree.LeftGTE(left), organizationtree.RightLTE(right)).
+		Exec(m.ctx); err != nil && i != (right-left+1)/2 {
+		return rollback(tx, err)
+	}
+	if err := tx.OrganizationTree.Update().
+		Where(organizationtree.LeftGTE(left)).
+		AddLeft(left - right - 1).
+		Exec(m.ctx); err != nil {
+		return rollback(tx, err)
+	}
+	if err := tx.OrganizationTree.Update().
+		Where(organizationtree.RightGTE(left)).
+		AddRight(left - right - 1).
+		Exec(m.ctx); err != nil {
+		return rollback(tx, err)
 	}
 	return tx.Commit()
 }

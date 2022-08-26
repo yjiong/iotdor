@@ -526,6 +526,33 @@ paths:
           description: get organization tree info failed
           schema:
             type: object
+    delete:
+      security:
+        - api_key: []
+      consumes:
+        - application/json
+      tags:
+        - 系统组织结构目录树信息
+      summary:  删除组织结构目录树信息
+      parameters:
+        - type: integer
+          description: 将要删除的组织结构目录树的id
+          name: id
+          in: path
+          required: true
+      responses:
+        '200':
+          description: ok
+          schema:
+            type: object
+        '401':
+          description: access denided
+          schema:
+            type: object
+        '404':
+          description: delete organization tree info failed
+          schema:
+            type: object
   /config/sys/organization_tree:
     get:
       security:
@@ -600,33 +627,6 @@ paths:
             type: object
         '404':
           description: update organization tree info failed
-          schema:
-            type: object
-  /config/sys/organization_tree/{posid}:
-    delete:
-      security:
-        - api_key: []
-      consumes:
-        - application/json
-      tags:
-        - 系统组织结构目录树信息
-      summary:  删除组织结构目录树信息
-      parameters:
-        description: 组织结构目录树的名称
-        name: posid
-        in: path
-        required: true
-      responses:
-        '200':
-          description: ok
-          schema:
-            type: object
-        '401':
-          description: access denided
-          schema:
-            type: object
-        '404':
-          description: delete organization tree info failed
           schema:
             type: object
   /config/sys/join_position_to_organization_tree/{otname}/{posid}:

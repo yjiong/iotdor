@@ -130,3 +130,17 @@ func (dtr *IotdorTran) organizationTree(w http.ResponseWriter, r *http.Request) 
 	}
 	respError(http.StatusOK, w, err)
 }
+
+func (dtr *IotdorTran) organizationTreeDel(w http.ResponseWriter, r *http.Request) {
+	var err error
+	if ids, ok := mux.Vars(r)["id"]; ok {
+		idint, _ := strconv.Atoi(ids)
+		if err = dtr.DeleteOrganizationTree(idint); err == nil {
+			respJSON(w, map[string]string{"msg": "delete organizationtree successful"})
+			return
+		}
+	} else {
+		err = errors.New("error: need id")
+	}
+	respError(http.StatusOK, w, err)
+}
