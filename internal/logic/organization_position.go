@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/yjiong/iotdor/ent"
+	"github.com/yjiong/iotdor/ent/device"
 	"github.com/yjiong/iotdor/ent/organizationposition"
 	"github.com/yjiong/iotdor/ent/user"
 )
@@ -61,7 +62,7 @@ func (m *Manage) BeRelatedDeviceToOrganizationPosition(posid, devid string) erro
 	var rerr error
 	o, oerr := m.entC.OrganizationPosition.Query().Where(organizationposition.PositionID(posid)).Only(m.ctx)
 	if oerr == nil {
-		d, derr := queryDeviceByDevID(m.ctx, m.entC, devid)
+		d, derr := m.entC.Device.Query().Where(device.DevID(devid)).Only(m.ctx)
 		if derr == nil {
 			rerr = d.Update().SetOrganizationPosition(o).Exec(m.ctx)
 		} else {
@@ -76,7 +77,7 @@ func (m *Manage) BeRelatedDeviceToOrganizationPosition(posid, devid string) erro
 // RemoveDeviceFromOrganizationPosition .....
 func (m *Manage) RemoveDeviceFromOrganizationPosition(devid string) error {
 	var rerr error
-	d, derr := queryDeviceByDevID(m.ctx, m.entC, devid)
+	d, derr := m.entC.Device.Query().Where(device.DevID(devid)).Only(m.ctx)
 	if derr == nil {
 		rerr = d.Update().ClearOrganizationPosition().Exec(m.ctx)
 	} else {

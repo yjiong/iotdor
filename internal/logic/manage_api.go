@@ -1,12 +1,14 @@
 package logic
 
 import (
+	"context"
 	"fmt"
 	"strconv"
 	"strings"
 	"time"
 
 	"github.com/yjiong/iotdor/ent"
+	"github.com/yjiong/iotdor/ent/group"
 	"github.com/yjiong/iotdor/ent/user"
 	"github.com/yjiong/iotdor/utils"
 )
@@ -69,7 +71,7 @@ func (m *Manage) DeviceHistoryValue(devid string, qs utils.QuerySection) any {
 
 // UsersInfo for api
 func (m *Manage) UsersInfo() (us []*ent.User, e error) {
-	if eg, err := queryGroupByName(m.ctx, m.entC, m.iotdName); err != nil {
+	if eg, err := m.entC.Group.Query().Where(group.Name(m.iotdName)).Only(m.ctx); err != nil {
 		e = err
 	} else {
 		us, _ = eg.QueryUsers().All(m.ctx)
@@ -93,7 +95,7 @@ func (m *Manage) UserInfo(name string) (u *ent.User, e error) {
 
 // AddUser ...
 func (m *Manage) AddUser(name, passwd string, adminFlag bool, phone ...string) error {
-	eg, _ := queryGroupByName(m.ctx, m.entC, m.iotdName)
+	eg, _ := m.entC.Group.Query().Where(group.Name(m.iotdName)).Only(m.ctx)
 	_, err := addUser(m.ctx, m.entC, name, passwd, eg, adminFlag, phone...)
 	return err
 }
@@ -106,7 +108,7 @@ func (m *Manage) DelUser(name string) error {
 
 // UpdateUser ...
 func (m *Manage) UpdateUser(name, passwd string, adminFlag bool, phone ...string) error {
-	eg, _ := queryGroupByName(m.ctx, m.entC, m.iotdName)
+	eg, _ := m.entC.Group.Query().Where(group.Name(m.iotdName)).Only(m.ctx)
 	err := updateUser(m.ctx, m.entC, name, passwd, eg, adminFlag, phone...)
 	return err
 }
@@ -120,6 +122,18 @@ func (m *Manage) UpdateUserLoginInfo(name, lip string) error {
 
 // UserAdminFlag ....
 func (m *Manage) UserAdminFlag(uname string) bool {
-	u, _ := queryUserByName(m.ctx, m.entC, uname)
-	return userAdminFlag(m.ctx, u, uname)
+	if u, err := m.entC.User.Query().Where(user.Name(uname)).Only(m.ctx); err == nil {
+		return userAdminFlag(m.ctx, u, m.iotdName)
+	}
+	return false
+}
+
+func userAdminFlag(ctx context.Context, u *ent.User, gname string) (f bool) {
+	gs, _ := u.QueryAdmins().All(ctx)
+	for _, g := range gs {
+		if f = g.Name == gname; f {
+			return
+		}
+	}
+	return
 }
