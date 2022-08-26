@@ -14,7 +14,6 @@ import (
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 	"github.com/yjiong/iotdor/utils"
 
-	//"github.com/eclipse/paho.mqtt.golang/packets"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -34,7 +33,6 @@ type MQTTDSrcer struct {
 	sqos         byte
 	retain       bool
 	SubTopic     string
-	BrokerURL    string
 }
 
 // NewMQTTDSrcer creates a new MQTTDSrcer.
@@ -44,7 +42,7 @@ func NewMQTTDSrcer(conm map[string]string) DSrcer {
 	}
 
 	opts := mqtt.NewClientOptions()
-	h.BrokerURL = conm["url"]
+	brokerURL := conm["url"]
 	h.Iotdname = conm["iotdname"]
 	log.Debugln(conm)
 	opts.SetUsername(conm["username"])
@@ -61,19 +59,19 @@ func NewMQTTDSrcer(conm map[string]string) DSrcer {
 	opts.SetKeepAlive(time.Duration(kplv) * time.Second)
 	rand := utils.GetSnowflakeID()
 	opts.SetClientID(fmt.Sprintf("%s-%s", h.Iotdname, rand))
-	optserver := "tcp://" + h.BrokerURL
+	optserver := "tcp://" + brokerURL
 	if conm["cafile"] != "" {
 		tlsconfig, err := newTLSConfig(conm)
 		if err != nil {
 			log.Errorf("Error with the mqtt CA certificate: %s", err)
 		} else {
 			opts.SetTLSConfig(tlsconfig)
-			optserver = "ssl://" + h.BrokerURL
+			optserver = "ssl://" + brokerURL
 		}
 	}
 	opts.AddBroker(optserver)
 
-	log.WithField("server", h.BrokerURL).Info("handler/mqtt: connecting to mqtt broker")
+	log.WithField("server", brokerURL).Info("handler/mqtt: connecting to mqtt broker")
 	h.conn = mqtt.NewClient(opts)
 	var counts int
 	for {
@@ -204,9 +202,4 @@ func (h *MQTTDSrcer) onConnectionLost(c mqtt.Client, reason error) {
 //IsConnected ..
 func (h *MQTTDSrcer) IsConnected() bool {
 	return h.conn.IsConnected()
-}
-
-//GetBrokerURL ...
-func (h *MQTTDSrcer) GetBrokerURL() string {
-	return h.BrokerURL
 }

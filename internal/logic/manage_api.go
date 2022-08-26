@@ -2,6 +2,7 @@ package logic
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 	"time"
 
@@ -36,17 +37,32 @@ func (m *Manage) DeviceRealTimeValue(devid string) map[string]string {
 }
 
 // DeviceHistoryValue ....
-func (m *Manage) DeviceHistoryValue(devid string, qs utils.QuerySection) []string {
+func (m *Manage) DeviceHistoryValue(devid string, qs utils.QuerySection) any {
+	var pages int64
 	cstr := fmt.Sprintf("select count(*) from %s where devid='%s' and timestamp between '%s' and '%s';",
-		DEVICETABLE, devid, qs.Since.Local().Format(TFORMAT), qs.Until.Local().Format(TFORMAT))
-	counts, _ := RawQuery(m.DB, cstr)
-	qstr := fmt.Sprintf("select * from %s where devid='%s' and timestamp between '%s' and '%s' limit %d, %d;",
-		DEVICETABLE, devid, qs.Since.Local().Format(TFORMAT), qs.Until.Local().Format(TFORMAT), qs.PageSize*qs.PagesIndex, qs.PageSize)
-	//qstrPG := fmt.Sprintf("select * from %s where devid='%s' and timestamp between '%s' and '%s' limit %d offset %d;",
-	//DEVICETABLE, devid, qs.Since.Local().Format(TFORMAT), qs.Until.Local().Format(TFORMAT), qs.PageSize, qs.PageSize*qs.PagesIndex)
-	rets, _ := RawQuery(m.DB, qstr)
-	rets = append(rets, counts...)
-	return rets
+		DEVICETABLE,
+		devid,
+		qs.Since.Local().Format(TFORMAT),
+		qs.Until.Local().Format(TFORMAT))
+	_, counts, _ := RawQuery(m.DB, cstr)
+	if len(counts) > 0 {
+		if c, err := strconv.ParseInt(counts[0], 10, 64); err == nil {
+			pages = utils.CalcPages(c, qs.PageSize)
+		}
+	}
+	qstr := fmt.Sprintf("select * from %s where devid='%s' and timestamp between '%s' and '%s' limit %d offset %d;",
+		DEVICETABLE,
+		devid,
+		qs.Since.Local().Format(TFORMAT),
+		qs.Until.Local().Format(TFORMAT),
+		qs.PageSize,
+		qs.PageSize*qs.PagesIndex)
+	columns, values, _ := RawQuery(m.DB, qstr)
+	return map[string]any{
+		"Columns": columns,
+		"pages":   pages,
+		"datas":   values,
+	}
 }
 
 // UsersInfo for api

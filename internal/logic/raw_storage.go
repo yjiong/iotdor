@@ -143,23 +143,24 @@ func InsertMap(db *sql.DB, tbname string, m map[string]string) (err error) {
 }
 
 // RawQuery ...
-func RawQuery(db *sql.DB, qstr string) (ret []string, err error) {
+func RawQuery(db *sql.DB, qstr string) (cols string, vals []string, err error) {
 	var rows *sql.Rows
 	if rows, err = db.Query(qstr); err == nil {
-		var col []string
-		if col, err = rows.Columns(); err == nil {
+		if col, err := rows.Columns(); err == nil {
 			vs := make([]any, len(col))
 			rawb := make([][]byte, len(col))
 			for i := range rawb {
 				vs[i] = &rawb[i]
+				cols = fmt.Sprintf("%s,%s", cols, col[i])
 			}
+			cols = strings.TrimLeft(cols, ",")
 			for rows.Next() {
 				rows.Scan(vs...)
 				bw := bytes.Buffer{}
-				for i, ra := range rawb {
-					bw.WriteString(fmt.Sprintf("%s:%s ", col[i], ra))
+				for _, ra := range rawb {
+					bw.WriteString(fmt.Sprintf("%s,", ra))
 				}
-				ret = append(ret, fmt.Sprintf("%s", bw.String()))
+				vals = append(vals, fmt.Sprintf("%s", strings.TrimRight(bw.String(), ",")))
 			}
 		}
 		rows.Close()
@@ -167,5 +168,5 @@ func RawQuery(db *sql.DB, qstr string) (ret []string, err error) {
 	if err != nil {
 		log.Error(err)
 	}
-	return ret, err
+	return
 }

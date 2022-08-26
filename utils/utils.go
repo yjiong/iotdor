@@ -15,8 +15,8 @@ import (
 
 // QuerySection ....
 type QuerySection struct {
-	PageSize   int       `json:"page_size"`
-	PagesIndex int       `json:"pages_index"`
+	PageSize   int64     `json:"page_size"`
+	PagesIndex int64     `json:"pages_index"`
 	Since      time.Time `json:"since"`
 	Until      time.Time `json:"until"`
 }
@@ -79,4 +79,15 @@ func RunCmd(name string, args ...string) ([]string, error) {
 	cmd := cmd.NewCmd(name, args...)
 	status := <-cmd.Start()
 	return status.Stdout, status.Error
+}
+
+// CalcPages ....
+// c=count
+// pz=page size
+func CalcPages(c, pz int64) int64 {
+	ps := c / pz
+	if c%pz > 0 {
+		ps++
+	}
+	return ps
 }

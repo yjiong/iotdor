@@ -14,7 +14,7 @@ var gwStat = []bool{false, true}
 
 func (m *Manage) gatewayInfoHandle(gwID string, stat int) {
 	if exist, _ := m.entC.Gateway.Query().Where(gateway.Gwid(gwID)).Exist(m.ctx); !exist {
-		addGateway(m.ctx, m.entC, gwID, m.iotdName, m.GetBrokerURL(), "", gwStat[stat], 60)
+		addGateway(m.ctx, m.entC, gwID, m.iotdName, "", "", gwStat[stat], 60)
 	}
 	if stat > 0 {
 		if ret, err := m.mqttCmd(gwID, InitSysGet); err == nil {

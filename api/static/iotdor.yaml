@@ -386,7 +386,11 @@ paths:
               $ref: '#/components/schemas/QuerySection'
       responses:
         '200':
-          description: ok
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RspDBData'          
           schema:
             type: object
         '404':
@@ -969,6 +973,18 @@ components:
           description: '终止时间'
           type: string
           format: date-time
+    RspDBData:
+      type: object
+      properties:
+        columns: 
+          description: 列名
+          type: string
+        datas:
+          description: 数据
+          type: array
+        pages:
+          description: 页数
+          type: integer
     #SerialParams:
       #type: object
       #properties:
