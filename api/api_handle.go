@@ -72,10 +72,13 @@ func (dtr *IotdorTran) allDevices(w http.ResponseWriter, r *http.Request) {
 func (dtr *IotdorTran) deviceRealTimeValue(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	if devid, ok := params["devid"]; ok {
-		respJSON(w, dtr.DeviceRealTimeValue(devid))
-	} else {
-		respError(http.StatusOK, w, errors.New("devid not exist"))
+		vs := dtr.DeviceRealTimeValue(devid)
+		if len(vs) > 0 {
+			respJSON(w, vs)
+			return
+		}
 	}
+	respError(http.StatusOK, w, errors.New("devid not exist"))
 }
 
 func (dtr *IotdorTran) deviceHistoryValue(w http.ResponseWriter, r *http.Request) {
