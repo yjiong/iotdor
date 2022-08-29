@@ -32,7 +32,7 @@ type DeviceControler interface {
 type OrganiTreeControler interface {
 	OrganizationTree() ([]*ent.OrganizationTree, error)
 	SubOrganizationFromID(id int) (eos []*ent.OrganizationTree, err error)
-	AddOrganizationTree(o ent.OrganizationTree) error
+	CreateOrganizationSubNode(o ent.OrganizationTree) error
 	UpdateOrganizationTree(o ent.OrganizationTree) error
 	DeleteOrganizationTree(id int) error
 }

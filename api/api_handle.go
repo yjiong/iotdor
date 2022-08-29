@@ -119,7 +119,7 @@ func (dtr *IotdorTran) organizationTree(w http.ResponseWriter, r *http.Request) 
 	case "POST":
 		var ot ent.OrganizationTree
 		decodeJSON(r, &ot)
-		if err = dtr.AddOrganizationTree(ot); err == nil {
+		if err = dtr.CreateOrganizationSubNode(ot); err == nil {
 			respJSON(w, map[string]string{"msg": "create organizationtree successful"})
 			return
 		}

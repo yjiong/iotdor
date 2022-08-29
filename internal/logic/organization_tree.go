@@ -28,8 +28,13 @@ func (m *Manage) SubOrganizationFromID(id int) (eos []*ent.OrganizationTree, err
 		Where(organizationtree.LeftGT(left), organizationtree.RightLT(right)).All(m.ctx)
 }
 
-// AddOrganizationTree .....
-func (m *Manage) AddOrganizationTree(o ent.OrganizationTree) error {
+// AddOrganizationNode  add for same level at courrent node left or right
+func (m *Manage) AddOrganizationNode(o ent.OrganizationTree, leftOrRight string) error {
+	return nil
+}
+
+// CreateOrganizationSubNode .....
+func (m *Manage) CreateOrganizationSubNode(o ent.OrganizationTree) error {
 	tx, err := m.entC.Tx(m.ctx)
 	if err != nil {
 		return err

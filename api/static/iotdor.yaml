@@ -580,7 +580,7 @@ paths:
         - application/json
       tags:
         - 系统组织结构目录树信息
-      summary:  添加组织结构目录树信息
+      summary:  创建组织结构目录树新一层的节点(为给定节点的子节点层)
       requestBody:
         content:
           application/json:
@@ -627,6 +627,42 @@ paths:
             type: object
         '404':
           description: update organization tree info failed
+          schema:
+            type: object
+  /config/sys/organization_tree/{left_or_right}:
+    post:
+      security:
+        - api_key: []
+      consumes:
+        - application/json
+      tags:
+        - 系统组织结构目录树信息
+      summary:  添加组织结构的节点(为给定节点的兄弟节点，位于同一层)
+      parameters:
+        - type: string
+          description: 添加在给定节点的左(前)边还是右(后)边(left或者right)
+          name: left_or_right
+          in: path
+          required: true
+          example: left
+      requestBody:
+        content:
+          application/json:
+            name: organization_tree_info
+            required: true
+            schema:
+              $ref: '#/components/schemas/OrganizationTree'
+      responses:
+        '200':
+          description: ok
+          schema:
+            type: object
+        '401':
+          description: access denided
+          schema:
+            type: object
+        '404':
+          description: create organization tree info failed
           schema:
             type: object
   /config/sys/join_position_to_organization_tree/{otname}/{posid}:
@@ -1066,7 +1102,7 @@ components:
       properties:
         id:
           type: integer
-          description: id(创建根的时候为0)创建的组织结构是该id层级的子层
+          description: id(创建根的时候为0)如果是创建则是该id层级的子节点,若是添加，则为同级层的兄弟节点。 
         name:
           type: string
           description: 组织结构目录树的名称
