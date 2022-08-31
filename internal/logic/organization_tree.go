@@ -55,7 +55,10 @@ func (m *Manage) AddOrganizationNode(id int, name, leftOrRight string) error {
 			return rollback(tx, errors.New("argument must = 'left' or 'right'"))
 		}
 		if err := tx.OrganizationTree.Create().
-			SetLeft(left).SetRight(op.Right).
+			SetParentID(op.ParentID).
+			SetLeft(left).
+			SetRight(op.Right).
+			SetLevel(op.Level).
 			SetName(name).Exec(m.ctx); err != nil {
 			return rollback(tx, err)
 		}
