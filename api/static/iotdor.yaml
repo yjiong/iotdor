@@ -587,7 +587,7 @@ paths:
             name: organization_tree_info
             required: true
             schema:
-              $ref: '#/components/schemas/OrganizationTree'
+              $ref: '#/components/schemas/CreateOrganizationTree'
       responses:
         '200':
           description: ok
@@ -629,7 +629,7 @@ paths:
           description: update organization tree info failed
           schema:
             type: object
-  /config/sys/organization_tree/{left_or_right}:
+  /config/sys/add_organization_tree:
     post:
       security:
         - api_key: []
@@ -638,20 +638,13 @@ paths:
       tags:
         - 系统组织结构目录树信息
       summary:  添加组织结构的节点(为给定节点的兄弟节点，位于同一层)
-      parameters:
-        - type: string
-          description: 添加在给定节点的左(前)边还是右(后)边(left或者right)
-          name: left_or_right
-          in: path
-          required: true
-          example: left
       requestBody:
         content:
           application/json:
             name: organization_tree_info
             required: true
             schema:
-              $ref: '#/components/schemas/OrganizationTree'
+              $ref: '#/components/schemas/AddOrganizationTree'
       responses:
         '200':
           description: ok
@@ -1102,10 +1095,32 @@ components:
       properties:
         id:
           type: integer
-          description: id(创建根的时候为0)如果是创建则是该id层级的子节点,若是添加，则为同级层的兄弟节点。 
+          description: id节点的id.
         name:
           type: string
-          description: 组织结构目录树的名称
+          description: 组织结构的名称
+    CreateOrganizationTree:        
+      type: object
+      properties:
+        parent_id:
+          type: integer
+          description: parent_id(创建根的时候为0)是该层级的节点的父节点.
+        name:
+          type: string
+          description: 要创建的组织结构的名称
+    AddOrganizationTree:        
+      type: object
+      properties:
+        id:
+          type: integer
+          description: id是位于将要添加的节点的临近节点的id.
+        name:
+          type: string
+          description: 要添加的组织结构的名称
+        left_or_right:
+          type: string
+          description: 添加在给定id节点的左(前)边还是右(后)边,值为(left|right)
+          example: right
     OrganizationPosition:        
       type: object
       properties:

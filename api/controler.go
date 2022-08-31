@@ -33,6 +33,7 @@ type OrganiTreeControler interface {
 	OrganizationTree() ([]*ent.OrganizationTree, error)
 	SubOrganizationFromID(id int) (eos []*ent.OrganizationTree, err error)
 	CreateOrganizationSubNode(o ent.OrganizationTree) error
+	AddOrganizationNode(id int, name, leftOrRight string) error
 	UpdateOrganizationTree(o ent.OrganizationTree) error
 	DeleteOrganizationTree(id int) error
 }

@@ -134,6 +134,25 @@ func (dtr *IotdorTran) organizationTree(w http.ResponseWriter, r *http.Request) 
 	respError(http.StatusOK, w, err)
 }
 
+func (dtr *IotdorTran) addOrganizationTree(w http.ResponseWriter, r *http.Request) {
+	var err error
+	var ot map[string]string
+	decodeJSON(r, &ot)
+	ids, idok := ot["id"]
+	name, nok := ot["name"]
+	lr, lrok := ot["left_or_right"]
+	id, ierr := strconv.Atoi(ids)
+	if idok && nok && lrok && ierr == nil {
+		if err = dtr.AddOrganizationNode(id, name, lr); err == nil {
+			respJSON(w, map[string]string{"msg": "create organizationtree successful"})
+			return
+		}
+	} else {
+		err = errors.New("argument error")
+	}
+	respError(http.StatusOK, w, err)
+}
+
 func (dtr *IotdorTran) organizationTreeDel(w http.ResponseWriter, r *http.Request) {
 	var err error
 	if ids, ok := mux.Vars(r)["id"]; ok {

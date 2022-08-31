@@ -1,6 +1,7 @@
 package logic
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/pkg/errors"
@@ -29,7 +30,36 @@ func (m *Manage) SubOrganizationFromID(id int) (eos []*ent.OrganizationTree, err
 }
 
 // AddOrganizationNode  add for same level at courrent node left or right
-func (m *Manage) AddOrganizationNode(o ent.OrganizationTree, leftOrRight string) error {
+func (m *Manage) AddOrganizationNode(id int, name, leftOrRight string) error {
+	tx, err := m.entC.Tx(m.ctx)
+	if err != nil {
+		return err
+	}
+	var left int
+	if op, err := tx.OrganizationTree.Query().
+		Where(organizationtree.ID(id)).
+		Only(m.ctx); err == nil {
+		left = op.Left
+		if err := handleLeftRight(m.ctx, left, 2, tx); err != nil {
+			return err
+		}
+		if leftOrRight == "left" {
+			if err := tx.OrganizationTree.Update().
+				Where(organizationtree.ID(op.ID)).
+				AddLeft(2).Exec(m.ctx); err != nil {
+				return rollback(tx, err)
+			}
+		} else if leftOrRight == "right" {
+			left++
+		} else {
+			return rollback(tx, errors.New("argument must = 'left' or 'right'"))
+		}
+		if err := tx.OrganizationTree.Create().
+			SetLeft(left).SetRight(op.Right).
+			SetName(name).Exec(m.ctx); err != nil {
+			return rollback(tx, err)
+		}
+	}
 	return nil
 }
 
@@ -40,40 +70,31 @@ func (m *Manage) CreateOrganizationSubNode(o ent.OrganizationTree) error {
 		return err
 	}
 	var left, level int
-	if o.ID == 0 {
+	if o.ParentID == 0 {
 		if exist, _ := tx.OrganizationTree.Query().
-			Where(organizationtree.ID(o.ID)).Exist(m.ctx); exist {
-			return errors.New("ID=0 aleady exist")
+			Where(organizationtree.Level(1)).Exist(m.ctx); exist {
+			return errors.New("level=1 aleady exist")
 		}
 		level = 0
 	} else {
 		if op, err := tx.OrganizationTree.Query().
-			Where(organizationtree.ID(o.ID)).
+			Where(organizationtree.ID(o.ParentID)).
 			Only(m.ctx); err == nil {
 			left = op.Left
 			level = op.Level
+			if op.Right > (op.Left + 1) {
+				return fmt.Errorf("subnode level=%d aleady exist, use add api to add same level node", level+1)
+			}
 		} else {
 			return err
 		}
-	}
-	if o.ID != 0 {
-		if lerr := tx.OrganizationTree.Update().
-			Where(organizationtree.LeftGT(left)).
-			AddLeft(2).
-			Exec(m.ctx); lerr != nil {
-			return rollback(tx, lerr)
-		}
-		if rerr := tx.OrganizationTree.Update().
-			Where(organizationtree.
-				RightGTE(left)).
-			AddRight(2).
-			Exec(m.ctx); rerr != nil {
-			return rollback(tx, rerr)
+		if err := handleLeftRight(m.ctx, left, 2, tx); err != nil {
+			return err
 		}
 	}
 	if err := tx.OrganizationTree.Create().
 		SetName(o.Name).
-		SetParentID(o.ID).
+		SetParentID(o.ParentID).
 		SetLeft(left + 1).
 		SetRight(left + 2).
 		SetLevel(level + 1).
@@ -81,6 +102,23 @@ func (m *Manage) CreateOrganizationSubNode(o ent.OrganizationTree) error {
 		return rollback(tx, err)
 	}
 	return tx.Commit()
+}
+
+func handleLeftRight(ctx context.Context, left, amount int, tx *ent.Tx) error {
+	if lerr := tx.OrganizationTree.Update().
+		Where(organizationtree.LeftGT(left)).
+		AddLeft(amount).
+		Exec(ctx); lerr != nil {
+		return rollback(tx, lerr)
+	}
+	if rerr := tx.OrganizationTree.Update().
+		Where(organizationtree.
+			RightGTE(left)).
+		AddRight(amount).
+		Exec(ctx); rerr != nil {
+		return rollback(tx, rerr)
+	}
+	return nil
 }
 
 // UpdateOrganizationTree ...

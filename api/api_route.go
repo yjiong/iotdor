@@ -13,7 +13,7 @@ func configRoute(mr *mux.Router, dtr *IotdorTran) {
 	mrSysRt.PathPrefix("/organization_tree/{id}").HandlerFunc(dtr.organizationTree).Methods("GET")
 	mrSysRt.PathPrefix("/organization_tree").HandlerFunc(dtr.organizationTree).Methods("GET", "POST", "PUT")
 	mrSysRt.PathPrefix("/organization_tree/{id}").HandlerFunc(dtr.organizationTreeDel).Methods("DELETE")
-	//mrSysRt.PathPrefix("/organization_tree/{left_or_right}").HandlerFunc(dtr.addOrganization).Methods("POST")
+	mrSysRt.PathPrefix("/add_organization_tree").HandlerFunc(dtr.addOrganizationTree).Methods("POST")
 }
 
 func gatewayRoute(mr *mux.Router, dtr *IotdorTran) {
