@@ -580,7 +580,7 @@ paths:
         - application/json
       tags:
         - 系统组织结构目录树信息
-      summary:  创建组织结构目录树新一层的节点(为给定节点的子节点层)
+      summary:  创建组织结构目录树某节点的子节点
       requestBody:
         content:
           application/json:
@@ -637,7 +637,7 @@ paths:
         - application/json
       tags:
         - 系统组织结构目录树信息
-      summary:  添加组织结构的节点(为给定节点的兄弟节点，位于同一层)
+      summary:  添加组织结构的节点(添加位于同一层的兄弟节点)
       requestBody:
         content:
           application/json:
