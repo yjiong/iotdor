@@ -136,19 +136,15 @@ func (dtr *IotdorTran) organizationTree(w http.ResponseWriter, r *http.Request) 
 
 func (dtr *IotdorTran) addOrganizationTree(w http.ResponseWriter, r *http.Request) {
 	var err error
-	var ot map[string]string
+	var ot struct {
+		ID          int    `json:"id"`
+		Name        string `json:"name"`
+		LeftOrRight string `json:"left_or_right"`
+	}
 	decodeJSON(r, &ot)
-	ids, idok := ot["id"]
-	name, nok := ot["name"]
-	lr, lrok := ot["left_or_right"]
-	id, ierr := strconv.Atoi(ids)
-	if idok && nok && lrok && ierr == nil {
-		if err = dtr.AddOrganizationNode(id, name, lr); err == nil {
-			respJSON(w, map[string]string{"msg": "create organizationtree successful"})
-			return
-		}
-	} else {
-		err = errors.New("argument error")
+	if err = dtr.AddOrganizationNode(ot.ID, ot.Name, ot.LeftOrRight); err == nil {
+		respJSON(w, map[string]string{"msg": "add organizationtree successful"})
+		return
 	}
 	respError(http.StatusOK, w, err)
 }

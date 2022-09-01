@@ -40,30 +40,31 @@ func (m *Manage) AddOrganizationNode(id int, name, leftOrRight string) error {
 		Where(organizationtree.ID(id)).
 		Only(m.ctx); err == nil {
 		left = op.Left
-		if err := handleLeftRight(m.ctx, left, 2, tx); err != nil {
+		if leftOrRight == "right" {
+			left += 2
+		} else if leftOrRight != "left" {
+			return errors.New("argument must = 'left' or 'right'")
+		}
+		if err := handleLeftRight(m.ctx, left-1, 2, tx); err != nil {
 			return err
 		}
-		if leftOrRight == "left" {
-			if err := tx.OrganizationTree.Update().
-				Where(organizationtree.ID(op.ID)).
-				AddLeft(2).Exec(m.ctx); err != nil {
-				return rollback(tx, err)
-			}
-		} else if leftOrRight == "right" {
-			left++
-		} else {
-			return rollback(tx, errors.New("argument must = 'left' or 'right'"))
-		}
+		//if leftOrRight == "left" {
+		//if err := tx.OrganizationTree.Update().
+		//Where(organizationtree.ID(id)).
+		//AddLeft(2).Exec(m.ctx); err != nil {
+		//return rollback(tx, err)
+		//}
+		//}
 		if err := tx.OrganizationTree.Create().
 			SetParentID(op.ParentID).
 			SetLeft(left).
-			SetRight(op.Right).
+			SetRight(left + 1).
 			SetLevel(op.Level).
 			SetName(name).Exec(m.ctx); err != nil {
 			return rollback(tx, err)
 		}
 	}
-	return nil
+	return tx.Commit()
 }
 
 // CreateOrganizationSubNode .....
