@@ -35,26 +35,22 @@ func (m *Manage) AddOrganizationNode(id int, name, leftOrRight string) error {
 	if err != nil {
 		return err
 	}
-	var left int
+	var left, right, handleLeft int
 	if op, err := tx.OrganizationTree.Query().
 		Where(organizationtree.ID(id)).
 		Only(m.ctx); err == nil {
 		left = op.Left
+		right = op.Right
+		handleLeft = left - 1
 		if leftOrRight == "right" {
-			left += 2
+			left = right + 1
+			handleLeft = right
 		} else if leftOrRight != "left" {
 			return errors.New("argument must = 'left' or 'right'")
 		}
-		if err := handleLeftRight(m.ctx, left-1, 2, tx); err != nil {
+		if err := handleLeftRight(m.ctx, handleLeft, 2, tx); err != nil {
 			return err
 		}
-		//if leftOrRight == "left" {
-		//if err := tx.OrganizationTree.Update().
-		//Where(organizationtree.ID(id)).
-		//AddLeft(2).Exec(m.ctx); err != nil {
-		//return rollback(tx, err)
-		//}
-		//}
 		if err := tx.OrganizationTree.Create().
 			SetParentID(op.ParentID).
 			SetLeft(left).
@@ -63,6 +59,8 @@ func (m *Manage) AddOrganizationNode(id int, name, leftOrRight string) error {
 			SetName(name).Exec(m.ctx); err != nil {
 			return rollback(tx, err)
 		}
+	} else {
+		return err
 	}
 	return tx.Commit()
 }
@@ -117,7 +115,7 @@ func handleLeftRight(ctx context.Context, left, amount int, tx *ent.Tx) error {
 	}
 	if rerr := tx.OrganizationTree.Update().
 		Where(organizationtree.
-			RightGTE(left)).
+			RightGT(left)).
 		AddRight(amount).
 		Exec(ctx); rerr != nil {
 		return rollback(tx, rerr)
