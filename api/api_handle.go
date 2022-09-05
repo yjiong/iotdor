@@ -162,3 +162,20 @@ func (dtr *IotdorTran) organizationTreeDel(w http.ResponseWriter, r *http.Reques
 	}
 	respError(http.StatusOK, w, err)
 }
+
+func (dtr *IotdorTran) relatePositionToOrganizationTree(w http.ResponseWriter, r *http.Request) {
+	var err error
+	ids, iok := mux.Vars(r)["id"]
+	pids, piok := mux.Vars(r)["posid"]
+	if iok && piok {
+		idint, _ := strconv.Atoi(ids)
+		pidint, _ := strconv.Atoi(pids)
+		if err = dtr.RelatePositioinToOranizationTree(idint, pidint); err == nil {
+			respJSON(w, map[string]string{"msg": "relate positoin to organizationtree successful"})
+			return
+		}
+	} else {
+		err = errors.New("error: need organizationtree id and postion posid")
+	}
+	respError(http.StatusOK, w, err)
+}

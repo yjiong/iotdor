@@ -14,8 +14,8 @@ func (m *Manage) OrganizationPosition() ([]*ent.OrganizationPosition, error) {
 	return m.entC.OrganizationPosition.Query().All(m.ctx)
 }
 
-// AddOrganizationPosition .....
-func (m *Manage) AddOrganizationPosition(o ent.OrganizationPosition) error {
+// CreateOrganizationPosition .....
+func (m *Manage) CreateOrganizationPosition(o ent.OrganizationPosition) error {
 	return m.entC.OrganizationPosition.Create().
 		SetPositionID(o.PositionID).
 		SetFloor(o.Floor).
@@ -57,8 +57,8 @@ func (m *Manage) QueryOrganizationPositionDevices(posid string) (ds []string, er
 	return
 }
 
-// BeRelatedDeviceToOrganizationPosition .....
-func (m *Manage) BeRelatedDeviceToOrganizationPosition(posid, devid string) error {
+// AddDeviceToOrganizationPosition .....
+func (m *Manage) AddDeviceToOrganizationPosition(posid, devid string) error {
 	var rerr error
 	o, oerr := m.entC.OrganizationPosition.Query().Where(organizationposition.PositionID(posid)).Only(m.ctx)
 	if oerr == nil {

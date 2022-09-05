@@ -36,16 +36,18 @@ type OrganiTreeControler interface {
 	AddOrganizationNode(id int, name, leftOrRight string) error
 	UpdateOrganizationTree(o ent.OrganizationTree) error
 	DeleteOrganizationTree(id int) error
+	RelatePositioinToOranizationTree(id, posid int) error
+	RemovePositioinFromOranizationTree(id, posid int) error
 }
 
 // OrganiPositionControler ....
 type OrganiPositionControler interface {
 	// OrganizationPosition ....
 	//OrganizationPosition() ([]ent.OrganizationPosition, error)
-	AddOrganizationPosition(o ent.OrganizationPosition) error
+	CreateOrganizationPosition(o ent.OrganizationPosition) error
 	UpdateOrganizationPosition(oName string, o ent.OrganizationPosition) error
 	DeleteOrganizationPosition(oName string) error
-	BeRelatedDeviceToOrganizationPosition(oName, devid string) error
+	AddDeviceToOrganizationPosition(oName, devid string) error
 	RemoveDeviceFromOrganizationPosition(devid string) error
 	QueryOrganizationPositionDevices(oName string) ([]string, error)
 }

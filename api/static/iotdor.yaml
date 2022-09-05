@@ -658,7 +658,7 @@ paths:
           description: create organization tree info failed
           schema:
             type: object
-  /config/sys/join_position_to_organization_tree/{otname}/{posid}:
+  /config/sys/relate_position_to_organization_tree/{id}/{posid}:
     post:
       security:
         - api_key: []
@@ -670,7 +670,7 @@ paths:
       parameters:
         - description: 关联组织结构目录树的ID(需存在)
           type: string
-          name: otname
+          name: id
           in: path
           required: true
         - description: 关联组织结构地理位置position_id(需在列表内存在，并且尚未关联)
@@ -691,7 +691,6 @@ paths:
           description: join organization position to tree failed
           schema:
             type: object
-  /config/sys/remove_position_from_organization_tree/{posid}:
     delete:
       security:
         - api_key: []
@@ -701,6 +700,11 @@ paths:
         - 系统组织结构目录树信息
       summary:  除移已关联组织结构的地理位置
       parameters:
+        - description: 要操作的关联组织结构目录树的ID(需存在)
+          type: string
+          name: id
+          in: path
+          required: true
         - description: 除移已关联组织结构的地理位置的position_id
           type: string
           name: posid
@@ -822,7 +826,7 @@ paths:
           description: remove organization position info failed 
           schema:
             type: object
-  /config/sys/add_organization_position_person_charge/{posid}/{uname}:
+  /config/sys/set_organization_position_person_charge/{posid}/{uname}:
     post:
       security:
         - api_key: []
@@ -911,7 +915,7 @@ paths:
           description: get organization device faied
           schema:
             type: object
-  /config/sys/join_device_to_organization_position/{posid}/{devid}:
+  /config/sys/add_device_to_organization_position/{posid}/{devid}:
     post:
       security:
         - api_key: []

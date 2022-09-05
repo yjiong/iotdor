@@ -6,6 +6,7 @@ import (
 
 	"github.com/pkg/errors"
 	"github.com/yjiong/iotdor/ent"
+	"github.com/yjiong/iotdor/ent/organizationposition"
 	"github.com/yjiong/iotdor/ent/organizationtree"
 )
 
@@ -162,6 +163,26 @@ func (m *Manage) DeleteOrganizationTree(id int) error {
 		return rollback(tx, err)
 	}
 	return tx.Commit()
+}
+
+// RelatePositioinToOranizationTree .....
+func (m *Manage) RelatePositioinToOranizationTree(id, posid int) error {
+	exist, err := m.entC.OrganizationPosition.Query().Where(organizationposition.ID(id)).Exist(m.ctx)
+	if exist {
+		return m.entC.OrganizationTree.Update().
+			Where(organizationtree.ID(id)).
+			SetOrganizationPositionsID(posid).
+			Exec(m.ctx)
+	}
+	return errors.Wrap(err, fmt.Sprintf("%d not exist", posid))
+}
+
+// RemovePositioinFromOranizationTree .....
+func (m *Manage) RemovePositioinFromOranizationTree(id, posid int) error {
+	return m.entC.OrganizationPosition.Update().
+		Where(organizationposition.ID(posid)).
+		RemoveOrganizationTreeIDs(id).
+		Exec(m.ctx)
 }
 
 // official rollback example func
