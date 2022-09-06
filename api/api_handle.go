@@ -92,6 +92,32 @@ func (dtr *IotdorTran) deviceHistoryValue(w http.ResponseWriter, r *http.Request
 	}
 }
 
+func (dtr *IotdorTran) getTreePosition(oes []*ent.OrganizationTree) []map[string]any {
+	rts := make([]map[string]any, 0)
+	rtps := make([]map[string]any, 0)
+	for _, o := range oes {
+		ps, _ := dtr.ListOrganizationTreePositions(o)
+		for _, p := range ps {
+			rtps = append(rtps, map[string]any{
+				"PositionID":           p.PositionID,
+				"Address":              p.Address,
+				"Floor":                p.Floor,
+				"UnitNo":               p.UnitNo,
+				"LongitudeAndLatitude": p.LongitudeAndLatitude,
+				"Summary":              p.Summary,
+			})
+		}
+		rts = append(rts, map[string]any{
+			"ID":        o.ID,
+			"ParentID":  o.ParentID,
+			"Name":      o.Name,
+			"Level":     o.Level,
+			"positions": rtps,
+		})
+	}
+	return rts
+}
+
 func (dtr *IotdorTran) organizationTree(w http.ResponseWriter, r *http.Request) {
 	var err error
 	switch r.Method {
@@ -104,16 +130,7 @@ func (dtr *IotdorTran) organizationTree(w http.ResponseWriter, r *http.Request) 
 			os, err = dtr.OrganizationTree()
 		}
 		if err == nil {
-			rm := make([]map[string]interface{}, 0)
-			for _, o := range os {
-				rm = append(rm, map[string]interface{}{
-					"ID":       o.ID,
-					"ParentID": o.ParentID,
-					"Name":     o.Name,
-					"Level":    o.Level,
-				})
-			}
-			respJSON(w, rm)
+			respJSON(w, dtr.getTreePosition(os))
 			return
 		}
 	case "POST":
@@ -170,9 +187,16 @@ func (dtr *IotdorTran) relatePositionToOrganizationTree(w http.ResponseWriter, r
 	if iok && piok {
 		idint, _ := strconv.Atoi(ids)
 		pidint, _ := strconv.Atoi(pids)
-		if err = dtr.RelatePositioinToOranizationTree(idint, pidint); err == nil {
-			respJSON(w, map[string]string{"msg": "relate positoin to organizationtree successful"})
-			return
+		if r.Method == "POST" {
+			if err = dtr.RelatePositioinToOranizationTree(idint, pidint); err == nil {
+				respJSON(w, map[string]string{"msg": "relate positoin to organizationtree successful"})
+				return
+			}
+		} else {
+			if err = dtr.RemovePositioinFromOranizationTree(idint, pidint); err == nil {
+				respJSON(w, map[string]string{"msg": "remove positoin from organizationtree successful"})
+				return
+			}
 		}
 	} else {
 		err = errors.New("error: need organizationtree id and postion posid")

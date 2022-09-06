@@ -15,6 +15,11 @@ func (m *Manage) OrganizationTree() (eos []*ent.OrganizationTree, err error) {
 	return m.entC.OrganizationTree.Query().All(m.ctx)
 }
 
+// ListOrganizationTreePositions ....
+func (m *Manage) ListOrganizationTreePositions(eo *ent.OrganizationTree) (eos []*ent.OrganizationPosition, err error) {
+	return eo.QueryOrganizationPositions().All(m.ctx)
+}
+
 // SubOrganizationFromID ....
 func (m *Manage) SubOrganizationFromID(id int) (eos []*ent.OrganizationTree, err error) {
 	var left, right int

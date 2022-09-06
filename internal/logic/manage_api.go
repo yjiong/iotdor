@@ -34,7 +34,7 @@ func (m *Manage) AllDevices() (ids []string) {
 // DeviceRealTimeValue ....
 func (m *Manage) DeviceRealTimeValue(devid string) (vs map[string]string) {
 	keys, _ := m.redisC.Keys(m.ctx, fmt.Sprintf("*:%s:*", devid)).Result()
-	if len(keys) > 0 && keys[0] == devid {
+	if len(keys) > 0 {
 		vs, _ = m.redisC.HGetAll(m.ctx, keys[0]).Result()
 	}
 	return
