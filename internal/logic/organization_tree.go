@@ -3,6 +3,7 @@ package logic
 import (
 	"context"
 	"fmt"
+	"strconv"
 
 	"github.com/pkg/errors"
 	"github.com/yjiong/iotdor/ent"
@@ -175,23 +176,29 @@ func (m *Manage) DeleteOrganizationTree(id int) error {
 }
 
 // RelatePositioinToOranizationTree .....
-func (m *Manage) RelatePositioinToOranizationTree(id, posid int) error {
-	exist, err := m.entC.OrganizationPosition.Query().Where(organizationposition.ID(id)).Exist(m.ctx)
-	if exist {
+func (m *Manage) RelatePositioinToOranizationTree(id, posid string) error {
+	idi, _ := strconv.Atoi(id)
+	po, err := m.entC.OrganizationPosition.Query().Where(organizationposition.PositionID(posid)).Only(m.ctx)
+	if po != nil && err == nil {
 		return m.entC.OrganizationTree.Update().
-			Where(organizationtree.ID(id)).
-			SetOrganizationPositionsID(posid).
+			Where(organizationtree.ID(idi)).
+			SetOrganizationPositionsID(po.ID).
 			Exec(m.ctx)
 	}
-	return errors.Wrap(err, fmt.Sprintf("%d not exist", posid))
+	return errors.Wrap(err, fmt.Sprintf("%s not exist", posid))
 }
 
 // RemovePositioinFromOranizationTree .....
-func (m *Manage) RemovePositioinFromOranizationTree(id, posid int) error {
-	return m.entC.OrganizationPosition.Update().
-		Where(organizationposition.ID(posid)).
-		RemoveOrganizationTreeIDs(id).
-		Exec(m.ctx)
+func (m *Manage) RemovePositioinFromOranizationTree(id, posid string) error {
+	idi, _ := strconv.Atoi(id)
+	po, err := m.entC.OrganizationPosition.Query().Where(organizationposition.PositionID(posid)).Only(m.ctx)
+	if po != nil && err == nil {
+		return m.entC.OrganizationPosition.Update().
+			Where(organizationposition.ID(po.ID)).
+			RemoveOrganizationTreeIDs(idi).
+			Exec(m.ctx)
+	}
+	return errors.Wrap(err, fmt.Sprintf("%s not exist", posid))
 }
 
 // official rollback example func

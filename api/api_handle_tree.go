@@ -99,18 +99,16 @@ func (dtr *IotdorTran) organizationTreeDel(w http.ResponseWriter, r *http.Reques
 
 func (dtr *IotdorTran) relatePositionToOrganizationTree(w http.ResponseWriter, r *http.Request) {
 	var err error
-	ids, iok := mux.Vars(r)["id"]
+	id, iok := mux.Vars(r)["id"]
 	pids, piok := mux.Vars(r)["posid"]
 	if iok && piok {
-		idint, _ := strconv.Atoi(ids)
-		pidint, _ := strconv.Atoi(pids)
 		if r.Method == "POST" {
-			if err = dtr.RelatePositioinToOranizationTree(idint, pidint); err == nil {
+			if err = dtr.RelatePositioinToOranizationTree(id, pids); err == nil {
 				respJSON(w, map[string]string{"msg": "relate positoin to organizationTree successful"})
 				return
 			}
 		} else {
-			if err = dtr.RemovePositioinFromOranizationTree(idint, pidint); err == nil {
+			if err = dtr.RemovePositioinFromOranizationTree(id, pids); err == nil {
 				respJSON(w, map[string]string{"msg": "remove positoin from organizationTree successful"})
 				return
 			}

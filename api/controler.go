@@ -37,8 +37,8 @@ type OrganiTreeControler interface {
 	AddOrganizationNode(id int, name, leftOrRight string) error
 	UpdateOrganizationTree(o ent.OrganizationTree) error
 	DeleteOrganizationTree(id int) error
-	RelatePositioinToOranizationTree(id, posid int) error
-	RemovePositioinFromOranizationTree(id, posid int) error
+	RelatePositioinToOranizationTree(id, posid string) error
+	RemovePositioinFromOranizationTree(id, posid string) error
 }
 
 // OrganiPositionControler ....
