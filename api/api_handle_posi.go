@@ -13,6 +13,7 @@ func (dtr *IotdorTran) getPositionDevice(oes []*ent.OrganizationPosition) []map[
 	rtps := make([]map[string]any, 0)
 	for _, o := range oes {
 		ps, _ := dtr.ListOrganizationPositionDevices(o)
+		rtps = rtps[:0]
 		for _, p := range ps {
 			rtps = append(rtps, map[string]any{
 				"devid": p.DevID,

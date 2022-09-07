@@ -79,23 +79,19 @@ func (otc *OrganizationTreeCreate) SetLevel(i int) *OrganizationTreeCreate {
 	return otc
 }
 
-// SetOrganizationPositionsID sets the "organization_positions" edge to the OrganizationPosition entity by ID.
-func (otc *OrganizationTreeCreate) SetOrganizationPositionsID(id int) *OrganizationTreeCreate {
-	otc.mutation.SetOrganizationPositionsID(id)
+// AddOrganizationPositionIDs adds the "organization_positions" edge to the OrganizationPosition entity by IDs.
+func (otc *OrganizationTreeCreate) AddOrganizationPositionIDs(ids ...int) *OrganizationTreeCreate {
+	otc.mutation.AddOrganizationPositionIDs(ids...)
 	return otc
 }
 
-// SetNillableOrganizationPositionsID sets the "organization_positions" edge to the OrganizationPosition entity by ID if the given value is not nil.
-func (otc *OrganizationTreeCreate) SetNillableOrganizationPositionsID(id *int) *OrganizationTreeCreate {
-	if id != nil {
-		otc = otc.SetOrganizationPositionsID(*id)
+// AddOrganizationPositions adds the "organization_positions" edges to the OrganizationPosition entity.
+func (otc *OrganizationTreeCreate) AddOrganizationPositions(o ...*OrganizationPosition) *OrganizationTreeCreate {
+	ids := make([]int, len(o))
+	for i := range o {
+		ids[i] = o[i].ID
 	}
-	return otc
-}
-
-// SetOrganizationPositions sets the "organization_positions" edge to the OrganizationPosition entity.
-func (otc *OrganizationTreeCreate) SetOrganizationPositions(o *OrganizationPosition) *OrganizationTreeCreate {
-	return otc.SetOrganizationPositionsID(o.ID)
+	return otc.AddOrganizationPositionIDs(ids...)
 }
 
 // Mutation returns the OrganizationTreeMutation object of the builder.
@@ -293,7 +289,7 @@ func (otc *OrganizationTreeCreate) createSpec() (*OrganizationTree, *sqlgraph.Cr
 	}
 	if nodes := otc.mutation.OrganizationPositionsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
+			Rel:     sqlgraph.O2M,
 			Inverse: false,
 			Table:   organizationtree.OrganizationPositionsTable,
 			Columns: []string{organizationtree.OrganizationPositionsColumn},
@@ -308,7 +304,6 @@ func (otc *OrganizationTreeCreate) createSpec() (*OrganizationTree, *sqlgraph.Cr
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.organization_tree_organization_positions = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

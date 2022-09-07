@@ -2772,8 +2772,7 @@ type OrganizationPositionMutation struct {
 	person_charges           map[int]struct{}
 	removedperson_charges    map[int]struct{}
 	clearedperson_charges    bool
-	organization_tree        map[int]struct{}
-	removedorganization_tree map[int]struct{}
+	organization_tree        *int
 	clearedorganization_tree bool
 	done                     bool
 	oldValue                 func(context.Context) (*OrganizationPosition, error)
@@ -3313,14 +3312,9 @@ func (m *OrganizationPositionMutation) ResetPersonCharges() {
 	m.removedperson_charges = nil
 }
 
-// AddOrganizationTreeIDs adds the "organization_tree" edge to the OrganizationTree entity by ids.
-func (m *OrganizationPositionMutation) AddOrganizationTreeIDs(ids ...int) {
-	if m.organization_tree == nil {
-		m.organization_tree = make(map[int]struct{})
-	}
-	for i := range ids {
-		m.organization_tree[ids[i]] = struct{}{}
-	}
+// SetOrganizationTreeID sets the "organization_tree" edge to the OrganizationTree entity by id.
+func (m *OrganizationPositionMutation) SetOrganizationTreeID(id int) {
+	m.organization_tree = &id
 }
 
 // ClearOrganizationTree clears the "organization_tree" edge to the OrganizationTree entity.
@@ -3333,29 +3327,20 @@ func (m *OrganizationPositionMutation) OrganizationTreeCleared() bool {
 	return m.clearedorganization_tree
 }
 
-// RemoveOrganizationTreeIDs removes the "organization_tree" edge to the OrganizationTree entity by IDs.
-func (m *OrganizationPositionMutation) RemoveOrganizationTreeIDs(ids ...int) {
-	if m.removedorganization_tree == nil {
-		m.removedorganization_tree = make(map[int]struct{})
-	}
-	for i := range ids {
-		delete(m.organization_tree, ids[i])
-		m.removedorganization_tree[ids[i]] = struct{}{}
-	}
-}
-
-// RemovedOrganizationTree returns the removed IDs of the "organization_tree" edge to the OrganizationTree entity.
-func (m *OrganizationPositionMutation) RemovedOrganizationTreeIDs() (ids []int) {
-	for id := range m.removedorganization_tree {
-		ids = append(ids, id)
+// OrganizationTreeID returns the "organization_tree" edge ID in the mutation.
+func (m *OrganizationPositionMutation) OrganizationTreeID() (id int, exists bool) {
+	if m.organization_tree != nil {
+		return *m.organization_tree, true
 	}
 	return
 }
 
 // OrganizationTreeIDs returns the "organization_tree" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// OrganizationTreeID instead. It exists only for internal usage by the builders.
 func (m *OrganizationPositionMutation) OrganizationTreeIDs() (ids []int) {
-	for id := range m.organization_tree {
-		ids = append(ids, id)
+	if id := m.organization_tree; id != nil {
+		ids = append(ids, *id)
 	}
 	return
 }
@@ -3364,7 +3349,6 @@ func (m *OrganizationPositionMutation) OrganizationTreeIDs() (ids []int) {
 func (m *OrganizationPositionMutation) ResetOrganizationTree() {
 	m.organization_tree = nil
 	m.clearedorganization_tree = false
-	m.removedorganization_tree = nil
 }
 
 // Where appends a list predicates to the OrganizationPositionMutation builder.
@@ -3655,11 +3639,9 @@ func (m *OrganizationPositionMutation) AddedIDs(name string) []ent.Value {
 		}
 		return ids
 	case organizationposition.EdgeOrganizationTree:
-		ids := make([]ent.Value, 0, len(m.organization_tree))
-		for id := range m.organization_tree {
-			ids = append(ids, id)
+		if id := m.organization_tree; id != nil {
+			return []ent.Value{*id}
 		}
-		return ids
 	}
 	return nil
 }
@@ -3672,9 +3654,6 @@ func (m *OrganizationPositionMutation) RemovedEdges() []string {
 	}
 	if m.removedperson_charges != nil {
 		edges = append(edges, organizationposition.EdgePersonCharges)
-	}
-	if m.removedorganization_tree != nil {
-		edges = append(edges, organizationposition.EdgeOrganizationTree)
 	}
 	return edges
 }
@@ -3692,12 +3671,6 @@ func (m *OrganizationPositionMutation) RemovedIDs(name string) []ent.Value {
 	case organizationposition.EdgePersonCharges:
 		ids := make([]ent.Value, 0, len(m.removedperson_charges))
 		for id := range m.removedperson_charges {
-			ids = append(ids, id)
-		}
-		return ids
-	case organizationposition.EdgeOrganizationTree:
-		ids := make([]ent.Value, 0, len(m.removedorganization_tree))
-		for id := range m.removedorganization_tree {
 			ids = append(ids, id)
 		}
 		return ids
@@ -3738,6 +3711,9 @@ func (m *OrganizationPositionMutation) EdgeCleared(name string) bool {
 // if that edge is not defined in the schema.
 func (m *OrganizationPositionMutation) ClearEdge(name string) error {
 	switch name {
+	case organizationposition.EdgeOrganizationTree:
+		m.ClearOrganizationTree()
+		return nil
 	}
 	return fmt.Errorf("unknown OrganizationPosition unique edge %s", name)
 }
@@ -3777,7 +3753,8 @@ type OrganizationTreeMutation struct {
 	level                         *int
 	addlevel                      *int
 	clearedFields                 map[string]struct{}
-	organization_positions        *int
+	organization_positions        map[int]struct{}
+	removedorganization_positions map[int]struct{}
 	clearedorganization_positions bool
 	done                          bool
 	oldValue                      func(context.Context) (*OrganizationTree, error)
@@ -4214,9 +4191,14 @@ func (m *OrganizationTreeMutation) ResetLevel() {
 	m.addlevel = nil
 }
 
-// SetOrganizationPositionsID sets the "organization_positions" edge to the OrganizationPosition entity by id.
-func (m *OrganizationTreeMutation) SetOrganizationPositionsID(id int) {
-	m.organization_positions = &id
+// AddOrganizationPositionIDs adds the "organization_positions" edge to the OrganizationPosition entity by ids.
+func (m *OrganizationTreeMutation) AddOrganizationPositionIDs(ids ...int) {
+	if m.organization_positions == nil {
+		m.organization_positions = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.organization_positions[ids[i]] = struct{}{}
+	}
 }
 
 // ClearOrganizationPositions clears the "organization_positions" edge to the OrganizationPosition entity.
@@ -4229,20 +4211,29 @@ func (m *OrganizationTreeMutation) OrganizationPositionsCleared() bool {
 	return m.clearedorganization_positions
 }
 
-// OrganizationPositionsID returns the "organization_positions" edge ID in the mutation.
-func (m *OrganizationTreeMutation) OrganizationPositionsID() (id int, exists bool) {
-	if m.organization_positions != nil {
-		return *m.organization_positions, true
+// RemoveOrganizationPositionIDs removes the "organization_positions" edge to the OrganizationPosition entity by IDs.
+func (m *OrganizationTreeMutation) RemoveOrganizationPositionIDs(ids ...int) {
+	if m.removedorganization_positions == nil {
+		m.removedorganization_positions = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m.organization_positions, ids[i])
+		m.removedorganization_positions[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedOrganizationPositions returns the removed IDs of the "organization_positions" edge to the OrganizationPosition entity.
+func (m *OrganizationTreeMutation) RemovedOrganizationPositionsIDs() (ids []int) {
+	for id := range m.removedorganization_positions {
+		ids = append(ids, id)
 	}
 	return
 }
 
 // OrganizationPositionsIDs returns the "organization_positions" edge IDs in the mutation.
-// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
-// OrganizationPositionsID instead. It exists only for internal usage by the builders.
 func (m *OrganizationTreeMutation) OrganizationPositionsIDs() (ids []int) {
-	if id := m.organization_positions; id != nil {
-		ids = append(ids, *id)
+	for id := range m.organization_positions {
+		ids = append(ids, id)
 	}
 	return
 }
@@ -4251,6 +4242,7 @@ func (m *OrganizationTreeMutation) OrganizationPositionsIDs() (ids []int) {
 func (m *OrganizationTreeMutation) ResetOrganizationPositions() {
 	m.organization_positions = nil
 	m.clearedorganization_positions = false
+	m.removedorganization_positions = nil
 }
 
 // Where appends a list predicates to the OrganizationTreeMutation builder.
@@ -4536,9 +4528,11 @@ func (m *OrganizationTreeMutation) AddedEdges() []string {
 func (m *OrganizationTreeMutation) AddedIDs(name string) []ent.Value {
 	switch name {
 	case organizationtree.EdgeOrganizationPositions:
-		if id := m.organization_positions; id != nil {
-			return []ent.Value{*id}
+		ids := make([]ent.Value, 0, len(m.organization_positions))
+		for id := range m.organization_positions {
+			ids = append(ids, id)
 		}
+		return ids
 	}
 	return nil
 }
@@ -4546,6 +4540,9 @@ func (m *OrganizationTreeMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *OrganizationTreeMutation) RemovedEdges() []string {
 	edges := make([]string, 0, 1)
+	if m.removedorganization_positions != nil {
+		edges = append(edges, organizationtree.EdgeOrganizationPositions)
+	}
 	return edges
 }
 
@@ -4553,6 +4550,12 @@ func (m *OrganizationTreeMutation) RemovedEdges() []string {
 // the given name in this mutation.
 func (m *OrganizationTreeMutation) RemovedIDs(name string) []ent.Value {
 	switch name {
+	case organizationtree.EdgeOrganizationPositions:
+		ids := make([]ent.Value, 0, len(m.removedorganization_positions))
+		for id := range m.removedorganization_positions {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
@@ -4580,9 +4583,6 @@ func (m *OrganizationTreeMutation) EdgeCleared(name string) bool {
 // if that edge is not defined in the schema.
 func (m *OrganizationTreeMutation) ClearEdge(name string) error {
 	switch name {
-	case organizationtree.EdgeOrganizationPositions:
-		m.ClearOrganizationPositions()
-		return nil
 	}
 	return fmt.Errorf("unknown OrganizationTree unique edge %s", name)
 }

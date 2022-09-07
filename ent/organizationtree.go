@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"github.com/yjiong/iotdor/ent/organizationposition"
 	"github.com/yjiong/iotdor/ent/organizationtree"
 )
 
@@ -33,27 +32,22 @@ type OrganizationTree struct {
 	Level int `json:"level,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the OrganizationTreeQuery when eager-loading is set.
-	Edges                                    OrganizationTreeEdges `json:"edges"`
-	organization_tree_organization_positions *int
+	Edges OrganizationTreeEdges `json:"edges"`
 }
 
 // OrganizationTreeEdges holds the relations/edges for other nodes in the graph.
 type OrganizationTreeEdges struct {
 	// OrganizationPositions holds the value of the organization_positions edge.
-	OrganizationPositions *OrganizationPosition `json:"organization_positions,omitempty"`
+	OrganizationPositions []*OrganizationPosition `json:"organization_positions,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [1]bool
 }
 
 // OrganizationPositionsOrErr returns the OrganizationPositions value or an error if the edge
-// was not loaded in eager-loading, or loaded but was not found.
-func (e OrganizationTreeEdges) OrganizationPositionsOrErr() (*OrganizationPosition, error) {
+// was not loaded in eager-loading.
+func (e OrganizationTreeEdges) OrganizationPositionsOrErr() ([]*OrganizationPosition, error) {
 	if e.loadedTypes[0] {
-		if e.OrganizationPositions == nil {
-			// Edge was loaded but was not found.
-			return nil, &NotFoundError{label: organizationposition.Label}
-		}
 		return e.OrganizationPositions, nil
 	}
 	return nil, &NotLoadedError{edge: "organization_positions"}
@@ -70,8 +64,6 @@ func (*OrganizationTree) scanValues(columns []string) ([]interface{}, error) {
 			values[i] = new(sql.NullString)
 		case organizationtree.FieldCreateTime, organizationtree.FieldUpdateTime:
 			values[i] = new(sql.NullTime)
-		case organizationtree.ForeignKeys[0]: // organization_tree_organization_positions
-			values[i] = new(sql.NullInt64)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type OrganizationTree", columns[i])
 		}
@@ -134,13 +126,6 @@ func (ot *OrganizationTree) assignValues(columns []string, values []interface{})
 				return fmt.Errorf("unexpected type %T for field level", values[i])
 			} else if value.Valid {
 				ot.Level = int(value.Int64)
-			}
-		case organizationtree.ForeignKeys[0]:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for edge-field organization_tree_organization_positions", value)
-			} else if value.Valid {
-				ot.organization_tree_organization_positions = new(int)
-				*ot.organization_tree_organization_positions = int(value.Int64)
 			}
 		}
 	}

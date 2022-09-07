@@ -963,7 +963,7 @@ func HasOrganizationTree() predicate.OrganizationPosition {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
 			sqlgraph.To(OrganizationTreeTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, true, OrganizationTreeTable, OrganizationTreeColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, OrganizationTreeTable, OrganizationTreeColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
@@ -975,7 +975,7 @@ func HasOrganizationTreeWith(preds ...predicate.OrganizationTree) predicate.Orga
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
 			sqlgraph.To(OrganizationTreeInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, true, OrganizationTreeTable, OrganizationTreeColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, OrganizationTreeTable, OrganizationTreeColumn),
 		)
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {

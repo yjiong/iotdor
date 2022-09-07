@@ -141,19 +141,23 @@ func (opc *OrganizationPositionCreate) AddPersonCharges(u ...*User) *Organizatio
 	return opc.AddPersonChargeIDs(ids...)
 }
 
-// AddOrganizationTreeIDs adds the "organization_tree" edge to the OrganizationTree entity by IDs.
-func (opc *OrganizationPositionCreate) AddOrganizationTreeIDs(ids ...int) *OrganizationPositionCreate {
-	opc.mutation.AddOrganizationTreeIDs(ids...)
+// SetOrganizationTreeID sets the "organization_tree" edge to the OrganizationTree entity by ID.
+func (opc *OrganizationPositionCreate) SetOrganizationTreeID(id int) *OrganizationPositionCreate {
+	opc.mutation.SetOrganizationTreeID(id)
 	return opc
 }
 
-// AddOrganizationTree adds the "organization_tree" edges to the OrganizationTree entity.
-func (opc *OrganizationPositionCreate) AddOrganizationTree(o ...*OrganizationTree) *OrganizationPositionCreate {
-	ids := make([]int, len(o))
-	for i := range o {
-		ids[i] = o[i].ID
+// SetNillableOrganizationTreeID sets the "organization_tree" edge to the OrganizationTree entity by ID if the given value is not nil.
+func (opc *OrganizationPositionCreate) SetNillableOrganizationTreeID(id *int) *OrganizationPositionCreate {
+	if id != nil {
+		opc = opc.SetOrganizationTreeID(*id)
 	}
-	return opc.AddOrganizationTreeIDs(ids...)
+	return opc
+}
+
+// SetOrganizationTree sets the "organization_tree" edge to the OrganizationTree entity.
+func (opc *OrganizationPositionCreate) SetOrganizationTree(o *OrganizationTree) *OrganizationPositionCreate {
+	return opc.SetOrganizationTreeID(o.ID)
 }
 
 // Mutation returns the OrganizationPositionMutation object of the builder.
@@ -391,7 +395,7 @@ func (opc *OrganizationPositionCreate) createSpec() (*OrganizationPosition, *sql
 	}
 	if nodes := opc.mutation.OrganizationTreeIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
 			Table:   organizationposition.OrganizationTreeTable,
 			Columns: []string{organizationposition.OrganizationTreeColumn},
@@ -406,6 +410,7 @@ func (opc *OrganizationPositionCreate) createSpec() (*OrganizationPosition, *sql
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
+		_node.organization_tree_organization_positions = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

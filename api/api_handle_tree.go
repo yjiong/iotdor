@@ -14,6 +14,7 @@ func (dtr *IotdorTran) getTreePosition(oes []*ent.OrganizationTree) []map[string
 	rtps := make([]map[string]any, 0)
 	for _, o := range oes {
 		ps, _ := dtr.ListOrganizationTreePositions(o)
+		rtps = rtps[:0]
 		for _, p := range ps {
 			rtps = append(rtps, map[string]any{
 				"position_id":            p.PositionID,

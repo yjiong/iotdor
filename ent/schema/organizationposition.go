@@ -31,7 +31,8 @@ func (OrganizationPosition) Edges() []ent.Edge {
 		edge.To("devices", Device.Type),
 		edge.To("person_charges", User.Type),
 		edge.From("organization_tree", OrganizationTree.Type).
-			Ref("organization_positions"),
+			Ref("organization_positions").
+			Unique(),
 	}
 }
 

@@ -48,7 +48,7 @@ const (
 	// It exists in this package in order to avoid circular dependency with the "user" package.
 	PersonChargesInverseTable = "users"
 	// OrganizationTreeTable is the table that holds the organization_tree relation/edge.
-	OrganizationTreeTable = "organization_trees"
+	OrganizationTreeTable = "organization_positions"
 	// OrganizationTreeInverseTable is the table name for the OrganizationTree entity.
 	// It exists in this package in order to avoid circular dependency with the "organizationtree" package.
 	OrganizationTreeInverseTable = "organization_trees"
@@ -69,6 +69,12 @@ var Columns = []string{
 	FieldSummary,
 }
 
+// ForeignKeys holds the SQL foreign-keys that are owned by the "organization_positions"
+// table and are not defined as standalone fields in the schema.
+var ForeignKeys = []string{
+	"organization_tree_organization_positions",
+}
+
 var (
 	// PersonChargesPrimaryKey and PersonChargesColumn2 are the table columns denoting the
 	// primary key for the person_charges relation (M2M).
@@ -79,6 +85,11 @@ var (
 func ValidColumn(column string) bool {
 	for i := range Columns {
 		if column == Columns[i] {
+			return true
+		}
+	}
+	for i := range ForeignKeys {
+		if column == ForeignKeys[i] {
 			return true
 		}
 	}

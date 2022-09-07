@@ -666,7 +666,7 @@ func (c *OrganizationPositionClient) QueryOrganizationTree(op *OrganizationPosit
 		step := sqlgraph.NewStep(
 			sqlgraph.From(organizationposition.Table, organizationposition.FieldID, id),
 			sqlgraph.To(organizationtree.Table, organizationtree.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, true, organizationposition.OrganizationTreeTable, organizationposition.OrganizationTreeColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, organizationposition.OrganizationTreeTable, organizationposition.OrganizationTreeColumn),
 		)
 		fromV = sqlgraph.Neighbors(op.driver.Dialect(), step)
 		return fromV, nil
@@ -772,7 +772,7 @@ func (c *OrganizationTreeClient) QueryOrganizationPositions(ot *OrganizationTree
 		step := sqlgraph.NewStep(
 			sqlgraph.From(organizationtree.Table, organizationtree.FieldID, id),
 			sqlgraph.To(organizationposition.Table, organizationposition.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, false, organizationtree.OrganizationPositionsTable, organizationtree.OrganizationPositionsColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, organizationtree.OrganizationPositionsTable, organizationtree.OrganizationPositionsColumn),
 		)
 		fromV = sqlgraph.Neighbors(ot.driver.Dialect(), step)
 		return fromV, nil

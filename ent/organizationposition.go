@@ -9,6 +9,7 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"github.com/yjiong/iotdor/ent/organizationposition"
+	"github.com/yjiong/iotdor/ent/organizationtree"
 )
 
 // OrganizationPosition is the model entity for the OrganizationPosition schema.
@@ -34,7 +35,8 @@ type OrganizationPosition struct {
 	Summary string `json:"summary,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the OrganizationPositionQuery when eager-loading is set.
-	Edges OrganizationPositionEdges `json:"edges"`
+	Edges                                    OrganizationPositionEdges `json:"edges"`
+	organization_tree_organization_positions *int
 }
 
 // OrganizationPositionEdges holds the relations/edges for other nodes in the graph.
@@ -44,7 +46,7 @@ type OrganizationPositionEdges struct {
 	// PersonCharges holds the value of the person_charges edge.
 	PersonCharges []*User `json:"person_charges,omitempty"`
 	// OrganizationTree holds the value of the organization_tree edge.
-	OrganizationTree []*OrganizationTree `json:"organization_tree,omitempty"`
+	OrganizationTree *OrganizationTree `json:"organization_tree,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [3]bool
@@ -69,9 +71,13 @@ func (e OrganizationPositionEdges) PersonChargesOrErr() ([]*User, error) {
 }
 
 // OrganizationTreeOrErr returns the OrganizationTree value or an error if the edge
-// was not loaded in eager-loading.
-func (e OrganizationPositionEdges) OrganizationTreeOrErr() ([]*OrganizationTree, error) {
+// was not loaded in eager-loading, or loaded but was not found.
+func (e OrganizationPositionEdges) OrganizationTreeOrErr() (*OrganizationTree, error) {
 	if e.loadedTypes[2] {
+		if e.OrganizationTree == nil {
+			// Edge was loaded but was not found.
+			return nil, &NotFoundError{label: organizationtree.Label}
+		}
 		return e.OrganizationTree, nil
 	}
 	return nil, &NotLoadedError{edge: "organization_tree"}
@@ -88,6 +94,8 @@ func (*OrganizationPosition) scanValues(columns []string) ([]interface{}, error)
 			values[i] = new(sql.NullString)
 		case organizationposition.FieldCreateTime, organizationposition.FieldUpdateTime:
 			values[i] = new(sql.NullTime)
+		case organizationposition.ForeignKeys[0]: // organization_tree_organization_positions
+			values[i] = new(sql.NullInt64)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type OrganizationPosition", columns[i])
 		}
@@ -156,6 +164,13 @@ func (op *OrganizationPosition) assignValues(columns []string, values []interfac
 				return fmt.Errorf("unexpected type %T for field summary", values[i])
 			} else if value.Valid {
 				op.Summary = value.String
+			}
+		case organizationposition.ForeignKeys[0]:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for edge-field organization_tree_organization_positions", value)
+			} else if value.Valid {
+				op.organization_tree_organization_positions = new(int)
+				*op.organization_tree_organization_positions = int(value.Int64)
 			}
 		}
 	}

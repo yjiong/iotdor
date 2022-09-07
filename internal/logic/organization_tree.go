@@ -182,7 +182,7 @@ func (m *Manage) RelatePositioinToOranizationTree(id, posid string) error {
 	if po != nil && err == nil {
 		return m.entC.OrganizationTree.Update().
 			Where(organizationtree.ID(idi)).
-			SetOrganizationPositionsID(po.ID).
+			AddOrganizationPositionIDs(po.ID).
 			Exec(m.ctx)
 	}
 	return errors.Wrap(err, fmt.Sprintf("%s not exist", posid))
@@ -191,11 +191,14 @@ func (m *Manage) RelatePositioinToOranizationTree(id, posid string) error {
 // RemovePositioinFromOranizationTree .....
 func (m *Manage) RemovePositioinFromOranizationTree(id, posid string) error {
 	idi, _ := strconv.Atoi(id)
-	po, err := m.entC.OrganizationPosition.Query().Where(organizationposition.PositionID(posid)).Only(m.ctx)
+	po, err := m.entC.OrganizationPosition.Query().
+		Where(organizationposition.PositionID(posid),
+			organizationposition.HasOrganizationTreeWith(organizationtree.ID(idi))).
+		Only(m.ctx)
 	if po != nil && err == nil {
-		return m.entC.OrganizationPosition.Update().
-			Where(organizationposition.ID(po.ID)).
-			RemoveOrganizationTreeIDs(idi).
+		return m.entC.OrganizationTree.Update().
+			Where(organizationtree.ID(idi)).
+			RemoveOrganizationPositionIDs(po.ID).
 			Exec(m.ctx)
 	}
 	return errors.Wrap(err, fmt.Sprintf("%s not exist", posid))

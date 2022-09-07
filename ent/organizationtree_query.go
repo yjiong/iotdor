@@ -4,6 +4,7 @@ package ent
 
 import (
 	"context"
+	"database/sql/driver"
 	"fmt"
 	"math"
 
@@ -25,7 +26,6 @@ type OrganizationTreeQuery struct {
 	fields                    []string
 	predicates                []predicate.OrganizationTree
 	withOrganizationPositions *OrganizationPositionQuery
-	withFKs                   bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -76,7 +76,7 @@ func (otq *OrganizationTreeQuery) QueryOrganizationPositions() *OrganizationPosi
 		step := sqlgraph.NewStep(
 			sqlgraph.From(organizationtree.Table, organizationtree.FieldID, selector),
 			sqlgraph.To(organizationposition.Table, organizationposition.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, false, organizationtree.OrganizationPositionsTable, organizationtree.OrganizationPositionsColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, organizationtree.OrganizationPositionsTable, organizationtree.OrganizationPositionsColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(otq.driver.Dialect(), step)
 		return fromU, nil
@@ -353,18 +353,11 @@ func (otq *OrganizationTreeQuery) prepareQuery(ctx context.Context) error {
 func (otq *OrganizationTreeQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*OrganizationTree, error) {
 	var (
 		nodes       = []*OrganizationTree{}
-		withFKs     = otq.withFKs
 		_spec       = otq.querySpec()
 		loadedTypes = [1]bool{
 			otq.withOrganizationPositions != nil,
 		}
 	)
-	if otq.withOrganizationPositions != nil {
-		withFKs = true
-	}
-	if withFKs {
-		_spec.Node.Columns = append(_spec.Node.Columns, organizationtree.ForeignKeys...)
-	}
 	_spec.ScanValues = func(columns []string) ([]interface{}, error) {
 		return (*OrganizationTree).scanValues(nil, columns)
 	}
@@ -384,8 +377,11 @@ func (otq *OrganizationTreeQuery) sqlAll(ctx context.Context, hooks ...queryHook
 		return nodes, nil
 	}
 	if query := otq.withOrganizationPositions; query != nil {
-		if err := otq.loadOrganizationPositions(ctx, query, nodes, nil,
-			func(n *OrganizationTree, e *OrganizationPosition) { n.Edges.OrganizationPositions = e }); err != nil {
+		if err := otq.loadOrganizationPositions(ctx, query, nodes,
+			func(n *OrganizationTree) { n.Edges.OrganizationPositions = []*OrganizationPosition{} },
+			func(n *OrganizationTree, e *OrganizationPosition) {
+				n.Edges.OrganizationPositions = append(n.Edges.OrganizationPositions, e)
+			}); err != nil {
 			return nil, err
 		}
 	}
@@ -393,31 +389,33 @@ func (otq *OrganizationTreeQuery) sqlAll(ctx context.Context, hooks ...queryHook
 }
 
 func (otq *OrganizationTreeQuery) loadOrganizationPositions(ctx context.Context, query *OrganizationPositionQuery, nodes []*OrganizationTree, init func(*OrganizationTree), assign func(*OrganizationTree, *OrganizationPosition)) error {
-	ids := make([]int, 0, len(nodes))
-	nodeids := make(map[int][]*OrganizationTree)
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int]*OrganizationTree)
 	for i := range nodes {
-		if nodes[i].organization_tree_organization_positions == nil {
-			continue
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
 		}
-		fk := *nodes[i].organization_tree_organization_positions
-		if _, ok := nodeids[fk]; !ok {
-			ids = append(ids, fk)
-		}
-		nodeids[fk] = append(nodeids[fk], nodes[i])
 	}
-	query.Where(organizationposition.IDIn(ids...))
+	query.withFKs = true
+	query.Where(predicate.OrganizationPosition(func(s *sql.Selector) {
+		s.Where(sql.InValues(organizationtree.OrganizationPositionsColumn, fks...))
+	}))
 	neighbors, err := query.All(ctx)
 	if err != nil {
 		return err
 	}
 	for _, n := range neighbors {
-		nodes, ok := nodeids[n.ID]
+		fk := n.organization_tree_organization_positions
+		if fk == nil {
+			return fmt.Errorf(`foreign-key "organization_tree_organization_positions" is nil for node %v`, n.ID)
+		}
+		node, ok := nodeids[*fk]
 		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "organization_tree_organization_positions" returned %v`, n.ID)
+			return fmt.Errorf(`unexpected foreign-key "organization_tree_organization_positions" returned %v for node %v`, *fk, n.ID)
 		}
-		for i := range nodes {
-			assign(nodes[i], n)
-		}
+		assign(node, n)
 	}
 	return nil
 }

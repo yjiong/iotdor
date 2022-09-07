@@ -26,8 +26,7 @@ func (OrganizationTree) Fields() []ent.Field {
 // Edges of the OrganizationTree.
 func (OrganizationTree) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.To("organization_positions", OrganizationPosition.Type).
-			Unique(),
+		edge.To("organization_positions", OrganizationPosition.Type),
 	}
 }
 

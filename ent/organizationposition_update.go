@@ -145,19 +145,23 @@ func (opu *OrganizationPositionUpdate) AddPersonCharges(u ...*User) *Organizatio
 	return opu.AddPersonChargeIDs(ids...)
 }
 
-// AddOrganizationTreeIDs adds the "organization_tree" edge to the OrganizationTree entity by IDs.
-func (opu *OrganizationPositionUpdate) AddOrganizationTreeIDs(ids ...int) *OrganizationPositionUpdate {
-	opu.mutation.AddOrganizationTreeIDs(ids...)
+// SetOrganizationTreeID sets the "organization_tree" edge to the OrganizationTree entity by ID.
+func (opu *OrganizationPositionUpdate) SetOrganizationTreeID(id int) *OrganizationPositionUpdate {
+	opu.mutation.SetOrganizationTreeID(id)
 	return opu
 }
 
-// AddOrganizationTree adds the "organization_tree" edges to the OrganizationTree entity.
-func (opu *OrganizationPositionUpdate) AddOrganizationTree(o ...*OrganizationTree) *OrganizationPositionUpdate {
-	ids := make([]int, len(o))
-	for i := range o {
-		ids[i] = o[i].ID
+// SetNillableOrganizationTreeID sets the "organization_tree" edge to the OrganizationTree entity by ID if the given value is not nil.
+func (opu *OrganizationPositionUpdate) SetNillableOrganizationTreeID(id *int) *OrganizationPositionUpdate {
+	if id != nil {
+		opu = opu.SetOrganizationTreeID(*id)
 	}
-	return opu.AddOrganizationTreeIDs(ids...)
+	return opu
+}
+
+// SetOrganizationTree sets the "organization_tree" edge to the OrganizationTree entity.
+func (opu *OrganizationPositionUpdate) SetOrganizationTree(o *OrganizationTree) *OrganizationPositionUpdate {
+	return opu.SetOrganizationTreeID(o.ID)
 }
 
 // Mutation returns the OrganizationPositionMutation object of the builder.
@@ -207,25 +211,10 @@ func (opu *OrganizationPositionUpdate) RemovePersonCharges(u ...*User) *Organiza
 	return opu.RemovePersonChargeIDs(ids...)
 }
 
-// ClearOrganizationTree clears all "organization_tree" edges to the OrganizationTree entity.
+// ClearOrganizationTree clears the "organization_tree" edge to the OrganizationTree entity.
 func (opu *OrganizationPositionUpdate) ClearOrganizationTree() *OrganizationPositionUpdate {
 	opu.mutation.ClearOrganizationTree()
 	return opu
-}
-
-// RemoveOrganizationTreeIDs removes the "organization_tree" edge to OrganizationTree entities by IDs.
-func (opu *OrganizationPositionUpdate) RemoveOrganizationTreeIDs(ids ...int) *OrganizationPositionUpdate {
-	opu.mutation.RemoveOrganizationTreeIDs(ids...)
-	return opu
-}
-
-// RemoveOrganizationTree removes "organization_tree" edges to OrganizationTree entities.
-func (opu *OrganizationPositionUpdate) RemoveOrganizationTree(o ...*OrganizationTree) *OrganizationPositionUpdate {
-	ids := make([]int, len(o))
-	for i := range o {
-		ids[i] = o[i].ID
-	}
-	return opu.RemoveOrganizationTreeIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -486,7 +475,7 @@ func (opu *OrganizationPositionUpdate) sqlSave(ctx context.Context) (n int, err 
 	}
 	if opu.mutation.OrganizationTreeCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
 			Table:   organizationposition.OrganizationTreeTable,
 			Columns: []string{organizationposition.OrganizationTreeColumn},
@@ -497,31 +486,12 @@ func (opu *OrganizationPositionUpdate) sqlSave(ctx context.Context) (n int, err 
 					Column: organizationtree.FieldID,
 				},
 			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := opu.mutation.RemovedOrganizationTreeIDs(); len(nodes) > 0 && !opu.mutation.OrganizationTreeCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: true,
-			Table:   organizationposition.OrganizationTreeTable,
-			Columns: []string{organizationposition.OrganizationTreeColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: organizationtree.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := opu.mutation.OrganizationTreeIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
 			Table:   organizationposition.OrganizationTreeTable,
 			Columns: []string{organizationposition.OrganizationTreeColumn},
@@ -671,19 +641,23 @@ func (opuo *OrganizationPositionUpdateOne) AddPersonCharges(u ...*User) *Organiz
 	return opuo.AddPersonChargeIDs(ids...)
 }
 
-// AddOrganizationTreeIDs adds the "organization_tree" edge to the OrganizationTree entity by IDs.
-func (opuo *OrganizationPositionUpdateOne) AddOrganizationTreeIDs(ids ...int) *OrganizationPositionUpdateOne {
-	opuo.mutation.AddOrganizationTreeIDs(ids...)
+// SetOrganizationTreeID sets the "organization_tree" edge to the OrganizationTree entity by ID.
+func (opuo *OrganizationPositionUpdateOne) SetOrganizationTreeID(id int) *OrganizationPositionUpdateOne {
+	opuo.mutation.SetOrganizationTreeID(id)
 	return opuo
 }
 
-// AddOrganizationTree adds the "organization_tree" edges to the OrganizationTree entity.
-func (opuo *OrganizationPositionUpdateOne) AddOrganizationTree(o ...*OrganizationTree) *OrganizationPositionUpdateOne {
-	ids := make([]int, len(o))
-	for i := range o {
-		ids[i] = o[i].ID
+// SetNillableOrganizationTreeID sets the "organization_tree" edge to the OrganizationTree entity by ID if the given value is not nil.
+func (opuo *OrganizationPositionUpdateOne) SetNillableOrganizationTreeID(id *int) *OrganizationPositionUpdateOne {
+	if id != nil {
+		opuo = opuo.SetOrganizationTreeID(*id)
 	}
-	return opuo.AddOrganizationTreeIDs(ids...)
+	return opuo
+}
+
+// SetOrganizationTree sets the "organization_tree" edge to the OrganizationTree entity.
+func (opuo *OrganizationPositionUpdateOne) SetOrganizationTree(o *OrganizationTree) *OrganizationPositionUpdateOne {
+	return opuo.SetOrganizationTreeID(o.ID)
 }
 
 // Mutation returns the OrganizationPositionMutation object of the builder.
@@ -733,25 +707,10 @@ func (opuo *OrganizationPositionUpdateOne) RemovePersonCharges(u ...*User) *Orga
 	return opuo.RemovePersonChargeIDs(ids...)
 }
 
-// ClearOrganizationTree clears all "organization_tree" edges to the OrganizationTree entity.
+// ClearOrganizationTree clears the "organization_tree" edge to the OrganizationTree entity.
 func (opuo *OrganizationPositionUpdateOne) ClearOrganizationTree() *OrganizationPositionUpdateOne {
 	opuo.mutation.ClearOrganizationTree()
 	return opuo
-}
-
-// RemoveOrganizationTreeIDs removes the "organization_tree" edge to OrganizationTree entities by IDs.
-func (opuo *OrganizationPositionUpdateOne) RemoveOrganizationTreeIDs(ids ...int) *OrganizationPositionUpdateOne {
-	opuo.mutation.RemoveOrganizationTreeIDs(ids...)
-	return opuo
-}
-
-// RemoveOrganizationTree removes "organization_tree" edges to OrganizationTree entities.
-func (opuo *OrganizationPositionUpdateOne) RemoveOrganizationTree(o ...*OrganizationTree) *OrganizationPositionUpdateOne {
-	ids := make([]int, len(o))
-	for i := range o {
-		ids[i] = o[i].ID
-	}
-	return opuo.RemoveOrganizationTreeIDs(ids...)
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
@@ -1042,7 +1001,7 @@ func (opuo *OrganizationPositionUpdateOne) sqlSave(ctx context.Context) (_node *
 	}
 	if opuo.mutation.OrganizationTreeCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
 			Table:   organizationposition.OrganizationTreeTable,
 			Columns: []string{organizationposition.OrganizationTreeColumn},
@@ -1053,31 +1012,12 @@ func (opuo *OrganizationPositionUpdateOne) sqlSave(ctx context.Context) (_node *
 					Column: organizationtree.FieldID,
 				},
 			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := opuo.mutation.RemovedOrganizationTreeIDs(); len(nodes) > 0 && !opuo.mutation.OrganizationTreeCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: true,
-			Table:   organizationposition.OrganizationTreeTable,
-			Columns: []string{organizationposition.OrganizationTreeColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: organizationtree.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := opuo.mutation.OrganizationTreeIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
 			Table:   organizationposition.OrganizationTreeTable,
 			Columns: []string{organizationposition.OrganizationTreeColumn},

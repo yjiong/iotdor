@@ -110,12 +110,21 @@ var (
 		{Name: "unit_no", Type: field.TypeString, Nullable: true},
 		{Name: "longitude_and_latitude", Type: field.TypeString},
 		{Name: "summary", Type: field.TypeString, Nullable: true},
+		{Name: "organization_tree_organization_positions", Type: field.TypeInt, Nullable: true},
 	}
 	// OrganizationPositionsTable holds the schema information for the "organization_positions" table.
 	OrganizationPositionsTable = &schema.Table{
 		Name:       "organization_positions",
 		Columns:    OrganizationPositionsColumns,
 		PrimaryKey: []*schema.Column{OrganizationPositionsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "organization_positions_organization_trees_organization_positions",
+				Columns:    []*schema.Column{OrganizationPositionsColumns[9]},
+				RefColumns: []*schema.Column{OrganizationTreesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
 		Indexes: []*schema.Index{
 			{
 				Name:    "organizationposition_position_id",
@@ -134,21 +143,12 @@ var (
 		{Name: "left", Type: field.TypeInt},
 		{Name: "right", Type: field.TypeInt},
 		{Name: "level", Type: field.TypeInt},
-		{Name: "organization_tree_organization_positions", Type: field.TypeInt, Nullable: true},
 	}
 	// OrganizationTreesTable holds the schema information for the "organization_trees" table.
 	OrganizationTreesTable = &schema.Table{
 		Name:       "organization_trees",
 		Columns:    OrganizationTreesColumns,
 		PrimaryKey: []*schema.Column{OrganizationTreesColumns[0]},
-		ForeignKeys: []*schema.ForeignKey{
-			{
-				Symbol:     "organization_trees_organization_positions_organization_positions",
-				Columns:    []*schema.Column{OrganizationTreesColumns[8]},
-				RefColumns: []*schema.Column{OrganizationPositionsColumns[0]},
-				OnDelete:   schema.SetNull,
-			},
-		},
 	}
 	// UsersColumns holds the columns for the "users" table.
 	UsersColumns = []*schema.Column{
@@ -260,7 +260,7 @@ func init() {
 	DevicesTable.ForeignKeys[0].RefTable = GatewaysTable
 	DevicesTable.ForeignKeys[1].RefTable = OrganizationPositionsTable
 	GatewaysTable.ForeignKeys[0].RefTable = GroupsTable
-	OrganizationTreesTable.ForeignKeys[0].RefTable = OrganizationPositionsTable
+	OrganizationPositionsTable.ForeignKeys[0].RefTable = OrganizationTreesTable
 	GroupUsersTable.ForeignKeys[0].RefTable = GroupsTable
 	GroupUsersTable.ForeignKeys[1].RefTable = UsersTable
 	GroupAdminsTable.ForeignKeys[0].RefTable = GroupsTable
