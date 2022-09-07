@@ -99,19 +99,19 @@ func (dtr *IotdorTran) getTreePosition(oes []*ent.OrganizationTree) []map[string
 		ps, _ := dtr.ListOrganizationTreePositions(o)
 		for _, p := range ps {
 			rtps = append(rtps, map[string]any{
-				"PositionID":           p.PositionID,
-				"Address":              p.Address,
-				"Floor":                p.Floor,
-				"UnitNo":               p.UnitNo,
-				"LongitudeAndLatitude": p.LongitudeAndLatitude,
-				"Summary":              p.Summary,
+				"position_id":            p.PositionID,
+				"address":                p.Address,
+				"floor":                  p.Floor,
+				"unit_no":                p.UnitNo,
+				"longitude_and_latitude": p.LongitudeAndLatitude,
+				"summary":                p.Summary,
 			})
 		}
 		rts = append(rts, map[string]any{
-			"ID":        o.ID,
-			"ParentID":  o.ParentID,
-			"Name":      o.Name,
-			"Level":     o.Level,
+			"id":        o.ID,
+			"parent_id": o.ParentID,
+			"name":      o.Name,
+			"level":     o.Level,
 			"positions": rtps,
 		})
 	}

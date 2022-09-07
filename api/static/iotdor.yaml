@@ -637,7 +637,7 @@ paths:
         - application/json
       tags:
         - 系统组织结构目录树信息
-      summary:  添加组织结构的节点(添加位于同一层的兄弟节点)
+      summary:  添加组织结构的节点(添加位于同一层且同一父节点的兄弟节点)
       requestBody:
         content:
           application/json:
