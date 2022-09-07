@@ -33,7 +33,7 @@ func (m *Manage) CreateOrganizationPosition(o ent.OrganizationPosition) error {
 }
 
 // UpdateOrganizationPosition .....
-func (m *Manage) UpdateOrganizationPosition(posid string, o ent.OrganizationPosition) error {
+func (m *Manage) UpdateOrganizationPosition(o ent.OrganizationPosition) error {
 	return m.entC.OrganizationPosition.Update().
 		Where(organizationposition.PositionID(o.PositionID)).
 		SetFloor(o.Floor).

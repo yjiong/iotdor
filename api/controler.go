@@ -46,11 +46,11 @@ type OrganiPositionControler interface {
 	OrganizationPosition() ([]*ent.OrganizationPosition, error)
 	ListOrganizationPositionDevices(*ent.OrganizationPosition) ([]*ent.Device, error)
 	CreateOrganizationPosition(o ent.OrganizationPosition) error
-	UpdateOrganizationPosition(oName string, o ent.OrganizationPosition) error
-	DeleteOrganizationPosition(oName string) error
-	AddDeviceToOrganizationPosition(oName, devid string) error
+	UpdateOrganizationPosition(o ent.OrganizationPosition) error
+	DeleteOrganizationPosition(posid string) error
+	AddDeviceToOrganizationPosition(posid, devid string) error
 	RemoveDeviceFromOrganizationPosition(devid string) error
-	QueryOrganizationPositionDevices(oName string) ([]string, error)
+	QueryOrganizationPositionDevices(posid string) ([]string, error)
 }
 
 // ManageAPI ...

@@ -799,7 +799,7 @@ paths:
           description: update organization position info failed 
           schema:
             type: object
-  /config/sys/delete_organization_position/{posid}:
+  /config/sys/organization_position/{posid}:
     delete:
       security:
         - api_key: []
@@ -809,10 +809,10 @@ paths:
         - 系统组织结构地理位置与设备关联信息
       summary:  删除组织结构地理位置信息
       parameters:
-        description: 组织结构地理位置的名称
-        name: posid
-        in: path
-        required: true
+        - description: 组织结构地理位置的名称
+          name: posid
+          in: path
+          required: true
       responses:
         '200':
           description: ok

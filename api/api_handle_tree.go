@@ -54,14 +54,14 @@ func (dtr *IotdorTran) organizationTree(w http.ResponseWriter, r *http.Request) 
 		var ot ent.OrganizationTree
 		decodeJSON(r, &ot)
 		if err = dtr.CreateOrganizationSubNode(ot); err == nil {
-			respJSON(w, map[string]string{"msg": "create organizationtree successful"})
+			respJSON(w, map[string]string{"msg": "create organizationTree successful"})
 			return
 		}
 	case "PUT":
 		var ot ent.OrganizationTree
 		decodeJSON(r, &ot)
 		if err = dtr.UpdateOrganizationTree(ot); err == nil {
-			respJSON(w, map[string]string{"msg": "update organizationtree successful"})
+			respJSON(w, map[string]string{"msg": "update organizationTree successful"})
 			return
 		}
 	}
@@ -77,7 +77,7 @@ func (dtr *IotdorTran) addOrganizationTree(w http.ResponseWriter, r *http.Reques
 	}
 	decodeJSON(r, &ot)
 	if err = dtr.AddOrganizationNode(ot.ID, ot.Name, ot.LeftOrRight); err == nil {
-		respJSON(w, map[string]string{"msg": "add organizationtree successful"})
+		respJSON(w, map[string]string{"msg": "add organizationTree successful"})
 		return
 	}
 	respError(http.StatusOK, w, err)
@@ -88,7 +88,7 @@ func (dtr *IotdorTran) organizationTreeDel(w http.ResponseWriter, r *http.Reques
 	if ids, ok := mux.Vars(r)["id"]; ok {
 		idint, _ := strconv.Atoi(ids)
 		if err = dtr.DeleteOrganizationTree(idint); err == nil {
-			respJSON(w, map[string]string{"msg": "delete organizationtree successful"})
+			respJSON(w, map[string]string{"msg": "delete organizationTree successful"})
 			return
 		}
 	} else {
@@ -106,17 +106,17 @@ func (dtr *IotdorTran) relatePositionToOrganizationTree(w http.ResponseWriter, r
 		pidint, _ := strconv.Atoi(pids)
 		if r.Method == "POST" {
 			if err = dtr.RelatePositioinToOranizationTree(idint, pidint); err == nil {
-				respJSON(w, map[string]string{"msg": "relate positoin to organizationtree successful"})
+				respJSON(w, map[string]string{"msg": "relate positoin to organizationTree successful"})
 				return
 			}
 		} else {
 			if err = dtr.RemovePositioinFromOranizationTree(idint, pidint); err == nil {
-				respJSON(w, map[string]string{"msg": "remove positoin from organizationtree successful"})
+				respJSON(w, map[string]string{"msg": "remove positoin from organizationTree successful"})
 				return
 			}
 		}
 	} else {
-		err = errors.New("error: need organizationtree id and postion posid")
+		err = errors.New("error: need organizationTree id and postion posid")
 	}
 	respError(http.StatusOK, w, err)
 }
