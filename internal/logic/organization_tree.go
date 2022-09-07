@@ -12,7 +12,9 @@ import (
 
 // OrganizationTree ....
 func (m *Manage) OrganizationTree() (eos []*ent.OrganizationTree, err error) {
-	return m.entC.OrganizationTree.Query().All(m.ctx)
+	return m.entC.OrganizationTree.Query().
+		Order(ent.Asc(organizationtree.FieldLeft)).
+		All(m.ctx)
 }
 
 // ListOrganizationTreePositions ....
@@ -32,7 +34,9 @@ func (m *Manage) SubOrganizationFromID(id int) (eos []*ent.OrganizationTree, err
 		return nil, err
 	}
 	return m.entC.OrganizationTree.Query().
-		Where(organizationtree.LeftGT(left), organizationtree.RightLT(right)).All(m.ctx)
+		Where(organizationtree.LeftGT(left), organizationtree.RightLT(right)).
+		Order(ent.Asc(organizationtree.FieldLeft)).
+		All(m.ctx)
 }
 
 // AddOrganizationNode  add for same level at courrent node left or right

@@ -7,6 +7,7 @@ import (
 	"github.com/yjiong/iotdor/ent/device"
 	"github.com/yjiong/iotdor/ent/organizationposition"
 	"github.com/yjiong/iotdor/ent/user"
+	"github.com/yjiong/iotdor/utils"
 )
 
 // OrganizationPosition ...
@@ -14,10 +15,16 @@ func (m *Manage) OrganizationPosition() ([]*ent.OrganizationPosition, error) {
 	return m.entC.OrganizationPosition.Query().All(m.ctx)
 }
 
+// ListOrganizationPositionDevices ....
+func (m *Manage) ListOrganizationPositionDevices(eo *ent.OrganizationPosition) ([]*ent.Device, error) {
+	return eo.QueryDevices().All(m.ctx)
+}
+
 // CreateOrganizationPosition .....
 func (m *Manage) CreateOrganizationPosition(o ent.OrganizationPosition) error {
+	opid := utils.GetSnowflakeID()
 	return m.entC.OrganizationPosition.Create().
-		SetPositionID(o.PositionID).
+		SetPositionID(opid).
 		SetFloor(o.Floor).
 		SetAddress(o.Address).
 		SetUnitNo(o.UnitNo).

@@ -1130,22 +1130,28 @@ components:
       properties:
         position_id:
           type: string
-          description: 组织结构地理位置的名称(需唯一)
+          description: 组织结构地理位置的ID("创建时，置空即可，由系统后端生成")
+          example: ""
         address:
           type: string
           description: 详细地址
+          example: 无锡市新区太湖大道XX号
         floor:
           type: string
           description: 楼层
+          example: 5
         unit_no:
           type: string
           description: 单元号(门牌号之类的)
+          example: 501
         longitude_and_latituude:    
           type: string
           description: 经纬度
+          example: 120.28429,31.52853
         summary:
           type: string
           description: 简介备注
+          example: 二比程序员宅基地
   securitySchemes:
     #xxxstore_auth:
       #type: oauth2

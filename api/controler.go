@@ -43,8 +43,8 @@ type OrganiTreeControler interface {
 
 // OrganiPositionControler ....
 type OrganiPositionControler interface {
-	// OrganizationPosition ....
-	//OrganizationPosition() ([]ent.OrganizationPosition, error)
+	OrganizationPosition() ([]*ent.OrganizationPosition, error)
+	ListOrganizationPositionDevices(*ent.OrganizationPosition) ([]*ent.Device, error)
 	CreateOrganizationPosition(o ent.OrganizationPosition) error
 	UpdateOrganizationPosition(oName string, o ent.OrganizationPosition) error
 	DeleteOrganizationPosition(oName string) error

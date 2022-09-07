@@ -68,6 +68,13 @@ func NewIotdorTran(m ManageAPI, p string) *IotdorTran {
 	}
 }
 
+// Context ....
+type Context struct {
+	Request *http.Request
+	Writer  http.ResponseWriter
+	mu      sync.RWMutex
+}
+
 // SetTR set http.Transport from websocket conn
 func (dtr *IotdorTran) SetTR(sn string, wsc *websocket.Conn) {
 	dtr.Mu.Lock()
