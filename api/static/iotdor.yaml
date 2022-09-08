@@ -346,11 +346,12 @@ paths:
         - 当前数据
       summary: 获取设备实时数据
       parameters:
-        - type: string
-          description: devid 设备ID
+        - description: devid 设备ID
           name: devid
           in: path
           required: true
+          schema:
+            type: string
       responses:
         '200':
           description: ok
@@ -372,11 +373,12 @@ paths:
         - 历史数据与统计数据
       summary: 获取设备历史数据
       parameters:
-        - type: string
-          description: devid 设备ID
+        - description: devid 设备ID
           name: devid
           in: path
-          requirkd: true
+          required: true
+          schema:
+            type: string
       requestBody:
         content:
           application/json:
@@ -487,6 +489,8 @@ paths:
           name: uname
           in: path
           required: true
+          schema:
+            type: string
       responses:
         '200':
           description: ok
@@ -508,11 +512,13 @@ paths:
         - 系统组织结构目录树信息
       summary:  获取系统组织结构目录某节点下的信息
       parameters:
-        - type: integer
-          description: 节点id
+        - description: 节点id
           name: id
           in: path
           required: true
+          schema:
+            type: integer
+            format: int64
       responses:
         '200':
           description: ok
@@ -535,11 +541,13 @@ paths:
         - 系统组织结构目录树信息
       summary:  删除组织结构目录树信息
       parameters:
-        - type: integer
-          description: 将要删除的组织结构目录树的id
+        - description: 将要删除的组织结构目录树的id
           name: id
           in: path
           required: true
+          schema:
+            type: integer
+            format: int64
       responses:
         '200':
           description: ok
@@ -669,15 +677,17 @@ paths:
       summary:  关联组织结构目录树和组织机构地理位置
       parameters:
         - description: 关联组织结构目录树的ID(需存在)
-          type: string
           name: id
           in: path
           required: true
+          schema:
+            type: string
         - description: 关联组织结构地理位置position_id(需在列表内存在，并且尚未关联)
-          type: string
           name: posid
           in: path
           required: true
+          schema:
+            type: string
       responses:
         '200':
           description: ok
@@ -701,15 +711,17 @@ paths:
       summary:  除移已关联组织结构的地理位置
       parameters:
         - description: 要操作的关联组织结构目录树的ID(需存在)
-          type: string
           name: id
           in: path
           required: true
+          schema:
+            type: string
         - description: 除移已关联组织结构的地理位置的position_id
-          type: string
           name: posid
           in: path
           required: true
+          schema:
+            type: string
       responses:
         '200':
           description: ok
@@ -813,6 +825,8 @@ paths:
           name: posid
           in: path
           required: true
+          schema:
+            type: string
       responses:
         '200':
           description: ok
@@ -836,16 +850,18 @@ paths:
         - 系统组织结构地理位置与设备关联信息
       summary:  设置组织结构地理位置负责人
       parameters:
-        - description: 组织结构地理位置名
-          type: string
+        - description: 组织结构地理位置posid
           name: posid
           in: path
           required: true
+          schema:
+            type: string
         - description: 设置组织结构地理位置负责人(需在用户内已经存在的)
-          type: string
           name: uname
           in: path
           required: true
+          schema:
+            type: string
       responses:
         '200':
           description: ok
@@ -859,7 +875,6 @@ paths:
           description: add organization person charge failed
           schema:
             type: object
-  /config/sys/remove_organization_position_person_charge/{uname}:
     delete:
       security:
         - api_key: []
@@ -869,11 +884,18 @@ paths:
         - 系统组织结构地理位置与设备关联信息
       summary:  删除组织结构地理位置负责人
       parameters:
-        - description: 删除组织结构地理位置负责人
-          type: string
+        - description: 组织结构地理位置posid
+          name: posid
+          in: path
+          required: true
+          schema:
+            type: string
+        - description: 删除组织结构地理位置负责人uname
           name: uname
           in: path
           required: true
+          schema:
+            type: string
       responses:
         '200':
           description: ok
@@ -898,10 +920,11 @@ paths:
       summary:  获取已关联组织结构地理位置的设备
       parameters:
         - description: 获取已关联组织结构地理位置的设备
-          type: string
           name: posid
           in: path
           required: true
+          schema:
+            type: string
       responses:
         '200':
           description: ok
@@ -915,7 +938,7 @@ paths:
           description: get organization device faied
           schema:
             type: object
-  /config/sys/add_device_to_organization_position/{posid}/{devid}:
+  /config/sys/organization_position_and_device/{posid}/{devid}:
     post:
       security:
         - api_key: []
@@ -926,15 +949,17 @@ paths:
       summary:  关联组织结构地理位置的设备
       parameters:
         - description: 关联组织结构地理位置的ID(需存在)
-          type: string
           name: posid
           in: path
           required: true
+          schema:
+            type: string
         - description: 关联组织结构地理位置的设备(需在设备列表内存在，并且尚未关联)
-          type: string
           name: devid
           in: path
           required: true
+          schema:
+            type: string
       responses:
         '200':
           description: ok
@@ -948,7 +973,6 @@ paths:
           description: add organization device
           schema:
             type: object
-  /config/sys/organization_position/{devid}:
     delete:
       security:
         - api_key: []
@@ -958,11 +982,18 @@ paths:
         - 系统组织结构地理位置与设备关联信息
       summary:  除移已关联组织结构地理位置的设备
       parameters:
+        - description: 关联组织结构地理位置的ID(需存在)
+          name: posid
+          in: path
+          required: true
+          schema:
+            type: string
         - description: 除移已关联组织结构地理位置的设备
-          type: string
           name: devid
           in: path
           required: true
+          schema:
+            type: string
       responses:
         '200':
           description: ok

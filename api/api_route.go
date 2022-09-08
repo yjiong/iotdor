@@ -18,7 +18,7 @@ func configRoute(mr *mux.Router, dtr *IotdorTran) {
 
 	mrSysRt.PathPrefix("/organization_position").HandlerFunc(dtr.organizationPosition).Methods("GET", "POST", "PUT")
 	mrSysRt.PathPrefix("/organization_position/{posid}").HandlerFunc(dtr.organizationPositionDel).Methods("DELETE")
-	mrSysRt.PathPrefix("/relate_position_to_organization_position/{id}/{posid}").HandlerFunc(dtr.addDeviceToOrganizationPosition).Methods("POST", "DELETE")
+	mrSysRt.PathPrefix("/organization_position_and_device/{posid}/{devid}").HandlerFunc(dtr.addDeviceToOrganizationPosition).Methods("POST", "DELETE")
 }
 
 func gatewayRoute(mr *mux.Router, dtr *IotdorTran) {

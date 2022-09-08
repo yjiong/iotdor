@@ -142,6 +142,11 @@ func (m *Manage) UpdateOrganizationTree(o ent.OrganizationTree) error {
 
 // DeleteOrganizationTree ...
 func (m *Manage) DeleteOrganizationTree(id int) error {
+	return m.deleteOrganizationTree(id, true)
+}
+
+// DeleteOrganizationTree ...
+func (m *Manage) deleteOrganizationTree(id int, onlyOne bool) error {
 	tx, err := m.entC.Tx(m.ctx)
 	var left, right int
 	if err != nil {
@@ -154,6 +159,9 @@ func (m *Manage) DeleteOrganizationTree(id int) error {
 		right = op.Right
 	} else {
 		return err
+	}
+	if onlyOne && right > (left+1) {
+		return errors.New("this node has sub node , remove sub node first")
 	}
 	if i, err := tx.OrganizationTree.Delete().
 		Where(organizationtree.LeftGTE(left), organizationtree.RightLTE(right)).
