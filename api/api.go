@@ -33,7 +33,7 @@ var subServerPort = "8888"
 func APIserver(ma ManageAPI, port string) {
 	dtr := NewIotdorTran(ma, subServerPort)
 	router := mux.NewRouter()
-	router.PathPrefix("/api/login").HandlerFunc(dtr.rawlogin)
+	router.HandleFunc("/api/login", dtr.rawlogin)
 	//router.PathPrefix("/api/ws/transport").HandlerFunc(dtr.tranSport)
 	configRoute(router.PathPrefix("/config").Subrouter(), dtr)
 	gatewayRoute(router.PathPrefix("/gateway").Subrouter(), dtr)

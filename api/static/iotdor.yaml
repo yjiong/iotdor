@@ -840,7 +840,7 @@ paths:
           description: remove organization position info failed 
           schema:
             type: object
-  /config/sys/set_organization_position_person_charge/{posid}/{uname}:
+  /config/sys/organization_position_person_charge/{posid}/{uname}:
     post:
       security:
         - api_key: []
