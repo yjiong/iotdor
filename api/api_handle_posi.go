@@ -9,26 +9,27 @@ import (
 )
 
 func (dtr *IotdorTran) getPositionDevice(oes []*ent.OrganizationPosition) []map[string]any {
-	rts := make([]map[string]any, 0)
-	rtps := make([]map[string]any, 0)
+	rps := make([]map[string]any, 0)
+	devs := make([]map[string]any, 0)
 	for _, o := range oes {
 		ps, _ := dtr.ListOrganizationPositionDevices(o)
-		rtps = rtps[:0]
+		devs = devs[:0]
 		for _, p := range ps {
-			rtps = append(rtps, map[string]any{
+			devs = append(devs, map[string]any{
 				"devid": p.DevID,
 			})
 		}
-		rts = append(rts, map[string]any{
+		rps = append(rps, map[string]any{
 			"position_id":            o.PositionID,
 			"address":                o.Address,
 			"floor":                  o.Floor,
 			"unit_no":                o.UnitNo,
 			"longitude_and_latitude": o.LongitudeAndLatitude,
 			"summary":                o.Summary,
+			"devices":                devs,
 		})
 	}
-	return rts
+	return rps
 }
 
 func (dtr *IotdorTran) organizationPosition(w http.ResponseWriter, r *http.Request) {
@@ -71,6 +72,28 @@ func (dtr *IotdorTran) organizationPositionDel(w http.ResponseWriter, r *http.Re
 	respError(http.StatusOK, w, err)
 }
 
+func (dtr *IotdorTran) personChargeOrganizationPosition(w http.ResponseWriter, r *http.Request) {
+	var err error
+	pid, iok := mux.Vars(r)["posid"]
+	uname, piok := mux.Vars(r)["uname"]
+	if iok && piok {
+		if r.Method == "POST" {
+			if err = dtr.SetPersonChargeWithOrganizationPosition(pid, uname); err == nil {
+				respJSON(w, map[string]string{"msg": "set person in charge to OrganizationPosition successful"})
+				return
+			}
+		} else {
+			if err = dtr.RemovePersonChargeWithOrganizationPosition(pid, uname); err == nil {
+				respJSON(w, map[string]string{"msg": "remove charge from organizationtree successful"})
+				return
+			}
+		}
+	} else {
+		err = errors.New("error: need OrganizationPosition posid and and user name")
+	}
+	respError(http.StatusOK, w, err)
+}
+
 func (dtr *IotdorTran) addDeviceToOrganizationPosition(w http.ResponseWriter, r *http.Request) {
 	var err error
 	pid, iok := mux.Vars(r)["posid"]
@@ -82,7 +105,7 @@ func (dtr *IotdorTran) addDeviceToOrganizationPosition(w http.ResponseWriter, r 
 				return
 			}
 		} else {
-			if err = dtr.RemoveDeviceFromOrganizationPosition(did); err == nil {
+			if err = dtr.RemoveDeviceFromOrganizationPosition(pid, did); err == nil {
 				respJSON(w, map[string]string{"msg": "remove device from organizationtree successful"})
 				return
 			}

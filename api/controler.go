@@ -49,7 +49,9 @@ type OrganiPositionControler interface {
 	UpdateOrganizationPosition(o ent.OrganizationPosition) error
 	DeleteOrganizationPosition(posid string) error
 	AddDeviceToOrganizationPosition(posid, devid string) error
-	RemoveDeviceFromOrganizationPosition(devid string) error
+	SetPersonChargeWithOrganizationPosition(posid, uname string) error
+	RemovePersonChargeWithOrganizationPosition(posid, uname string) error
+	RemoveDeviceFromOrganizationPosition(posid, devid string) error
 	QueryOrganizationPositionDevices(posid string) ([]string, error)
 }
 

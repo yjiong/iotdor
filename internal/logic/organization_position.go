@@ -3,6 +3,7 @@ package logic
 import (
 	"fmt"
 
+	"github.com/pkg/errors"
 	"github.com/yjiong/iotdor/ent"
 	"github.com/yjiong/iotdor/ent/device"
 	"github.com/yjiong/iotdor/ent/organizationposition"
@@ -82,15 +83,18 @@ func (m *Manage) AddDeviceToOrganizationPosition(posid, devid string) error {
 }
 
 // RemoveDeviceFromOrganizationPosition .....
-func (m *Manage) RemoveDeviceFromOrganizationPosition(devid string) error {
-	var rerr error
-	d, derr := m.entC.Device.Query().Where(device.DevID(devid)).Only(m.ctx)
-	if derr == nil {
-		rerr = d.Update().ClearOrganizationPosition().Exec(m.ctx)
-	} else {
-		rerr = derr
+func (m *Manage) RemoveDeviceFromOrganizationPosition(posid, devid string) error {
+	d, err := m.entC.Device.Query().
+		Where(device.DevID(devid),
+			device.HasOrganizationPositionWith(organizationposition.PositionID(posid))).
+		Only(m.ctx)
+	if d != nil && err == nil {
+		return m.entC.OrganizationPosition.Update().
+			Where(organizationposition.PositionID(posid)).
+			RemoveDeviceIDs(d.ID).
+			Exec(m.ctx)
 	}
-	return rerr
+	return errors.Wrap(err, fmt.Sprintf("%s not exist", devid))
 }
 
 // SetPersonChargeWithOrganizationPosition .....
