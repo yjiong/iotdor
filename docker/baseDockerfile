@@ -1,8 +1,8 @@
-FROM alpine
+FROM alpine:latest AS base
 MAINTAINER yjiong@msn.com
 
-RUN echo "http://mirrors.aliyun.com/alpine/latest-stable/main/" > /etc/apk/repositories && \
-    echo "http://mirrors.aliyun.com/alpine/latest-stable/community/" >> /etc/apk/repositories
+RUN echo "http://mirrors.ustc.edu.cn/alpine/latest-stable/main/" > /etc/apk/repositories && \
+    echo "http://mirrors.ustc.edu.cn/alpine/latest-stable/community/" >> /etc/apk/repositories
 
 RUN apk update && \
     apk add --no-cache ca-certificates && \
@@ -10,3 +10,4 @@ RUN apk update && \
     cp -rf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 
 ENV LANG=C.UTF-8
+

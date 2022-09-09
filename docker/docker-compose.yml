@@ -1,14 +1,14 @@
 version: '3'
 services:
-  #base:
-    #build:
-      #context: ./
-      #dockerfile: ./baseDockerfile
-    #image: base
-  iotdor:
+  base:
     build:
       context: ./
-      dockerfile: ./iotdorDockerfile
+      dockerfile: ./baseDockerfile
+    image: base
+  iotdor:
+    build:
+      context: ../
+      dockerfile: ./docker/iotdorDockerfile
     restart: always
     image: iotdor
     container_name: iotdor
@@ -25,9 +25,9 @@ services:
       BROKER_PASSWORD: yj12345
       MYSQL_USER: root
       MYSQL_PASSWORD: yaojiong
-      SERVER_PORT: 8899
+      SERVER_PORT: 8888
     ports:
-      - "8899:8899"
+      - "8888:8888"
 
   mosquitto:
     build:

@@ -6,7 +6,6 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	"io"
 	"io/fs"
 	"net"
 	"net/http"
@@ -39,7 +38,7 @@ func APIserver(ma ManageAPI, port string) {
 	gatewayRoute(router.PathPrefix("/gateway").Subrouter(), dtr)
 	deviceRoute(router.PathPrefix("/device").Subrouter(), dtr)
 	PprofGroup(router)
-	router.PathPrefix("/").Handler(http.FileServer(wus))
+	router.PathPrefix("/").Handler(http.FileServer(http.FS(wus)))
 	log.Infof("iotdor start apt server at port:%s", port)
 	http.ListenAndServe(fmt.Sprintf(":%s", port), router)
 }
@@ -200,27 +199,12 @@ type webui struct {
 	path    string
 }
 
-func (w *webui) Open(name string) (http.File, error) {
+func (w *webui) Open(name string) (fs.File, error) {
 	if filepath.Separator != '/' && strings.ContainsRune(name, filepath.Separator) {
 		return nil, errors.New("http: invalid character in file path")
 	}
 	fullName := filepath.Join(w.path, filepath.FromSlash(path.Clean("/"+name)))
-	file, err := w.wuEmbed.Open(fullName)
-	wf := &WebuiFile{
-		File: file,
-	}
-	return wf, err
-}
-
-// WebuiFile ......
-type WebuiFile struct {
-	io.Seeker
-	fs.File
-}
-
-// Readdir ......
-func (*WebuiFile) Readdir(count int) ([]fs.FileInfo, error) {
-	return nil, nil
+	return w.wuEmbed.Open(fullName)
 }
 
 var wus = &webui{

@@ -3,16 +3,15 @@ MAINTAINER yjiong@msn.com
 
 VOLUME /var/lib/mysql /run/mysqld
 
-RUN apk update && \
-    apk add --no-cache mysql mysql-client && \
+RUN apk add --no-cache mysql mysql-client && \
     rm -rf /var/cache/apk/* \
-    rm -rf /etc/apk/repositories && \
-    cp -rf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+    rm -rf /etc/apk/repositories
 
 ADD mysqlup.sh /mysqlup
 ADD my.cnf /etc
 RUN chmod 755 /mysqlup
 
+ENV LANG=C.UTF-8
 ENV MYSQL_DATABASE=iotd
 ENV MYSQL_USER=root
 ENV MYSQL_PASSWORD=root

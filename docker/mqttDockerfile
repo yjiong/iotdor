@@ -1,10 +1,8 @@
 FROM base
 MAINTAINER yjiong@msn.com
 
-RUN apk update && \
-    apk add --no-cache mosquitto && \
-    rm -rf /etc/apk/repositories && \
-    cp -rf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+RUN apk add --no-cache mosquitto && \
+    rm -rf /etc/apk/repositories
 
 ENV LANG=C.UTF-8
 ENV USER=yj
