@@ -21,13 +21,12 @@ services:
       - mysql
       - redis
     environment:
-      BROKER_USER: yj
-      BROKER_PASSWORD: yj12345
-      MYSQL_USER: root
-      MYSQL_PASSWORD: yaojiong
       SERVER_PORT: 8888
     ports:
       - "8888:8888"
+    volumes:
+      - "/etc/iotdor:/etc/iotdor"
+      - "/var/iotdor/log:/iot/log"
 
   mosquitto:
     build:
@@ -54,7 +53,7 @@ services:
       - "3306:3306"
     environment:
       TZ: Asia/Shanghai
-      MYSQL_DATABASE: iotd
+      MYSQL_DATABASE: iotdor
       MYSQL_USER: root
       MYSQL_PASSWORD: yaojiong
     volumes:

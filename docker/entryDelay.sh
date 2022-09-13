@@ -5,6 +5,7 @@
 # mail: 4418229@qq.com
 # Created Time: 2021-01-15 22:57:08
 #########################################################################
+test -e /etc/iotdor/config.yml || cp config.yml /etc/iotdor/
 : ${SLEEP_SECOND:=1}
 
 wait_for() {

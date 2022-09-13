@@ -5,9 +5,10 @@ RUN apk add --no-cache redis && \
     rm -rf /etc/apk/repositories
 
 ENV LANG=C.UTF-8
-ENV PASSWORD=yaojiong
+ENV REDIS_PASSWORD=yaojiong
 
 ADD redis.conf /etc/redis/redis.conf
+RUN sed -i 's/yaojiong/'"${REDIS_PASSWORD}"'/' /etc/redis/redis.conf 
 
 RUN { \
         echo '#!/bin/sh'; \

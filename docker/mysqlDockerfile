@@ -12,7 +12,7 @@ ADD my.cnf /etc
 RUN chmod 755 /mysqlup
 
 ENV LANG=C.UTF-8
-ENV MYSQL_DATABASE=iotd
+ENV MYSQL_DATABASE=iotdor
 ENV MYSQL_USER=root
 ENV MYSQL_PASSWORD=root
 

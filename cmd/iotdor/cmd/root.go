@@ -3,6 +3,7 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -11,8 +12,6 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	//"github.com/spf13/viper"
-	//"github.com/yjiong/iotdor/api"
 )
 
 // BASEPATH execfile path
@@ -37,25 +36,17 @@ func init() {
 	eb, _ := exec.LookPath(os.Args[0])
 	absp, _ := filepath.Abs(eb)
 	BASEPATH = filepath.Dir(absp)
-	cobra.OnInitialize(initConfig)
+	if err := initDataSrcAndDBconfig(); err != nil {
+		log.Fatalln(err)
+	}
 	rootCmd.PersistentFlags().IntVarP(&logLevel, "log-level", "L", 4, "debug=5, info=4, error=2, fatal=1, panic=0")
-	rootCmd.PersistentFlags().StringVarP(&cfgtype, "configType", "t", "sqlite", "path to configuration file (optional)")
-	//rootCmd.PersistentFlags().StringVarP(&dataDBpath, "databasePath", "d", filepath.Join(BASEPATH, "db"), "set database path")
-
-	// bind flag to config vars
-	//viper.BindPFlag("general.log_level", rootCmd.PersistentFlags().Lookup("log-level"))
-
-	// defaults
-	//viper.SetDefault("postgresql.automigrate", true)
-	//viper.SetDefault("postgresql.dsn", "postgres://localhost/postgresql?sslmode=disable")
-
 	rootCmd.AddCommand(versionCmd)
 	rootCmd.AddCommand(
 		&cobra.Command{
 			Use:   "config",
 			Short: "Print the config",
 			Run: func(cmd *cobra.Command, args []string) {
-				prettyf("")
+				prettyf(configViper.AllSettings())
 			},
 		},
 	)
@@ -69,30 +60,6 @@ func Execute(v string) {
 	}
 }
 
-func initConfig() {
-	if cfgtype == "json" {
-		v := viper.New()
-		v.SetConfigType("json")
-		for f, s := range map[string]interface{}{
-			"updataconf": "",
-		} {
-			v.SetConfigName(f)
-			if err := v.ReadInConfig(); err != nil {
-				switch err.(type) {
-				case viper.ConfigFileNotFoundError:
-					log.Warning("No configuration file found, using defaults.")
-				default:
-					log.WithError(err).Fatal("read configuration file error")
-				}
-			}
-			if err := v.Unmarshal(s); err != nil {
-				log.WithError(err).Fatal("unmarshal config error")
-			}
-			//log.Infoln(s)
-		}
-	}
-}
-
 func prettyf(v ...interface{}) {
 	for _, s := range v {
 		jb, _ := json.Marshal(s)
@@ -100,4 +67,31 @@ func prettyf(v ...interface{}) {
 		pj, _ := sjb.EncodePretty()
 		fmt.Println(string(pj))
 	}
+}
+
+func initDataSrcAndDBconfig() error {
+	conyml := filepath.Join(BASEPATH, "config.yml")
+	sysconyml := filepath.Join("/etc/iotdor", "config.yml")
+	var df *os.File
+	var err error
+	if _, err = os.Stat(sysconyml); err != nil {
+		if os.IsNotExist(err) {
+			if _, err = os.Stat(conyml); err != nil {
+				if os.IsNotExist(err) {
+					if df, err = os.OpenFile(conyml, os.O_WRONLY|os.O_CREATE, 0666); err == nil {
+						sexyml, _ := configYml.Open("config.yml")
+						io.Copy(df, sexyml)
+						df.Sync()
+					}
+				}
+			}
+		}
+	}
+	configViper = viper.New()
+	configViper.AddConfigPath("/etc/iotdor")
+	configViper.AddConfigPath(BASEPATH)
+	configViper.SetConfigName("config.yml")
+	configViper.SetConfigType("yml")
+	err = configViper.ReadInConfig()
+	return err
 }

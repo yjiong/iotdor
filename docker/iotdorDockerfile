@@ -24,8 +24,10 @@ MAINTAINER yjiong@msn.com
 
 ADD ./docker/entryDelay.sh /bin/entryDelay
 RUN mkdir iot
+RUN mkdir /etc/iotdor
 WORKDIR /iot
 COPY --from=development /mydevelop/iotdor/build/iotdor .
+COPY ./docker/iotdor_config.yml ./config.yml
 RUN chmod 755 /bin/entryDelay
 RUN chmod 755 iotdor
 EXPOSE $SERVER_PORT

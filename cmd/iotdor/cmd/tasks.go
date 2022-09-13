@@ -20,11 +20,6 @@ import (
 //go:embed config.yml
 var configYml embed.FS
 var lm *logic.Manage
-
-//var rawDB *sql.DB
-//var dataSrc datasrc.DSrcer
-//var dbClient *ent.Client
-//var redisClient *redis.Client
 var configViper *viper.Viper
 
 func setLogLevel() error {
@@ -57,33 +52,6 @@ func printStartMessage() error {
 		"docs":    "http://github.com/yjiong",
 	}).Info("starting iotdor process")
 	return nil
-}
-
-func initDataSrcAndDB() error {
-	conyml := filepath.Join(BASEPATH, "config.yml")
-	sysconyml := filepath.Join("/etc/iotdor", "config.yml")
-	var df *os.File
-	var err error
-	if _, err = os.Stat(sysconyml); err != nil {
-		if os.IsNotExist(err) {
-			if _, err = os.Stat(conyml); err != nil {
-				if os.IsNotExist(err) {
-					if df, err = os.OpenFile(conyml, os.O_WRONLY|os.O_CREATE, 0666); err == nil {
-						sexyml, _ := configYml.Open("config.yml")
-						io.Copy(df, sexyml)
-						df.Sync()
-					}
-				}
-			}
-		}
-	}
-	configViper = viper.New()
-	configViper.AddConfigPath("/etc/iotdor")
-	configViper.AddConfigPath(BASEPATH)
-	configViper.SetConfigName("config.yml")
-	configViper.SetConfigType("yml")
-	err = configViper.ReadInConfig()
-	return err
 }
 
 func runLogicMsgHandle() error {

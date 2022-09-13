@@ -1,0 +1,37 @@
+broker:
+  url: mosquitto:1883
+  username: yj
+  password: yj12345
+  keepalive: 60
+  #publish qos
+  pqos: 1
+  #subscribe qos
+  sqos: 1
+  retain: false
+  cafile:
+  certfile:
+  keyfile:
+  iotdname: iotd-test
+database:
+  type: mysql
+  host: mysql
+  port: 3306
+  user: root
+  dbname: iotdor
+  password: yaojiong
+  #interval x minutes storage 
+  storage_interval: 5
+redis:
+  host: redis
+  port: 6379
+  password: yaojiong
+http_server:
+  port: 8888
+  cert: server.cert
+  key: server.key
+  debug_flag: true
+  
+
+  
+
+
