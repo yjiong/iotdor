@@ -1,0 +1,27 @@
+FROM base
+MAINTAINER yjiong@msn.com
+
+RUN apk add --no-cache postgres && \
+    rm -rf /etc/apk/repositories
+
+ENV LANG=C.UTF-8
+ENV POSTGRES_USER=root
+ENV POSTGRES_DB=iotdor
+ENV POSTGRES_PASSWORD=yaojiong
+
+RUN mkdir /var/lib/postgresql && chown postgres:postgres -R /var/lib/postgresql && \
+    mkdir /run/postgresql && chown postgres:postgres -R /run/postgresql && \
+    su - postgres -c "initdb --username=postgres --encoding=UTF8 --data-checksums -D /var/lib/postgresql/data" && \
+    su - postgres -c "pg_ctl start -D /var/lib/postgresql/data"
+
+RUN { \
+        echo '#!/bin/sh'; \
+        echo 'set -e'; \
+        echo; \
+        echo 'su - postgres -c "postgres -D /var/lib/postgresql/data"'; \
+     } > /bin/startup \
+    && chmod +x /bin/startup
+
+EXPOSE 5432
+USER nobody:nogroup
+ENTRYPOINT ["startup"]

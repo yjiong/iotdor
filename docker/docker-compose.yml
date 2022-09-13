@@ -15,6 +15,7 @@ services:
     depends_on:
       - mosquitto
       - mysql
+      #- postgres
       - redis
     links:
       - mosquitto
@@ -57,8 +58,8 @@ services:
       MYSQL_USER: root
       MYSQL_PASSWORD: yaojiong
     volumes:
-      - "/var/lib/mysql/:/var/lib/mysql"
-      - "/var/run/mysqld:/run/mysqld"
+      - "/var/lib/iot_mysql/:/var/lib/mysql"
+      - "/var/run/iot_mysqld:/run/mysqld"
 
   redis:
     build:
@@ -73,5 +74,22 @@ services:
       TZ: Asia/Shanghai
       REDIS_PASSWORD: yaojiong
     volumes:
-      - "/var/lib/redis/:/var/lib/redis"
+      - "/var/lib/iot_redis/:/var/lib/redis"
 
+  #postgres:
+    #build:
+      #context: ./
+      #dockerfile: ./postgresDockerfile
+    #image: postgresiot
+    #container_name: postgresiot
+    #ports:
+      #- "5432:5432"
+    #environment:
+      #TZ: Asia/Shanghai
+      #POSTGRES_USER: root
+      #POSTGRES_DB: iotdor
+      #POSTGRES_PASSWORD: yaojiong
+    #restart:
+      #always
+    #volumes:
+      #- "/var/lib/postgresql/iot_data:/var/lib/postgresql/data"
