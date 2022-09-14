@@ -93,3 +93,4 @@ services:
       #always
     #volumes:
       #- "/var/lib/postgresql/iot_data:/var/lib/postgresql/data"
+      #- "/var/run/postgresql:/var/run/postgresql"

@@ -1,18 +1,22 @@
 FROM base
 MAINTAINER yjiong@msn.com
 
-RUN apk add --no-cache postgres && \
+RUN apk update &&\
+    apk add --no-cache postgresql icu-data-full &&\
     rm -rf /etc/apk/repositories
 
 ENV LANG=C.UTF-8
-ENV POSTGRES_USER=root
+ENV POSTGRES_USER=iotdor
 ENV POSTGRES_DB=iotdor
 ENV POSTGRES_PASSWORD=yaojiong
 
-RUN mkdir /var/lib/postgresql && chown postgres:postgres -R /var/lib/postgresql && \
-    mkdir /run/postgresql && chown postgres:postgres -R /run/postgresql && \
-    su - postgres -c "initdb --username=postgres --encoding=UTF8 --data-checksums -D /var/lib/postgresql/data" && \
-    su - postgres -c "pg_ctl start -D /var/lib/postgresql/data"
+RUN mkdir /run/postgresql && chown postgres:postgres -R /run/postgresql &&\
+    su - postgres -c "initdb --username=postgres --encoding=UTF8 --data-checksums -D /var/lib/postgresql/data" &&\
+    su - postgres -c "pg_ctl start -D /var/lib/postgresql/data" &&\
+    su - postgres -c "psql -c \"CREATE USER ${POSTGRES_USER} WITH PASSWORD '${POSTGRES_PASSWORD}';\"" &&\
+    su - postgres -c "psql -c \"CREATE DATABASE ${POSTGRES_DB} OWNER ${POSTGRES_USER}\";" &&\
+    su - postgres -c "psql -c \"GRANT ALL PRIVILEGES ON DATABASE ${POSTGRES_DB} TO ${POSTGRES_USER};\"" &&\
+    su - postgres -c "pg_ctl stop -D /var/lib/postgresql/data" 
 
 RUN { \
         echo '#!/bin/sh'; \
@@ -23,5 +27,5 @@ RUN { \
     && chmod +x /bin/startup
 
 EXPOSE 5432
-USER nobody:nogroup
-ENTRYPOINT ["startup"]
+USER postgres:postgres
+ENTRYPOINT ["postgres","-D","/var/lib/postgresql/data"]
