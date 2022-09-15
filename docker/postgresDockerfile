@@ -9,23 +9,9 @@ ENV LANG=C.UTF-8
 ENV POSTGRES_USER=iotdor
 ENV POSTGRES_DB=iotdor
 ENV POSTGRES_PASSWORD=yaojiong
+RUN mkdir /run/postgresql && chown postgres:postgres -R /run/postgresql
 
-RUN mkdir /run/postgresql && chown postgres:postgres -R /run/postgresql &&\
-    su - postgres -c "initdb --username=postgres --encoding=UTF8 --data-checksums -D /var/lib/postgresql/data" &&\
-    su - postgres -c "pg_ctl start -D /var/lib/postgresql/data" &&\
-    su - postgres -c "psql -c \"CREATE USER ${POSTGRES_USER} WITH PASSWORD '${POSTGRES_PASSWORD}';\"" &&\
-    su - postgres -c "psql -c \"CREATE DATABASE ${POSTGRES_DB} OWNER ${POSTGRES_USER}\";" &&\
-    su - postgres -c "psql -c \"GRANT ALL PRIVILEGES ON DATABASE ${POSTGRES_DB} TO ${POSTGRES_USER};\"" &&\
-    su - postgres -c "pg_ctl stop -D /var/lib/postgresql/data" 
-
-RUN { \
-        echo '#!/bin/sh'; \
-        echo 'set -e'; \
-        echo; \
-        echo 'su - postgres -c "postgres -D /var/lib/postgresql/data"'; \
-     } > /bin/startup \
-    && chmod +x /bin/startup
-
+ADD pgup.sh /pgup
+RUN chmod 755 /pgup
 EXPOSE 5432
-USER postgres:postgres
-ENTRYPOINT ["postgres","-D","/var/lib/postgresql/data"]
+ENTRYPOINT ["/pgup"]
