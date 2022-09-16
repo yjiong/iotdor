@@ -76,21 +76,21 @@ services:
     volumes:
       - "/var/lib/iot_redis/:/var/lib/redis"
 
-  #postgres:
-    #build:
-      #context: ./
-      #dockerfile: ./postgresDockerfile
-    #image: postgresiot
-    #container_name: postgresiot
-    #ports:
-      #- "5432:5432"
-    #environment:
-      #TZ: Asia/Shanghai
-      #POSTGRES_USER: root
-      #POSTGRES_DB: iotdor
-      #POSTGRES_PASSWORD: yaojiong
-    #restart:
-      #always
-    #volumes:
-      #- "/var/lib/postgresql/iot_data:/var/lib/postgresql/data"
-      #- "/var/run/postgresql:/var/run/postgresql"
+  postgres:
+    build:
+      context: ./
+      dockerfile: ./postgresDockerfile
+    image: postgresiot
+    container_name: postgresiot
+    ports:
+      - "5432:5432"
+    environment:
+      TZ: Asia/Shanghai
+      POSTGRES_USER: root
+      POSTGRES_DB: iotdor
+      POSTGRES_PASSWORD: yaojiong
+    restart:
+      always
+    volumes:
+      - "/var/lib/iot_postgresql:/var/lib/postgresql"
+      - "/var/run/iot_postgresql:/var/run/postgresql"

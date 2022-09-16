@@ -9,7 +9,6 @@ ENV LANG=C.UTF-8
 ENV POSTGRES_USER=iotdor
 ENV POSTGRES_DB=iotdor
 ENV POSTGRES_PASSWORD=yaojiong
-RUN mkdir /run/postgresql && chown postgres:postgres -R /run/postgresql
 
 ADD pgup.sh /pgup
 RUN chmod 755 /pgup
