@@ -86,7 +86,7 @@ services:
       - "5432:5432"
     environment:
       TZ: Asia/Shanghai
-      POSTGRES_USER: root
+      POSTGRES_USER: iotdor
       POSTGRES_DB: iotdor
       POSTGRES_PASSWORD: yaojiong
     restart:
