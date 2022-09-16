@@ -6,7 +6,6 @@ info:
     url: 'https://github.com/yjiong'
     email: yjiong@msn.com
   version: v1.0.0
-basePath: /
 #server: http:/xxx 
 paths:
   /api/login:
@@ -17,19 +16,22 @@ paths:
       requestBody:
         content:
           application/json:
-            name: user_info
-            required: true
             schema:
               $ref: '#/components/schemas/LoginUser'
+        required: true
       responses:
         '200':
           description: ok
-          schema:
-            type: string
+          content:
+            application/json:
+              schema:
+                type: object
         '404':
           description: login failed
-          schema:
-            type: object
+          content:
+            application/json:
+              schema:
+                type: object
   /gateway/list:
     get:
       tags:
@@ -38,15 +40,18 @@ paths:
       responses:
         '200':
           description: ok
-          schema:
-            type: object
+          content:
+            application/json:
+              schema:
+                type: object
         '404':
           description: Can not get gateway list
-          schema:
-            type: object
+          content:
+            application/json:
+              schema:
+                type: object
       security:
-        - api_key: 
-            - read: list
+        - api_key: [] 
 #  /gateway/{gatewaysn}/info:
 #    get:
 #      consumes:
@@ -318,30 +323,26 @@ paths:
     get:
       security:
         - api_key: [] 
-      consumes:
-        - application/json
-      produces:
-        - application/json
       tags:
         - 当前数据
       summary: 获取所有设备ID
       responses:
         '200':
           description: ok
-          schema:
-            type: object
+          content:
+            application/json:
+              schema:
+                type: object
         '404':
           description: Can not get device ID
-          schema:
-            type: object
+          content:
+            application/json:
+              schema:
+                type: object
   /device/realtime_data/{devid}:
     get:
       security:
         - api_key: []
-      consumes:
-        - application/json
-      produces:
-        - application/json
       tags:
         - 当前数据
       summary: 获取设备实时数据
@@ -355,20 +356,20 @@ paths:
       responses:
         '200':
           description: ok
-          schema:
-            type: object
+          content:
+            application/json:
+              schema:
+                type: object
         '404':
           description: Can not get realtime data
-          schema:
-            type: object
+          content:
+            application/json:
+              schema:
+                type: object
   /device/history_data/{devid}:
     post:
       security:
         - api_key: []
-      consumes:
-        - application/json
-      produces:
-        - application/json
       tags:
         - 历史数据与统计数据
       summary: 获取设备历史数据
@@ -382,10 +383,9 @@ paths:
       requestBody:
         content:
           application/json:
-            name: history_data
-            required: true
             schema:
               $ref: '#/components/schemas/QuerySection'
+        required: true
       responses:
         '200':
           description: successful operation
@@ -393,94 +393,99 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/RspDBData'          
-          schema:
-            type: object
         '404':
           description: Can not get realtime data
-          schema:
-            type: object
+          content:
+            application/json:
+              schema:
+                type: object
   /config/sys/user_info:
     get:
       security:
         - api_key: []
-      consumes:
-        - application/json
       tags:
         - 系统用户信息
       summary: 获取用户信息
+      description: 获取用户信息
       responses:
         '200':
           description: ok
-          schema:
-            type: object
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RPUser'
         '404':
           description: get user_info error
-          schema:
-            type: object
   /config/sys/add_user:
     post:
       security:
         - api_key: []
-      consumes:
-        - application/json
       tags:
         - 系统用户信息
       summary: 添加用户
       requestBody:
         content:
           application/json:
-            name: user_info
-            required: true
             schema:
               $ref: '#/components/schemas/TWUser'
+        required: true
       responses:
         '200':
           description: ok
-          schema:
-            type: object
+          content:
+            application/json:
+              schema:
+                type: object
         '401':
           description: access denided
-          schema:
-            type: object
+          content:
+            application/json:
+              schema:
+                type: object
         '404':
           description: add user failed
-          schema:
-            type: object
+          content:
+            application/json:
+              schema:
+                type: object
   /config/sys/update_user:
     put:
       security:
         - api_key: []
-      consumes:
-        - application/json
       tags:
         - 系统用户信息
       summary: 更新用户(修改密码，电话, 设置为管理员)
       requestBody:
         content:
           application/json:
-            name: user_info
-            required: true
             schema:
               $ref: '#/components/schemas/TWUser'
+        required: true
       responses:
         '200':
           description: ok
-          schema:
-            type: object
+          content:
+            application/json:
+              schema:
+                type: object
         '401':
           description: access denided
-          schema:
-            type: object
+          content:
+            application/json:
+              schema:
+                type: object
         '404':
           description: update user failed
-          schema:
-            type: object
+          content:
+            application/json:
+              schema:
+                type: object
   /config/sys/delete_user/{uname}:
     delete:
       security:
         - api_key: []
-      consumes:
-        - application/json
       tags:
         - 系统用户信息
       summary: 删除用户
@@ -494,16 +499,22 @@ paths:
       responses:
         '200':
           description: ok
-          schema:
-            type: object
+          content:
+            application/json:
+              schema:
+                type: object
         '401':
           description: access denided
-          schema:
-            type: object
+          content:
+            application/json:
+              schema:
+                type: object
         '404':
           description: delete user failed
-          schema:
-            type: object
+          content:
+            application/json:
+              schema:
+                type: object
   /config/sys/organization_tree/{id}:
     get:
       security:
@@ -522,21 +533,25 @@ paths:
       responses:
         '200':
           description: ok
-          schema:
-            type: object
+          content:
+            application/json:
+              schema:
+                type: object
         '401':
           description: access denided
-          schema:
-            type: object
+          content:
+            application/json:
+              schema:
+                type: object
         '404':
           description: get organization tree info failed
-          schema:
-            type: object
+          content:
+            application/json:
+              schema:
+                type: object
     delete:
       security:
         - api_key: []
-      consumes:
-        - application/json
       tags:
         - 系统组织结构目录树信息
       summary:  删除组织结构目录树信息
@@ -551,16 +566,22 @@ paths:
       responses:
         '200':
           description: ok
-          schema:
-            type: object
+          content:
+            application/json:
+              schema:
+                type: object
         '401':
           description: access denided
-          schema:
-            type: object
+          content:
+            application/json:
+              schema:
+                type: object
         '404':
           description: delete organization tree info failed
-          schema:
-            type: object
+          content:
+            application/json:
+              schema:
+                type: object
   /config/sys/organization_tree:
     get:
       security:
@@ -571,107 +592,120 @@ paths:
       responses:
         '200':
           description: ok
-          schema:
-            type: object
+          content:
+            application/json:
+              schema:
+                type: object
         '401':
           description: access denided
-          schema:
-            type: object
+          content:
+            application/json:
+              schema:
+                type: object
         '404':
           description: get organization tree info failed
-          schema:
-            type: object
+          content:
+            application/json:
+              schema:
+                type: object
     post:
       security:
         - api_key: []
-      consumes:
-        - application/json
       tags:
         - 系统组织结构目录树信息
       summary:  创建组织结构目录树某节点的子节点
       requestBody:
         content:
           application/json:
-            name: organization_tree_info
-            required: true
             schema:
               $ref: '#/components/schemas/CreateOrganizationTree'
+        required: true
       responses:
         '200':
           description: ok
-          schema:
-            type: object
+          content:
+            application/json:
+              schema:
+                type: object
         '401':
           description: access denided
-          schema:
-            type: object
+          content:
+            application/json:
+              schema:
+                type: object
         '404':
           description: create organization tree info failed
-          schema:
-            type: object
+          content:
+            application/json:
+              schema:
+                type: object
     put:
       security:
         - api_key: []
-      consumes:
-        - application/json
       tags:
         - 系统组织结构目录树信息
       summary:  更新组织结构目录树信息(修改名称)
       requestBody:
         content:
           application/json:
-            name: organization_tree_info
-            required: true
             schema:
               $ref: '#/components/schemas/OrganizationTree'
+        required: true
       responses:
         '200':
           description: ok
-          schema:
-            type: object
+          content:
+            application/json:
+              schema:
+                type: object
         '401':
           description: access denided
-          schema:
-            type: object
+          content:
+            application/json:
+              schema:
+                type: object
         '404':
           description: update organization tree info failed
-          schema:
-            type: object
+          content:
+            application/json:
+              schema:
+                type: object
   /config/sys/add_organization_tree:
     post:
       security:
         - api_key: []
-      consumes:
-        - application/json
       tags:
         - 系统组织结构目录树信息
       summary:  添加组织结构的节点(添加位于同一层且同一父节点的兄弟节点)
       requestBody:
         content:
           application/json:
-            name: organization_tree_info
-            required: true
             schema:
               $ref: '#/components/schemas/AddOrganizationTree'
+        required: true
       responses:
         '200':
           description: ok
-          schema:
-            type: object
+          content:
+            application/json:
+              schema:
+                type: object
         '401':
           description: access denided
-          schema:
-            type: object
+          content:
+            application/json:
+              schema:
+                type: object
         '404':
           description: create organization tree info failed
-          schema:
-            type: object
+          content:
+            application/json:
+              schema:
+                type: object
   /config/sys/relate_position_to_organization_tree/{id}/{posid}:
     post:
       security:
         - api_key: []
-      consumes:
-        - application/json
       tags:
         - 系统组织结构目录树信息
       summary:  关联组织结构目录树和组织机构地理位置
@@ -691,21 +725,25 @@ paths:
       responses:
         '200':
           description: ok
-          schema:
-            type: object
+          content:
+            application/json:
+              schema:
+                type: object
         '401':
           description: access denided
-          schema:
-            type: object
+          content:
+            application/json:
+              schema:
+                type: object
         '404':
           description: join organization position to tree failed
-          schema:
-            type: object
+          content:
+            application/json:
+              schema:
+                type: object
     delete:
       security:
         - api_key: []
-      consumes:
-        - application/json
       tags:
         - 系统组织结构目录树信息
       summary:  除移已关联组织结构的地理位置
@@ -725,16 +763,22 @@ paths:
       responses:
         '200':
           description: ok
-          schema:
-            type: object
+          content:
+            application/json:
+              schema:
+                type: object
         '401':
           description: access denided
-          schema:
-            type: object
+          content:
+            application/json:
+              schema:
+                type: object
         '404':
           description: remove organization position from tree failed
-          schema:
-            type: object
+          content:
+            application/json:
+              schema:
+                type: object
   /config/sys/organization_position:
     get:
       security:
@@ -745,78 +789,88 @@ paths:
       responses:
         '200':
           description: ok
-          schema:
-            type: object
+          content:
+            application/json:
+              schema:
+                type: object
         '401':
           description: access denided
-          schema:
-            type: object
+          content:
+            application/json:
+              schema:
+                type: object
         '404':
           description: get organization position info failed
-          schema:
-            type: object
+          content:
+            application/json:
+              schema:
+                type: object
     post:
       security:
         - api_key: []
-      consumes:
-        - application/json
       tags:
         - 系统组织结构地理位置与设备关联信息
       summary:  添加组织结构地理位置信息
       requestBody:
         content:
           application/json:
-            name: organization_position_info
-            required: true
             schema:
               $ref: '#/components/schemas/OrganizationPosition'
+        required: true
       responses:
         '200':
           description: ok
-          schema:
-            type: object
+          content:
+            application/json:
+              schema:
+                type: object
         '401':
           description: access denided
-          schema:
-            type: object
+          content:
+            application/json:
+              schema:
+                type: object
         '404':
           description: create organization position failed
-          schema:
-            type: object
+          content:
+            application/json:
+              schema:
+                type: object
     put:
       security:
         - api_key: []
-      consumes:
-        - application/json
       tags:
         - 系统组织结构地理位置与设备关联信息
       summary:  更新组织结构地理位置信息
       requestBody:
         content:
           application/json:
-            name: organization_info
-            required: true
             schema:
               $ref: '#/components/schemas/OrganizationPosition'
+        required: true
       responses:
         '200':
           description: ok
-          schema:
-            type: object
+          content:
+            application/json:
+              schema:
+                type: object
         '401':
           description: access denided
-          schema:
-            type: object
+          content:
+            application/json:
+              schema:
+                type: object
         '404':
           description: update organization position info failed 
-          schema:
-            type: object
+          content:
+            application/json:
+              schema:
+                type: object
   /config/sys/organization_position/{posid}:
     delete:
       security:
         - api_key: []
-      consumes:
-        - application/json
       tags:
         - 系统组织结构地理位置与设备关联信息
       summary:  删除组织结构地理位置信息
@@ -830,22 +884,26 @@ paths:
       responses:
         '200':
           description: ok
-          schema:
-            type: object
+          content:
+            application/json:
+              schema:
+                type: object
         '401':
           description: access denided
-          schema:
-            type: object
+          content:
+            application/json:
+              schema:
+                type: object
         '404':
           description: remove organization position info failed 
-          schema:
-            type: object
+          content:
+            application/json:
+              schema:
+                type: object
   /config/sys/organization_position_person_charge/{posid}/{uname}:
     post:
       security:
         - api_key: []
-      consumes:
-        - application/json
       tags:
         - 系统组织结构地理位置与设备关联信息
       summary:  设置组织结构地理位置负责人
@@ -865,21 +923,25 @@ paths:
       responses:
         '200':
           description: ok
-          schema:
-            type: object
+          content:
+            application/json:
+              schema:
+                type: object
         '401':
           description: access denided
-          schema:
-            type: object
+          content:
+            application/json:
+              schema:
+                type: object
         '404':
           description: add organization person charge failed
-          schema:
-            type: object
+          content:
+            application/json:
+              schema:
+                type: object
     delete:
       security:
         - api_key: []
-      consumes:
-        - application/json
       tags:
         - 系统组织结构地理位置与设备关联信息
       summary:  删除组织结构地理位置负责人
@@ -899,22 +961,26 @@ paths:
       responses:
         '200':
           description: ok
-          schema:
-            type: object
+          content:
+            application/json:
+              schema:
+                type: object
         '401':
           description: access denided
-          schema:
-            type: object
+          content:
+            application/json:
+              schema:
+                type: object
         '404':
           description: remove organization person charge failed
-          schema:
-            type: object
+          content:
+            application/json:
+              schema:
+                type: object
   /config/sys/organization_position_device/{posid}:
     get:
       security:
         - api_key: []
-      consumes:
-        - application/json
       tags:
         - 系统组织结构地理位置与设备关联信息
       summary:  获取已关联组织结构地理位置的设备
@@ -928,22 +994,26 @@ paths:
       responses:
         '200':
           description: ok
-          schema:
-            type: object
+          content:
+            application/json:
+              schema:
+                type: object
         '401':
           description: access denided
-          schema:
-            type: object
+          content:
+            application/json:
+              schema:
+                type: object
         '404':
           description: get organization device faied
-          schema:
-            type: object
+          content:
+            application/json:
+              schema:
+                type: object
   /config/sys/organization_position_and_device/{posid}/{devid}:
     post:
       security:
         - api_key: []
-      consumes:
-        - application/json
       tags:
         - 系统组织结构地理位置与设备关联信息
       summary:  关联组织结构地理位置的设备
@@ -963,21 +1033,25 @@ paths:
       responses:
         '200':
           description: ok
-          schema:
-            type: object
+          content:
+            application/json:
+              schema:
+                type: object
         '401':
           description: access denided
-          schema:
-            type: object
+          content:
+            application/json:
+              schema:
+                type: object
         '404':
           description: add organization device
-          schema:
-            type: object
+          content:
+            application/json:
+              schema:
+                type: object
     delete:
       security:
         - api_key: []
-      consumes:
-        - application/json
       tags:
         - 系统组织结构地理位置与设备关联信息
       summary:  除移已关联组织结构地理位置的设备
@@ -997,16 +1071,22 @@ paths:
       responses:
         '200':
           description: ok
-          schema:
-            type: object
+          content:
+            application/json:
+              schema:
+                type: object
         '401':
           description: access denided
-          schema:
-            type: object
+          content:
+            application/json:
+              schema:
+                type: object
         '404':
           description: remove organization device
-          schema:
-            type: object
+          content:
+            application/json:
+              schema:
+                type: object
 components:
   schemas:
     LoginUser:
@@ -1046,6 +1126,8 @@ components:
         datas:
           description: 数据
           type: array
+          items:
+            type: object
         pages:
           description: 页数
           type: integer
@@ -1112,6 +1194,19 @@ components:
         #stop_bit:
           #description: 停止位
           #type: string
+    RPUser:
+      type: object
+      properties:
+        name:
+          type: string
+        admin_flag:
+          type: boolean
+        phone:
+          type: string
+        last_login_ip:
+          type: string
+        last_login_time:
+          type: string
     TWUser:
       type: object
       properties:
