@@ -156,14 +156,14 @@ func updateGateway(ctx context.Context,
 
 func addOrUpdateDevice(ctx context.Context,
 	c *ent.Client,
-	did, dtype, daddr, conn, name string,
+	did, dtype, daddr, name string,
+	conn map[string]any,
 	gw *ent.Gateway) error {
 	exist, _ := c.Device.Query().Where(device.DevID(did)).Exist(ctx)
 	if !exist {
 		return c.Device.Create().
 			SetDevID(did).
-			SetDevType(dtype).
-			SetDevAddr(daddr).
+			SetType(dtype).
 			SetConn(conn).
 			SetName(name).
 			SetGateway(gw).
@@ -171,8 +171,7 @@ func addOrUpdateDevice(ctx context.Context,
 	}
 	return c.Device.Update().
 		Where(device.DevID(did)).
-		SetDevType(dtype).
-		SetDevAddr(daddr).
+		SetType(dtype).
 		SetConn(conn).
 		SetName(name).
 		SetGateway(gw).
