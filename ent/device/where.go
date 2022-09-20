@@ -102,24 +102,24 @@ func DevID(v string) predicate.Device {
 	})
 }
 
-// DevType applies equality check predicate on the "dev_type" field. It's identical to DevTypeEQ.
-func DevType(v string) predicate.Device {
+// Type applies equality check predicate on the "type" field. It's identical to TypeEQ.
+func Type(v string) predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldDevType), v))
+		s.Where(sql.EQ(s.C(FieldType), v))
 	})
 }
 
-// DevAddr applies equality check predicate on the "dev_addr" field. It's identical to DevAddrEQ.
-func DevAddr(v string) predicate.Device {
+// ReadInterval applies equality check predicate on the "read_interval" field. It's identical to ReadIntervalEQ.
+func ReadInterval(v int) predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldDevAddr), v))
+		s.Where(sql.EQ(s.C(FieldReadInterval), v))
 	})
 }
 
-// Conn applies equality check predicate on the "conn" field. It's identical to ConnEQ.
-func Conn(v string) predicate.Device {
+// StoreInterval applies equality check predicate on the "store_interval" field. It's identical to StoreIntervalEQ.
+func StoreInterval(v int) predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldConn), v))
+		s.Where(sql.EQ(s.C(FieldStoreInterval), v))
 	})
 }
 
@@ -371,300 +371,258 @@ func DevIDContainsFold(v string) predicate.Device {
 	})
 }
 
-// DevTypeEQ applies the EQ predicate on the "dev_type" field.
-func DevTypeEQ(v string) predicate.Device {
+// TypeEQ applies the EQ predicate on the "type" field.
+func TypeEQ(v string) predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldDevType), v))
+		s.Where(sql.EQ(s.C(FieldType), v))
 	})
 }
 
-// DevTypeNEQ applies the NEQ predicate on the "dev_type" field.
-func DevTypeNEQ(v string) predicate.Device {
+// TypeNEQ applies the NEQ predicate on the "type" field.
+func TypeNEQ(v string) predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldDevType), v))
+		s.Where(sql.NEQ(s.C(FieldType), v))
 	})
 }
 
-// DevTypeIn applies the In predicate on the "dev_type" field.
-func DevTypeIn(vs ...string) predicate.Device {
+// TypeIn applies the In predicate on the "type" field.
+func TypeIn(vs ...string) predicate.Device {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
 	return predicate.Device(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldDevType), v...))
+		s.Where(sql.In(s.C(FieldType), v...))
 	})
 }
 
-// DevTypeNotIn applies the NotIn predicate on the "dev_type" field.
-func DevTypeNotIn(vs ...string) predicate.Device {
+// TypeNotIn applies the NotIn predicate on the "type" field.
+func TypeNotIn(vs ...string) predicate.Device {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
 	return predicate.Device(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldDevType), v...))
+		s.Where(sql.NotIn(s.C(FieldType), v...))
 	})
 }
 
-// DevTypeGT applies the GT predicate on the "dev_type" field.
-func DevTypeGT(v string) predicate.Device {
+// TypeGT applies the GT predicate on the "type" field.
+func TypeGT(v string) predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldDevType), v))
+		s.Where(sql.GT(s.C(FieldType), v))
 	})
 }
 
-// DevTypeGTE applies the GTE predicate on the "dev_type" field.
-func DevTypeGTE(v string) predicate.Device {
+// TypeGTE applies the GTE predicate on the "type" field.
+func TypeGTE(v string) predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldDevType), v))
+		s.Where(sql.GTE(s.C(FieldType), v))
 	})
 }
 
-// DevTypeLT applies the LT predicate on the "dev_type" field.
-func DevTypeLT(v string) predicate.Device {
+// TypeLT applies the LT predicate on the "type" field.
+func TypeLT(v string) predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldDevType), v))
+		s.Where(sql.LT(s.C(FieldType), v))
 	})
 }
 
-// DevTypeLTE applies the LTE predicate on the "dev_type" field.
-func DevTypeLTE(v string) predicate.Device {
+// TypeLTE applies the LTE predicate on the "type" field.
+func TypeLTE(v string) predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldDevType), v))
+		s.Where(sql.LTE(s.C(FieldType), v))
 	})
 }
 
-// DevTypeContains applies the Contains predicate on the "dev_type" field.
-func DevTypeContains(v string) predicate.Device {
+// TypeContains applies the Contains predicate on the "type" field.
+func TypeContains(v string) predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
-		s.Where(sql.Contains(s.C(FieldDevType), v))
+		s.Where(sql.Contains(s.C(FieldType), v))
 	})
 }
 
-// DevTypeHasPrefix applies the HasPrefix predicate on the "dev_type" field.
-func DevTypeHasPrefix(v string) predicate.Device {
+// TypeHasPrefix applies the HasPrefix predicate on the "type" field.
+func TypeHasPrefix(v string) predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
-		s.Where(sql.HasPrefix(s.C(FieldDevType), v))
+		s.Where(sql.HasPrefix(s.C(FieldType), v))
 	})
 }
 
-// DevTypeHasSuffix applies the HasSuffix predicate on the "dev_type" field.
-func DevTypeHasSuffix(v string) predicate.Device {
+// TypeHasSuffix applies the HasSuffix predicate on the "type" field.
+func TypeHasSuffix(v string) predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
-		s.Where(sql.HasSuffix(s.C(FieldDevType), v))
+		s.Where(sql.HasSuffix(s.C(FieldType), v))
 	})
 }
 
-// DevTypeEqualFold applies the EqualFold predicate on the "dev_type" field.
-func DevTypeEqualFold(v string) predicate.Device {
+// TypeEqualFold applies the EqualFold predicate on the "type" field.
+func TypeEqualFold(v string) predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
-		s.Where(sql.EqualFold(s.C(FieldDevType), v))
+		s.Where(sql.EqualFold(s.C(FieldType), v))
 	})
 }
 
-// DevTypeContainsFold applies the ContainsFold predicate on the "dev_type" field.
-func DevTypeContainsFold(v string) predicate.Device {
+// TypeContainsFold applies the ContainsFold predicate on the "type" field.
+func TypeContainsFold(v string) predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
-		s.Where(sql.ContainsFold(s.C(FieldDevType), v))
+		s.Where(sql.ContainsFold(s.C(FieldType), v))
 	})
 }
 
-// DevAddrEQ applies the EQ predicate on the "dev_addr" field.
-func DevAddrEQ(v string) predicate.Device {
+// ReadIntervalEQ applies the EQ predicate on the "read_interval" field.
+func ReadIntervalEQ(v int) predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldDevAddr), v))
+		s.Where(sql.EQ(s.C(FieldReadInterval), v))
 	})
 }
 
-// DevAddrNEQ applies the NEQ predicate on the "dev_addr" field.
-func DevAddrNEQ(v string) predicate.Device {
+// ReadIntervalNEQ applies the NEQ predicate on the "read_interval" field.
+func ReadIntervalNEQ(v int) predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldDevAddr), v))
+		s.Where(sql.NEQ(s.C(FieldReadInterval), v))
 	})
 }
 
-// DevAddrIn applies the In predicate on the "dev_addr" field.
-func DevAddrIn(vs ...string) predicate.Device {
+// ReadIntervalIn applies the In predicate on the "read_interval" field.
+func ReadIntervalIn(vs ...int) predicate.Device {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
 	return predicate.Device(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldDevAddr), v...))
+		s.Where(sql.In(s.C(FieldReadInterval), v...))
 	})
 }
 
-// DevAddrNotIn applies the NotIn predicate on the "dev_addr" field.
-func DevAddrNotIn(vs ...string) predicate.Device {
+// ReadIntervalNotIn applies the NotIn predicate on the "read_interval" field.
+func ReadIntervalNotIn(vs ...int) predicate.Device {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
 	return predicate.Device(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldDevAddr), v...))
+		s.Where(sql.NotIn(s.C(FieldReadInterval), v...))
 	})
 }
 
-// DevAddrGT applies the GT predicate on the "dev_addr" field.
-func DevAddrGT(v string) predicate.Device {
+// ReadIntervalGT applies the GT predicate on the "read_interval" field.
+func ReadIntervalGT(v int) predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldDevAddr), v))
+		s.Where(sql.GT(s.C(FieldReadInterval), v))
 	})
 }
 
-// DevAddrGTE applies the GTE predicate on the "dev_addr" field.
-func DevAddrGTE(v string) predicate.Device {
+// ReadIntervalGTE applies the GTE predicate on the "read_interval" field.
+func ReadIntervalGTE(v int) predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldDevAddr), v))
+		s.Where(sql.GTE(s.C(FieldReadInterval), v))
 	})
 }
 
-// DevAddrLT applies the LT predicate on the "dev_addr" field.
-func DevAddrLT(v string) predicate.Device {
+// ReadIntervalLT applies the LT predicate on the "read_interval" field.
+func ReadIntervalLT(v int) predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldDevAddr), v))
+		s.Where(sql.LT(s.C(FieldReadInterval), v))
 	})
 }
 
-// DevAddrLTE applies the LTE predicate on the "dev_addr" field.
-func DevAddrLTE(v string) predicate.Device {
+// ReadIntervalLTE applies the LTE predicate on the "read_interval" field.
+func ReadIntervalLTE(v int) predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldDevAddr), v))
+		s.Where(sql.LTE(s.C(FieldReadInterval), v))
 	})
 }
 
-// DevAddrContains applies the Contains predicate on the "dev_addr" field.
-func DevAddrContains(v string) predicate.Device {
+// ReadIntervalIsNil applies the IsNil predicate on the "read_interval" field.
+func ReadIntervalIsNil() predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
-		s.Where(sql.Contains(s.C(FieldDevAddr), v))
+		s.Where(sql.IsNull(s.C(FieldReadInterval)))
 	})
 }
 
-// DevAddrHasPrefix applies the HasPrefix predicate on the "dev_addr" field.
-func DevAddrHasPrefix(v string) predicate.Device {
+// ReadIntervalNotNil applies the NotNil predicate on the "read_interval" field.
+func ReadIntervalNotNil() predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
-		s.Where(sql.HasPrefix(s.C(FieldDevAddr), v))
+		s.Where(sql.NotNull(s.C(FieldReadInterval)))
 	})
 }
 
-// DevAddrHasSuffix applies the HasSuffix predicate on the "dev_addr" field.
-func DevAddrHasSuffix(v string) predicate.Device {
+// StoreIntervalEQ applies the EQ predicate on the "store_interval" field.
+func StoreIntervalEQ(v int) predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
-		s.Where(sql.HasSuffix(s.C(FieldDevAddr), v))
+		s.Where(sql.EQ(s.C(FieldStoreInterval), v))
 	})
 }
 
-// DevAddrEqualFold applies the EqualFold predicate on the "dev_addr" field.
-func DevAddrEqualFold(v string) predicate.Device {
+// StoreIntervalNEQ applies the NEQ predicate on the "store_interval" field.
+func StoreIntervalNEQ(v int) predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
-		s.Where(sql.EqualFold(s.C(FieldDevAddr), v))
+		s.Where(sql.NEQ(s.C(FieldStoreInterval), v))
 	})
 }
 
-// DevAddrContainsFold applies the ContainsFold predicate on the "dev_addr" field.
-func DevAddrContainsFold(v string) predicate.Device {
-	return predicate.Device(func(s *sql.Selector) {
-		s.Where(sql.ContainsFold(s.C(FieldDevAddr), v))
-	})
-}
-
-// ConnEQ applies the EQ predicate on the "conn" field.
-func ConnEQ(v string) predicate.Device {
-	return predicate.Device(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldConn), v))
-	})
-}
-
-// ConnNEQ applies the NEQ predicate on the "conn" field.
-func ConnNEQ(v string) predicate.Device {
-	return predicate.Device(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldConn), v))
-	})
-}
-
-// ConnIn applies the In predicate on the "conn" field.
-func ConnIn(vs ...string) predicate.Device {
+// StoreIntervalIn applies the In predicate on the "store_interval" field.
+func StoreIntervalIn(vs ...int) predicate.Device {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
 	return predicate.Device(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldConn), v...))
+		s.Where(sql.In(s.C(FieldStoreInterval), v...))
 	})
 }
 
-// ConnNotIn applies the NotIn predicate on the "conn" field.
-func ConnNotIn(vs ...string) predicate.Device {
+// StoreIntervalNotIn applies the NotIn predicate on the "store_interval" field.
+func StoreIntervalNotIn(vs ...int) predicate.Device {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
 	return predicate.Device(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldConn), v...))
+		s.Where(sql.NotIn(s.C(FieldStoreInterval), v...))
 	})
 }
 
-// ConnGT applies the GT predicate on the "conn" field.
-func ConnGT(v string) predicate.Device {
+// StoreIntervalGT applies the GT predicate on the "store_interval" field.
+func StoreIntervalGT(v int) predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldConn), v))
+		s.Where(sql.GT(s.C(FieldStoreInterval), v))
 	})
 }
 
-// ConnGTE applies the GTE predicate on the "conn" field.
-func ConnGTE(v string) predicate.Device {
+// StoreIntervalGTE applies the GTE predicate on the "store_interval" field.
+func StoreIntervalGTE(v int) predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldConn), v))
+		s.Where(sql.GTE(s.C(FieldStoreInterval), v))
 	})
 }
 
-// ConnLT applies the LT predicate on the "conn" field.
-func ConnLT(v string) predicate.Device {
+// StoreIntervalLT applies the LT predicate on the "store_interval" field.
+func StoreIntervalLT(v int) predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldConn), v))
+		s.Where(sql.LT(s.C(FieldStoreInterval), v))
 	})
 }
 
-// ConnLTE applies the LTE predicate on the "conn" field.
-func ConnLTE(v string) predicate.Device {
+// StoreIntervalLTE applies the LTE predicate on the "store_interval" field.
+func StoreIntervalLTE(v int) predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldConn), v))
+		s.Where(sql.LTE(s.C(FieldStoreInterval), v))
 	})
 }
 
-// ConnContains applies the Contains predicate on the "conn" field.
-func ConnContains(v string) predicate.Device {
+// StoreIntervalIsNil applies the IsNil predicate on the "store_interval" field.
+func StoreIntervalIsNil() predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
-		s.Where(sql.Contains(s.C(FieldConn), v))
+		s.Where(sql.IsNull(s.C(FieldStoreInterval)))
 	})
 }
 
-// ConnHasPrefix applies the HasPrefix predicate on the "conn" field.
-func ConnHasPrefix(v string) predicate.Device {
+// StoreIntervalNotNil applies the NotNil predicate on the "store_interval" field.
+func StoreIntervalNotNil() predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
-		s.Where(sql.HasPrefix(s.C(FieldConn), v))
-	})
-}
-
-// ConnHasSuffix applies the HasSuffix predicate on the "conn" field.
-func ConnHasSuffix(v string) predicate.Device {
-	return predicate.Device(func(s *sql.Selector) {
-		s.Where(sql.HasSuffix(s.C(FieldConn), v))
-	})
-}
-
-// ConnEqualFold applies the EqualFold predicate on the "conn" field.
-func ConnEqualFold(v string) predicate.Device {
-	return predicate.Device(func(s *sql.Selector) {
-		s.Where(sql.EqualFold(s.C(FieldConn), v))
-	})
-}
-
-// ConnContainsFold applies the ContainsFold predicate on the "conn" field.
-func ConnContainsFold(v string) predicate.Device {
-	return predicate.Device(func(s *sql.Selector) {
-		s.Where(sql.ContainsFold(s.C(FieldConn), v))
+		s.Where(sql.NotNull(s.C(FieldStoreInterval)))
 	})
 }
 

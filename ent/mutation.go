@@ -46,9 +46,12 @@ type DeviceMutation struct {
 	create_time                  *time.Time
 	update_time                  *time.Time
 	dev_id                       *string
-	dev_type                     *string
-	dev_addr                     *string
-	conn                         *string
+	_type                        *string
+	conn                         *map[string]interface{}
+	read_interval                *int
+	addread_interval             *int
+	store_interval               *int
+	addstore_interval            *int
 	name                         *string
 	delete_flag                  *bool
 	summary                      *string
@@ -268,85 +271,49 @@ func (m *DeviceMutation) ResetDevID() {
 	m.dev_id = nil
 }
 
-// SetDevType sets the "dev_type" field.
-func (m *DeviceMutation) SetDevType(s string) {
-	m.dev_type = &s
+// SetType sets the "type" field.
+func (m *DeviceMutation) SetType(s string) {
+	m._type = &s
 }
 
-// DevType returns the value of the "dev_type" field in the mutation.
-func (m *DeviceMutation) DevType() (r string, exists bool) {
-	v := m.dev_type
+// GetType returns the value of the "type" field in the mutation.
+func (m *DeviceMutation) GetType() (r string, exists bool) {
+	v := m._type
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldDevType returns the old "dev_type" field's value of the Device entity.
+// OldType returns the old "type" field's value of the Device entity.
 // If the Device object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *DeviceMutation) OldDevType(ctx context.Context) (v string, err error) {
+func (m *DeviceMutation) OldType(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldDevType is only allowed on UpdateOne operations")
+		return v, errors.New("OldType is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldDevType requires an ID field in the mutation")
+		return v, errors.New("OldType requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldDevType: %w", err)
+		return v, fmt.Errorf("querying old value for OldType: %w", err)
 	}
-	return oldValue.DevType, nil
+	return oldValue.Type, nil
 }
 
-// ResetDevType resets all changes to the "dev_type" field.
-func (m *DeviceMutation) ResetDevType() {
-	m.dev_type = nil
-}
-
-// SetDevAddr sets the "dev_addr" field.
-func (m *DeviceMutation) SetDevAddr(s string) {
-	m.dev_addr = &s
-}
-
-// DevAddr returns the value of the "dev_addr" field in the mutation.
-func (m *DeviceMutation) DevAddr() (r string, exists bool) {
-	v := m.dev_addr
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldDevAddr returns the old "dev_addr" field's value of the Device entity.
-// If the Device object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *DeviceMutation) OldDevAddr(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldDevAddr is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldDevAddr requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldDevAddr: %w", err)
-	}
-	return oldValue.DevAddr, nil
-}
-
-// ResetDevAddr resets all changes to the "dev_addr" field.
-func (m *DeviceMutation) ResetDevAddr() {
-	m.dev_addr = nil
+// ResetType resets all changes to the "type" field.
+func (m *DeviceMutation) ResetType() {
+	m._type = nil
 }
 
 // SetConn sets the "conn" field.
-func (m *DeviceMutation) SetConn(s string) {
-	m.conn = &s
+func (m *DeviceMutation) SetConn(value map[string]interface{}) {
+	m.conn = &value
 }
 
 // Conn returns the value of the "conn" field in the mutation.
-func (m *DeviceMutation) Conn() (r string, exists bool) {
+func (m *DeviceMutation) Conn() (r map[string]interface{}, exists bool) {
 	v := m.conn
 	if v == nil {
 		return
@@ -357,7 +324,7 @@ func (m *DeviceMutation) Conn() (r string, exists bool) {
 // OldConn returns the old "conn" field's value of the Device entity.
 // If the Device object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *DeviceMutation) OldConn(ctx context.Context) (v string, err error) {
+func (m *DeviceMutation) OldConn(ctx context.Context) (v map[string]interface{}, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldConn is only allowed on UpdateOne operations")
 	}
@@ -374,6 +341,146 @@ func (m *DeviceMutation) OldConn(ctx context.Context) (v string, err error) {
 // ResetConn resets all changes to the "conn" field.
 func (m *DeviceMutation) ResetConn() {
 	m.conn = nil
+}
+
+// SetReadInterval sets the "read_interval" field.
+func (m *DeviceMutation) SetReadInterval(i int) {
+	m.read_interval = &i
+	m.addread_interval = nil
+}
+
+// ReadInterval returns the value of the "read_interval" field in the mutation.
+func (m *DeviceMutation) ReadInterval() (r int, exists bool) {
+	v := m.read_interval
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldReadInterval returns the old "read_interval" field's value of the Device entity.
+// If the Device object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DeviceMutation) OldReadInterval(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldReadInterval is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldReadInterval requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldReadInterval: %w", err)
+	}
+	return oldValue.ReadInterval, nil
+}
+
+// AddReadInterval adds i to the "read_interval" field.
+func (m *DeviceMutation) AddReadInterval(i int) {
+	if m.addread_interval != nil {
+		*m.addread_interval += i
+	} else {
+		m.addread_interval = &i
+	}
+}
+
+// AddedReadInterval returns the value that was added to the "read_interval" field in this mutation.
+func (m *DeviceMutation) AddedReadInterval() (r int, exists bool) {
+	v := m.addread_interval
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearReadInterval clears the value of the "read_interval" field.
+func (m *DeviceMutation) ClearReadInterval() {
+	m.read_interval = nil
+	m.addread_interval = nil
+	m.clearedFields[device.FieldReadInterval] = struct{}{}
+}
+
+// ReadIntervalCleared returns if the "read_interval" field was cleared in this mutation.
+func (m *DeviceMutation) ReadIntervalCleared() bool {
+	_, ok := m.clearedFields[device.FieldReadInterval]
+	return ok
+}
+
+// ResetReadInterval resets all changes to the "read_interval" field.
+func (m *DeviceMutation) ResetReadInterval() {
+	m.read_interval = nil
+	m.addread_interval = nil
+	delete(m.clearedFields, device.FieldReadInterval)
+}
+
+// SetStoreInterval sets the "store_interval" field.
+func (m *DeviceMutation) SetStoreInterval(i int) {
+	m.store_interval = &i
+	m.addstore_interval = nil
+}
+
+// StoreInterval returns the value of the "store_interval" field in the mutation.
+func (m *DeviceMutation) StoreInterval() (r int, exists bool) {
+	v := m.store_interval
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStoreInterval returns the old "store_interval" field's value of the Device entity.
+// If the Device object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DeviceMutation) OldStoreInterval(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStoreInterval is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStoreInterval requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStoreInterval: %w", err)
+	}
+	return oldValue.StoreInterval, nil
+}
+
+// AddStoreInterval adds i to the "store_interval" field.
+func (m *DeviceMutation) AddStoreInterval(i int) {
+	if m.addstore_interval != nil {
+		*m.addstore_interval += i
+	} else {
+		m.addstore_interval = &i
+	}
+}
+
+// AddedStoreInterval returns the value that was added to the "store_interval" field in this mutation.
+func (m *DeviceMutation) AddedStoreInterval() (r int, exists bool) {
+	v := m.addstore_interval
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearStoreInterval clears the value of the "store_interval" field.
+func (m *DeviceMutation) ClearStoreInterval() {
+	m.store_interval = nil
+	m.addstore_interval = nil
+	m.clearedFields[device.FieldStoreInterval] = struct{}{}
+}
+
+// StoreIntervalCleared returns if the "store_interval" field was cleared in this mutation.
+func (m *DeviceMutation) StoreIntervalCleared() bool {
+	_, ok := m.clearedFields[device.FieldStoreInterval]
+	return ok
+}
+
+// ResetStoreInterval resets all changes to the "store_interval" field.
+func (m *DeviceMutation) ResetStoreInterval() {
+	m.store_interval = nil
+	m.addstore_interval = nil
+	delete(m.clearedFields, device.FieldStoreInterval)
 }
 
 // SetName sets the "name" field.
@@ -620,7 +727,7 @@ func (m *DeviceMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *DeviceMutation) Fields() []string {
-	fields := make([]string, 0, 9)
+	fields := make([]string, 0, 10)
 	if m.create_time != nil {
 		fields = append(fields, device.FieldCreateTime)
 	}
@@ -630,14 +737,17 @@ func (m *DeviceMutation) Fields() []string {
 	if m.dev_id != nil {
 		fields = append(fields, device.FieldDevID)
 	}
-	if m.dev_type != nil {
-		fields = append(fields, device.FieldDevType)
-	}
-	if m.dev_addr != nil {
-		fields = append(fields, device.FieldDevAddr)
+	if m._type != nil {
+		fields = append(fields, device.FieldType)
 	}
 	if m.conn != nil {
 		fields = append(fields, device.FieldConn)
+	}
+	if m.read_interval != nil {
+		fields = append(fields, device.FieldReadInterval)
+	}
+	if m.store_interval != nil {
+		fields = append(fields, device.FieldStoreInterval)
 	}
 	if m.name != nil {
 		fields = append(fields, device.FieldName)
@@ -662,12 +772,14 @@ func (m *DeviceMutation) Field(name string) (ent.Value, bool) {
 		return m.UpdateTime()
 	case device.FieldDevID:
 		return m.DevID()
-	case device.FieldDevType:
-		return m.DevType()
-	case device.FieldDevAddr:
-		return m.DevAddr()
+	case device.FieldType:
+		return m.GetType()
 	case device.FieldConn:
 		return m.Conn()
+	case device.FieldReadInterval:
+		return m.ReadInterval()
+	case device.FieldStoreInterval:
+		return m.StoreInterval()
 	case device.FieldName:
 		return m.Name()
 	case device.FieldDeleteFlag:
@@ -689,12 +801,14 @@ func (m *DeviceMutation) OldField(ctx context.Context, name string) (ent.Value, 
 		return m.OldUpdateTime(ctx)
 	case device.FieldDevID:
 		return m.OldDevID(ctx)
-	case device.FieldDevType:
-		return m.OldDevType(ctx)
-	case device.FieldDevAddr:
-		return m.OldDevAddr(ctx)
+	case device.FieldType:
+		return m.OldType(ctx)
 	case device.FieldConn:
 		return m.OldConn(ctx)
+	case device.FieldReadInterval:
+		return m.OldReadInterval(ctx)
+	case device.FieldStoreInterval:
+		return m.OldStoreInterval(ctx)
 	case device.FieldName:
 		return m.OldName(ctx)
 	case device.FieldDeleteFlag:
@@ -731,26 +845,33 @@ func (m *DeviceMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetDevID(v)
 		return nil
-	case device.FieldDevType:
+	case device.FieldType:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetDevType(v)
-		return nil
-	case device.FieldDevAddr:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetDevAddr(v)
+		m.SetType(v)
 		return nil
 	case device.FieldConn:
-		v, ok := value.(string)
+		v, ok := value.(map[string]interface{})
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetConn(v)
+		return nil
+	case device.FieldReadInterval:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetReadInterval(v)
+		return nil
+	case device.FieldStoreInterval:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStoreInterval(v)
 		return nil
 	case device.FieldName:
 		v, ok := value.(string)
@@ -780,13 +901,26 @@ func (m *DeviceMutation) SetField(name string, value ent.Value) error {
 // AddedFields returns all numeric fields that were incremented/decremented during
 // this mutation.
 func (m *DeviceMutation) AddedFields() []string {
-	return nil
+	var fields []string
+	if m.addread_interval != nil {
+		fields = append(fields, device.FieldReadInterval)
+	}
+	if m.addstore_interval != nil {
+		fields = append(fields, device.FieldStoreInterval)
+	}
+	return fields
 }
 
 // AddedField returns the numeric value that was incremented/decremented on a field
 // with the given name. The second boolean return value indicates that this field
 // was not set, or was not defined in the schema.
 func (m *DeviceMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case device.FieldReadInterval:
+		return m.AddedReadInterval()
+	case device.FieldStoreInterval:
+		return m.AddedStoreInterval()
+	}
 	return nil, false
 }
 
@@ -795,6 +929,20 @@ func (m *DeviceMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *DeviceMutation) AddField(name string, value ent.Value) error {
 	switch name {
+	case device.FieldReadInterval:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddReadInterval(v)
+		return nil
+	case device.FieldStoreInterval:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddStoreInterval(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Device numeric field %s", name)
 }
@@ -803,6 +951,12 @@ func (m *DeviceMutation) AddField(name string, value ent.Value) error {
 // mutation.
 func (m *DeviceMutation) ClearedFields() []string {
 	var fields []string
+	if m.FieldCleared(device.FieldReadInterval) {
+		fields = append(fields, device.FieldReadInterval)
+	}
+	if m.FieldCleared(device.FieldStoreInterval) {
+		fields = append(fields, device.FieldStoreInterval)
+	}
 	if m.FieldCleared(device.FieldName) {
 		fields = append(fields, device.FieldName)
 	}
@@ -826,6 +980,12 @@ func (m *DeviceMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *DeviceMutation) ClearField(name string) error {
 	switch name {
+	case device.FieldReadInterval:
+		m.ClearReadInterval()
+		return nil
+	case device.FieldStoreInterval:
+		m.ClearStoreInterval()
+		return nil
 	case device.FieldName:
 		m.ClearName()
 		return nil
@@ -852,14 +1012,17 @@ func (m *DeviceMutation) ResetField(name string) error {
 	case device.FieldDevID:
 		m.ResetDevID()
 		return nil
-	case device.FieldDevType:
-		m.ResetDevType()
-		return nil
-	case device.FieldDevAddr:
-		m.ResetDevAddr()
+	case device.FieldType:
+		m.ResetType()
 		return nil
 	case device.FieldConn:
 		m.ResetConn()
+		return nil
+	case device.FieldReadInterval:
+		m.ResetReadInterval()
+		return nil
+	case device.FieldStoreInterval:
+		m.ResetStoreInterval()
 		return nil
 	case device.FieldName:
 		m.ResetName()

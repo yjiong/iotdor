@@ -17,12 +17,14 @@ const (
 	FieldUpdateTime = "update_time"
 	// FieldDevID holds the string denoting the dev_id field in the database.
 	FieldDevID = "dev_id"
-	// FieldDevType holds the string denoting the dev_type field in the database.
-	FieldDevType = "dev_type"
-	// FieldDevAddr holds the string denoting the dev_addr field in the database.
-	FieldDevAddr = "dev_addr"
+	// FieldType holds the string denoting the type field in the database.
+	FieldType = "type"
 	// FieldConn holds the string denoting the conn field in the database.
 	FieldConn = "conn"
+	// FieldReadInterval holds the string denoting the read_interval field in the database.
+	FieldReadInterval = "read_interval"
+	// FieldStoreInterval holds the string denoting the store_interval field in the database.
+	FieldStoreInterval = "store_interval"
 	// FieldName holds the string denoting the name field in the database.
 	FieldName = "name"
 	// FieldDeleteFlag holds the string denoting the delete_flag field in the database.
@@ -57,9 +59,10 @@ var Columns = []string{
 	FieldCreateTime,
 	FieldUpdateTime,
 	FieldDevID,
-	FieldDevType,
-	FieldDevAddr,
+	FieldType,
 	FieldConn,
+	FieldReadInterval,
+	FieldStoreInterval,
 	FieldName,
 	FieldDeleteFlag,
 	FieldSummary,

@@ -18,15 +18,13 @@ func (Device) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("dev_id").
 			Unique(),
-		field.String("dev_type"),
-		field.String("dev_addr"),
-		field.String("conn"),
-		field.String("name").
-			Optional(),
-		field.Bool("delete_flag").
-			Optional(),
-		field.String("summary").
-			Optional(),
+		field.String("type"),
+		field.JSON("conn", map[string]any{}),
+		field.Int("read_interval").Optional(),
+		field.Int("store_interval").Optional(),
+		field.String("name").Optional(),
+		field.Bool("delete_flag").Optional(),
+		field.String("summary").Optional(),
 	}
 }
 

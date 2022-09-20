@@ -56,21 +56,43 @@ func (dc *DeviceCreate) SetDevID(s string) *DeviceCreate {
 	return dc
 }
 
-// SetDevType sets the "dev_type" field.
-func (dc *DeviceCreate) SetDevType(s string) *DeviceCreate {
-	dc.mutation.SetDevType(s)
-	return dc
-}
-
-// SetDevAddr sets the "dev_addr" field.
-func (dc *DeviceCreate) SetDevAddr(s string) *DeviceCreate {
-	dc.mutation.SetDevAddr(s)
+// SetType sets the "type" field.
+func (dc *DeviceCreate) SetType(s string) *DeviceCreate {
+	dc.mutation.SetType(s)
 	return dc
 }
 
 // SetConn sets the "conn" field.
-func (dc *DeviceCreate) SetConn(s string) *DeviceCreate {
-	dc.mutation.SetConn(s)
+func (dc *DeviceCreate) SetConn(m map[string]interface{}) *DeviceCreate {
+	dc.mutation.SetConn(m)
+	return dc
+}
+
+// SetReadInterval sets the "read_interval" field.
+func (dc *DeviceCreate) SetReadInterval(i int) *DeviceCreate {
+	dc.mutation.SetReadInterval(i)
+	return dc
+}
+
+// SetNillableReadInterval sets the "read_interval" field if the given value is not nil.
+func (dc *DeviceCreate) SetNillableReadInterval(i *int) *DeviceCreate {
+	if i != nil {
+		dc.SetReadInterval(*i)
+	}
+	return dc
+}
+
+// SetStoreInterval sets the "store_interval" field.
+func (dc *DeviceCreate) SetStoreInterval(i int) *DeviceCreate {
+	dc.mutation.SetStoreInterval(i)
+	return dc
+}
+
+// SetNillableStoreInterval sets the "store_interval" field if the given value is not nil.
+func (dc *DeviceCreate) SetNillableStoreInterval(i *int) *DeviceCreate {
+	if i != nil {
+		dc.SetStoreInterval(*i)
+	}
 	return dc
 }
 
@@ -252,11 +274,8 @@ func (dc *DeviceCreate) check() error {
 	if _, ok := dc.mutation.DevID(); !ok {
 		return &ValidationError{Name: "dev_id", err: errors.New(`ent: missing required field "Device.dev_id"`)}
 	}
-	if _, ok := dc.mutation.DevType(); !ok {
-		return &ValidationError{Name: "dev_type", err: errors.New(`ent: missing required field "Device.dev_type"`)}
-	}
-	if _, ok := dc.mutation.DevAddr(); !ok {
-		return &ValidationError{Name: "dev_addr", err: errors.New(`ent: missing required field "Device.dev_addr"`)}
+	if _, ok := dc.mutation.GetType(); !ok {
+		return &ValidationError{Name: "type", err: errors.New(`ent: missing required field "Device.type"`)}
 	}
 	if _, ok := dc.mutation.Conn(); !ok {
 		return &ValidationError{Name: "conn", err: errors.New(`ent: missing required field "Device.conn"`)}
@@ -312,29 +331,37 @@ func (dc *DeviceCreate) createSpec() (*Device, *sqlgraph.CreateSpec) {
 		})
 		_node.DevID = value
 	}
-	if value, ok := dc.mutation.DevType(); ok {
+	if value, ok := dc.mutation.GetType(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: device.FieldDevType,
+			Column: device.FieldType,
 		})
-		_node.DevType = value
-	}
-	if value, ok := dc.mutation.DevAddr(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: device.FieldDevAddr,
-		})
-		_node.DevAddr = value
+		_node.Type = value
 	}
 	if value, ok := dc.mutation.Conn(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
+			Type:   field.TypeJSON,
 			Value:  value,
 			Column: device.FieldConn,
 		})
 		_node.Conn = value
+	}
+	if value, ok := dc.mutation.ReadInterval(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: device.FieldReadInterval,
+		})
+		_node.ReadInterval = value
+	}
+	if value, ok := dc.mutation.StoreInterval(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: device.FieldStoreInterval,
+		})
+		_node.StoreInterval = value
 	}
 	if value, ok := dc.mutation.Name(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{

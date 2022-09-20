@@ -3,6 +3,7 @@
 package ent
 
 import (
+	"encoding/json"
 	"fmt"
 	"strings"
 	"time"
@@ -24,12 +25,14 @@ type Device struct {
 	UpdateTime time.Time `json:"update_time,omitempty"`
 	// DevID holds the value of the "dev_id" field.
 	DevID string `json:"dev_id,omitempty"`
-	// DevType holds the value of the "dev_type" field.
-	DevType string `json:"dev_type,omitempty"`
-	// DevAddr holds the value of the "dev_addr" field.
-	DevAddr string `json:"dev_addr,omitempty"`
+	// Type holds the value of the "type" field.
+	Type string `json:"type,omitempty"`
 	// Conn holds the value of the "conn" field.
-	Conn string `json:"conn,omitempty"`
+	Conn map[string]interface{} `json:"conn,omitempty"`
+	// ReadInterval holds the value of the "read_interval" field.
+	ReadInterval int `json:"read_interval,omitempty"`
+	// StoreInterval holds the value of the "store_interval" field.
+	StoreInterval int `json:"store_interval,omitempty"`
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
 	// DeleteFlag holds the value of the "delete_flag" field.
@@ -85,11 +88,13 @@ func (*Device) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
+		case device.FieldConn:
+			values[i] = new([]byte)
 		case device.FieldDeleteFlag:
 			values[i] = new(sql.NullBool)
-		case device.FieldID:
+		case device.FieldID, device.FieldReadInterval, device.FieldStoreInterval:
 			values[i] = new(sql.NullInt64)
-		case device.FieldDevID, device.FieldDevType, device.FieldDevAddr, device.FieldConn, device.FieldName, device.FieldSummary:
+		case device.FieldDevID, device.FieldType, device.FieldName, device.FieldSummary:
 			values[i] = new(sql.NullString)
 		case device.FieldCreateTime, device.FieldUpdateTime:
 			values[i] = new(sql.NullTime)
@@ -136,23 +141,31 @@ func (d *Device) assignValues(columns []string, values []interface{}) error {
 			} else if value.Valid {
 				d.DevID = value.String
 			}
-		case device.FieldDevType:
+		case device.FieldType:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field dev_type", values[i])
+				return fmt.Errorf("unexpected type %T for field type", values[i])
 			} else if value.Valid {
-				d.DevType = value.String
-			}
-		case device.FieldDevAddr:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field dev_addr", values[i])
-			} else if value.Valid {
-				d.DevAddr = value.String
+				d.Type = value.String
 			}
 		case device.FieldConn:
-			if value, ok := values[i].(*sql.NullString); !ok {
+			if value, ok := values[i].(*[]byte); !ok {
 				return fmt.Errorf("unexpected type %T for field conn", values[i])
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &d.Conn); err != nil {
+					return fmt.Errorf("unmarshal field conn: %w", err)
+				}
+			}
+		case device.FieldReadInterval:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field read_interval", values[i])
 			} else if value.Valid {
-				d.Conn = value.String
+				d.ReadInterval = int(value.Int64)
+			}
+		case device.FieldStoreInterval:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field store_interval", values[i])
+			} else if value.Valid {
+				d.StoreInterval = int(value.Int64)
 			}
 		case device.FieldName:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -233,14 +246,17 @@ func (d *Device) String() string {
 	builder.WriteString("dev_id=")
 	builder.WriteString(d.DevID)
 	builder.WriteString(", ")
-	builder.WriteString("dev_type=")
-	builder.WriteString(d.DevType)
-	builder.WriteString(", ")
-	builder.WriteString("dev_addr=")
-	builder.WriteString(d.DevAddr)
+	builder.WriteString("type=")
+	builder.WriteString(d.Type)
 	builder.WriteString(", ")
 	builder.WriteString("conn=")
-	builder.WriteString(d.Conn)
+	builder.WriteString(fmt.Sprintf("%v", d.Conn))
+	builder.WriteString(", ")
+	builder.WriteString("read_interval=")
+	builder.WriteString(fmt.Sprintf("%v", d.ReadInterval))
+	builder.WriteString(", ")
+	builder.WriteString("store_interval=")
+	builder.WriteString(fmt.Sprintf("%v", d.StoreInterval))
 	builder.WriteString(", ")
 	builder.WriteString("name=")
 	builder.WriteString(d.Name)

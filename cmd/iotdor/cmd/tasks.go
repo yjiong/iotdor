@@ -68,7 +68,9 @@ func runLogicMsgHandle() error {
 		Password: r["password"],
 		DB:       0, // use default DB
 	})
-	if err := redisClient.Ping(ctx).Err(); err != nil {
+	if err := redisClient.Ping(ctx).Err(); err == nil {
+		log.Infof("redis %s connect successful", fmt.Sprintf("%s:%s", r["host"], r["port"]))
+	} else {
 		log.Error(err)
 		return err
 	}

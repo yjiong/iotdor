@@ -42,21 +42,69 @@ func (du *DeviceUpdate) SetDevID(s string) *DeviceUpdate {
 	return du
 }
 
-// SetDevType sets the "dev_type" field.
-func (du *DeviceUpdate) SetDevType(s string) *DeviceUpdate {
-	du.mutation.SetDevType(s)
-	return du
-}
-
-// SetDevAddr sets the "dev_addr" field.
-func (du *DeviceUpdate) SetDevAddr(s string) *DeviceUpdate {
-	du.mutation.SetDevAddr(s)
+// SetType sets the "type" field.
+func (du *DeviceUpdate) SetType(s string) *DeviceUpdate {
+	du.mutation.SetType(s)
 	return du
 }
 
 // SetConn sets the "conn" field.
-func (du *DeviceUpdate) SetConn(s string) *DeviceUpdate {
-	du.mutation.SetConn(s)
+func (du *DeviceUpdate) SetConn(m map[string]interface{}) *DeviceUpdate {
+	du.mutation.SetConn(m)
+	return du
+}
+
+// SetReadInterval sets the "read_interval" field.
+func (du *DeviceUpdate) SetReadInterval(i int) *DeviceUpdate {
+	du.mutation.ResetReadInterval()
+	du.mutation.SetReadInterval(i)
+	return du
+}
+
+// SetNillableReadInterval sets the "read_interval" field if the given value is not nil.
+func (du *DeviceUpdate) SetNillableReadInterval(i *int) *DeviceUpdate {
+	if i != nil {
+		du.SetReadInterval(*i)
+	}
+	return du
+}
+
+// AddReadInterval adds i to the "read_interval" field.
+func (du *DeviceUpdate) AddReadInterval(i int) *DeviceUpdate {
+	du.mutation.AddReadInterval(i)
+	return du
+}
+
+// ClearReadInterval clears the value of the "read_interval" field.
+func (du *DeviceUpdate) ClearReadInterval() *DeviceUpdate {
+	du.mutation.ClearReadInterval()
+	return du
+}
+
+// SetStoreInterval sets the "store_interval" field.
+func (du *DeviceUpdate) SetStoreInterval(i int) *DeviceUpdate {
+	du.mutation.ResetStoreInterval()
+	du.mutation.SetStoreInterval(i)
+	return du
+}
+
+// SetNillableStoreInterval sets the "store_interval" field if the given value is not nil.
+func (du *DeviceUpdate) SetNillableStoreInterval(i *int) *DeviceUpdate {
+	if i != nil {
+		du.SetStoreInterval(*i)
+	}
+	return du
+}
+
+// AddStoreInterval adds i to the "store_interval" field.
+func (du *DeviceUpdate) AddStoreInterval(i int) *DeviceUpdate {
+	du.mutation.AddStoreInterval(i)
+	return du
+}
+
+// ClearStoreInterval clears the value of the "store_interval" field.
+func (du *DeviceUpdate) ClearStoreInterval() *DeviceUpdate {
+	du.mutation.ClearStoreInterval()
 	return du
 }
 
@@ -270,25 +318,58 @@ func (du *DeviceUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: device.FieldDevID,
 		})
 	}
-	if value, ok := du.mutation.DevType(); ok {
+	if value, ok := du.mutation.GetType(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: device.FieldDevType,
-		})
-	}
-	if value, ok := du.mutation.DevAddr(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: device.FieldDevAddr,
+			Column: device.FieldType,
 		})
 	}
 	if value, ok := du.mutation.Conn(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
+			Type:   field.TypeJSON,
 			Value:  value,
 			Column: device.FieldConn,
+		})
+	}
+	if value, ok := du.mutation.ReadInterval(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: device.FieldReadInterval,
+		})
+	}
+	if value, ok := du.mutation.AddedReadInterval(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: device.FieldReadInterval,
+		})
+	}
+	if du.mutation.ReadIntervalCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Column: device.FieldReadInterval,
+		})
+	}
+	if value, ok := du.mutation.StoreInterval(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: device.FieldStoreInterval,
+		})
+	}
+	if value, ok := du.mutation.AddedStoreInterval(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: device.FieldStoreInterval,
+		})
+	}
+	if du.mutation.StoreIntervalCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Column: device.FieldStoreInterval,
 		})
 	}
 	if value, ok := du.mutation.Name(); ok {
@@ -431,21 +512,69 @@ func (duo *DeviceUpdateOne) SetDevID(s string) *DeviceUpdateOne {
 	return duo
 }
 
-// SetDevType sets the "dev_type" field.
-func (duo *DeviceUpdateOne) SetDevType(s string) *DeviceUpdateOne {
-	duo.mutation.SetDevType(s)
-	return duo
-}
-
-// SetDevAddr sets the "dev_addr" field.
-func (duo *DeviceUpdateOne) SetDevAddr(s string) *DeviceUpdateOne {
-	duo.mutation.SetDevAddr(s)
+// SetType sets the "type" field.
+func (duo *DeviceUpdateOne) SetType(s string) *DeviceUpdateOne {
+	duo.mutation.SetType(s)
 	return duo
 }
 
 // SetConn sets the "conn" field.
-func (duo *DeviceUpdateOne) SetConn(s string) *DeviceUpdateOne {
-	duo.mutation.SetConn(s)
+func (duo *DeviceUpdateOne) SetConn(m map[string]interface{}) *DeviceUpdateOne {
+	duo.mutation.SetConn(m)
+	return duo
+}
+
+// SetReadInterval sets the "read_interval" field.
+func (duo *DeviceUpdateOne) SetReadInterval(i int) *DeviceUpdateOne {
+	duo.mutation.ResetReadInterval()
+	duo.mutation.SetReadInterval(i)
+	return duo
+}
+
+// SetNillableReadInterval sets the "read_interval" field if the given value is not nil.
+func (duo *DeviceUpdateOne) SetNillableReadInterval(i *int) *DeviceUpdateOne {
+	if i != nil {
+		duo.SetReadInterval(*i)
+	}
+	return duo
+}
+
+// AddReadInterval adds i to the "read_interval" field.
+func (duo *DeviceUpdateOne) AddReadInterval(i int) *DeviceUpdateOne {
+	duo.mutation.AddReadInterval(i)
+	return duo
+}
+
+// ClearReadInterval clears the value of the "read_interval" field.
+func (duo *DeviceUpdateOne) ClearReadInterval() *DeviceUpdateOne {
+	duo.mutation.ClearReadInterval()
+	return duo
+}
+
+// SetStoreInterval sets the "store_interval" field.
+func (duo *DeviceUpdateOne) SetStoreInterval(i int) *DeviceUpdateOne {
+	duo.mutation.ResetStoreInterval()
+	duo.mutation.SetStoreInterval(i)
+	return duo
+}
+
+// SetNillableStoreInterval sets the "store_interval" field if the given value is not nil.
+func (duo *DeviceUpdateOne) SetNillableStoreInterval(i *int) *DeviceUpdateOne {
+	if i != nil {
+		duo.SetStoreInterval(*i)
+	}
+	return duo
+}
+
+// AddStoreInterval adds i to the "store_interval" field.
+func (duo *DeviceUpdateOne) AddStoreInterval(i int) *DeviceUpdateOne {
+	duo.mutation.AddStoreInterval(i)
+	return duo
+}
+
+// ClearStoreInterval clears the value of the "store_interval" field.
+func (duo *DeviceUpdateOne) ClearStoreInterval() *DeviceUpdateOne {
+	duo.mutation.ClearStoreInterval()
 	return duo
 }
 
@@ -689,25 +818,58 @@ func (duo *DeviceUpdateOne) sqlSave(ctx context.Context) (_node *Device, err err
 			Column: device.FieldDevID,
 		})
 	}
-	if value, ok := duo.mutation.DevType(); ok {
+	if value, ok := duo.mutation.GetType(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: device.FieldDevType,
-		})
-	}
-	if value, ok := duo.mutation.DevAddr(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: device.FieldDevAddr,
+			Column: device.FieldType,
 		})
 	}
 	if value, ok := duo.mutation.Conn(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
+			Type:   field.TypeJSON,
 			Value:  value,
 			Column: device.FieldConn,
+		})
+	}
+	if value, ok := duo.mutation.ReadInterval(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: device.FieldReadInterval,
+		})
+	}
+	if value, ok := duo.mutation.AddedReadInterval(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: device.FieldReadInterval,
+		})
+	}
+	if duo.mutation.ReadIntervalCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Column: device.FieldReadInterval,
+		})
+	}
+	if value, ok := duo.mutation.StoreInterval(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: device.FieldStoreInterval,
+		})
+	}
+	if value, ok := duo.mutation.AddedStoreInterval(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: device.FieldStoreInterval,
+		})
+	}
+	if duo.mutation.StoreIntervalCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Column: device.FieldStoreInterval,
 		})
 	}
 	if value, ok := duo.mutation.Name(); ok {

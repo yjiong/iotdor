@@ -12,7 +12,7 @@ import (
 
 var gwStat = []bool{false, true}
 
-func (m *Manage) gatewayInfoHandle(gwID string, stat int) {
+func (m *Manage) gatewayInfoHandle(gwID, gwCtag string, stat int) {
 	if exist, _ := m.entC.Gateway.Query().Where(gateway.Gwid(gwID)).Exist(m.ctx); !exist {
 		addGateway(m.ctx, m.entC, gwID, m.iotdName, "", "", gwStat[stat], 60)
 	}
@@ -24,9 +24,14 @@ func (m *Manage) gatewayInfoHandle(gwID string, stat int) {
 			uit, _ := strconv.Atoi(fmt.Sprintf("%s", rm["interval"]))
 			updateGateway(m.ctx, m.entC, gwID, m.iotdName, burl, "", ver, gwStat[stat], uit)
 		}
-		if ret, err := m.mqttCmd(gwID, ListDevItems); err == nil {
-			log.Debugln(ret)
-			//TODO
+		if m.redisC.Get(m.ctx, m.mkRedisKeyPrefix(gwID, GatewayCtagValue)).String() != gwCtag {
+			if err := m.redisC.Set(m.ctx, m.mkRedisKeyPrefix(gwID, GatewayCtagValue), gwCtag, 0).Err(); err != nil {
+				log.Error(err)
+			}
+			if ret, err := m.mqttCmd(gwID, ListDevItems); err == nil {
+				log.Debugln(ret)
+				//TODO
+			}
 		}
 	} else {
 		m.entC.Gateway.Update().Where(gateway.Gwid(gwID)).SetOnline(false).Exec(m.ctx)
