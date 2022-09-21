@@ -6,6 +6,7 @@ import (
 	"time"
 
 	log "github.com/sirupsen/logrus"
+	"github.com/yjiong/iotdor/ent"
 	"github.com/yjiong/iotdor/ent/gateway"
 	"github.com/yjiong/iotdor/utils"
 )
@@ -30,6 +31,9 @@ func (m *Manage) gatewayInfoHandle(gwID, gwCtag string, stat int) {
 			}
 			if ret, err := m.mqttCmd(gwID, ListDevItems); err == nil {
 				log.Debugln(ret)
+				var eds []ent.Device
+				unMarshlDev(ret,&eds)
+				log.Debugf("%+v", eds)
 				//TODO
 			}
 		}

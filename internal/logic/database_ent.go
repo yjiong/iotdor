@@ -8,7 +8,6 @@ import (
 	esql "entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/schema"
 	"github.com/yjiong/iotdor/ent"
-	"github.com/yjiong/iotdor/ent/device"
 	"github.com/yjiong/iotdor/ent/gateway"
 	"github.com/yjiong/iotdor/ent/group"
 	"github.com/yjiong/iotdor/ent/migrate"
@@ -153,4 +152,3 @@ func updateGateway(ctx context.Context,
 		SetUpInterval(upInterval).
 		Exec(ctx)
 }
-

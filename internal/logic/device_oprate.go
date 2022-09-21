@@ -16,29 +16,51 @@ func (m *Manage) setGwAllDevDelFlag(gwid string) {
 		}
 	}
 }
-func (m *Manage) addOrUpdateDevice(did, dtype, daddr, name string,
-	ri, si int,
-	conn map[string]any,
-	gw *ent.Gateway) error {
-	exist, _ := m.entC.Device.Query().Where(device.DevID(did)).Exist(m.ctx)
+func (m *Manage) addOrUpdateDevice(dev *ent.Device, gw *ent.Gateway) error {
+	//if gw, err = m.entC.Gateway.Query().Where(gateway.Gwid(gwid)).Only(m.ctx); gw != nil && err == nil {
+	exist, _ := m.entC.Device.Query().Where(device.DevID(dev.DevID)).Exist(m.ctx)
 	if !exist {
 		return m.entC.Device.Create().
-			SetDevID(did).
-			SetType(dtype).
-			SetConn(conn).
-			SetName(name).
+			SetDevID(dev.DevID).
+			SetType(dev.Type).
+			SetConn(dev.Conn).
+			SetName(dev.Name).
 			SetGateway(gw).
-			SetReadInterval(ri).
-			SetStoreInterval(si).
+			SetReadInterval(dev.ReadInterval).
+			SetStoreInterval(dev.StoreInterval).
+			SetDeleteFlag(false).
 			Exec(m.ctx)
 	}
 	return m.entC.Device.Update().
-		Where(device.DevID(did)).
-		SetType(dtype).
-		SetConn(conn).
-		SetName(name).
+		Where(device.DevID(dev.DevID)).
+		SetType(dev.Type).
+		SetConn(dev.Conn).
+		SetName(dev.Name).
 		SetGateway(gw).
-		SetReadInterval(ri).
-		SetStoreInterval(si).
+		SetReadInterval(dev.ReadInterval).
+		SetStoreInterval(dev.StoreInterval).
+		SetDeleteFlag(false).
 		Exec(m.ctx)
+}
+
+func unMarshlDev(aed any, ueds *[]ent.Device) {
+	if eds, ok := aed.([]any); ok {
+		for _, ed := range eds {
+			unMarshlDev(ed, ueds)
+		}
+	} else {
+		if aem, ok := aed.(map[string]any); ok {
+			ed := ent.Device{
+				DevID: aem["devid"].(string),
+				Type:  aem["type"].(string),
+				Conn:  aem["conn"].(map[string]any),
+				//ReadInterval:  aem["read_interval"].(json.Number),
+				//StoreInterval: aem["store_interval"].(json.Number),
+				//Name:       aem["devname"].(string),
+				DeleteFlag: false,
+				//Summary:    aem["summary"].(string),
+			}
+			*ueds = append(*ueds, ed)
+		}
+	}
 }
