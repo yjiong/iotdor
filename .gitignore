@@ -6,7 +6,9 @@ Vagrantfile
 *.log
 # certs
 certs/
-
+api/static/myyaml/
+api/static/example.yaml
+api/static/outline.yaml
 # builds
 dist/
 build/*
