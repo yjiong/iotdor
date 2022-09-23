@@ -74,23 +74,23 @@ func (gu *GatewayUpdate) ClearInstallationLocation() *GatewayUpdate {
 	return gu
 }
 
-// SetOnline sets the "online" field.
-func (gu *GatewayUpdate) SetOnline(b bool) *GatewayUpdate {
-	gu.mutation.SetOnline(b)
+// SetStat sets the "stat" field.
+func (gu *GatewayUpdate) SetStat(s string) *GatewayUpdate {
+	gu.mutation.SetStat(s)
 	return gu
 }
 
-// SetNillableOnline sets the "online" field if the given value is not nil.
-func (gu *GatewayUpdate) SetNillableOnline(b *bool) *GatewayUpdate {
-	if b != nil {
-		gu.SetOnline(*b)
+// SetNillableStat sets the "stat" field if the given value is not nil.
+func (gu *GatewayUpdate) SetNillableStat(s *string) *GatewayUpdate {
+	if s != nil {
+		gu.SetStat(*s)
 	}
 	return gu
 }
 
-// ClearOnline clears the value of the "online" field.
-func (gu *GatewayUpdate) ClearOnline() *GatewayUpdate {
-	gu.mutation.ClearOnline()
+// ClearStat clears the value of the "stat" field.
+func (gu *GatewayUpdate) ClearStat() *GatewayUpdate {
+	gu.mutation.ClearStat()
 	return gu
 }
 
@@ -363,17 +363,17 @@ func (gu *GatewayUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: gateway.FieldInstallationLocation,
 		})
 	}
-	if value, ok := gu.mutation.Online(); ok {
+	if value, ok := gu.mutation.Stat(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
+			Type:   field.TypeString,
 			Value:  value,
-			Column: gateway.FieldOnline,
+			Column: gateway.FieldStat,
 		})
 	}
-	if gu.mutation.OnlineCleared() {
+	if gu.mutation.StatCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
-			Column: gateway.FieldOnline,
+			Type:   field.TypeString,
+			Column: gateway.FieldStat,
 		})
 	}
 	if value, ok := gu.mutation.DeleteFlag(); ok {
@@ -581,23 +581,23 @@ func (guo *GatewayUpdateOne) ClearInstallationLocation() *GatewayUpdateOne {
 	return guo
 }
 
-// SetOnline sets the "online" field.
-func (guo *GatewayUpdateOne) SetOnline(b bool) *GatewayUpdateOne {
-	guo.mutation.SetOnline(b)
+// SetStat sets the "stat" field.
+func (guo *GatewayUpdateOne) SetStat(s string) *GatewayUpdateOne {
+	guo.mutation.SetStat(s)
 	return guo
 }
 
-// SetNillableOnline sets the "online" field if the given value is not nil.
-func (guo *GatewayUpdateOne) SetNillableOnline(b *bool) *GatewayUpdateOne {
-	if b != nil {
-		guo.SetOnline(*b)
+// SetNillableStat sets the "stat" field if the given value is not nil.
+func (guo *GatewayUpdateOne) SetNillableStat(s *string) *GatewayUpdateOne {
+	if s != nil {
+		guo.SetStat(*s)
 	}
 	return guo
 }
 
-// ClearOnline clears the value of the "online" field.
-func (guo *GatewayUpdateOne) ClearOnline() *GatewayUpdateOne {
-	guo.mutation.ClearOnline()
+// ClearStat clears the value of the "stat" field.
+func (guo *GatewayUpdateOne) ClearStat() *GatewayUpdateOne {
+	guo.mutation.ClearStat()
 	return guo
 }
 
@@ -900,17 +900,17 @@ func (guo *GatewayUpdateOne) sqlSave(ctx context.Context) (_node *Gateway, err e
 			Column: gateway.FieldInstallationLocation,
 		})
 	}
-	if value, ok := guo.mutation.Online(); ok {
+	if value, ok := guo.mutation.Stat(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
+			Type:   field.TypeString,
 			Value:  value,
-			Column: gateway.FieldOnline,
+			Column: gateway.FieldStat,
 		})
 	}
-	if guo.mutation.OnlineCleared() {
+	if guo.mutation.StatCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
-			Column: gateway.FieldOnline,
+			Type:   field.TypeString,
+			Column: gateway.FieldStat,
 		})
 	}
 	if value, ok := guo.mutation.DeleteFlag(); ok {

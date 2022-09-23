@@ -60,7 +60,7 @@ var (
 		{Name: "svrid", Type: field.TypeString},
 		{Name: "broker", Type: field.TypeString},
 		{Name: "installation_location", Type: field.TypeString, Nullable: true},
-		{Name: "online", Type: field.TypeBool, Nullable: true},
+		{Name: "stat", Type: field.TypeString, Nullable: true},
 		{Name: "delete_flag", Type: field.TypeBool, Nullable: true},
 		{Name: "up_interval", Type: field.TypeInt, Default: 60},
 		{Name: "version", Type: field.TypeString, Nullable: true},

@@ -22,7 +22,7 @@ func (Gateway) Fields() []ent.Field {
 		field.String("broker"),
 		field.String("installation_location").
 			Optional(),
-		field.Bool("online").
+		field.String("stat").
 			Optional(),
 		field.Bool("delete_flag").
 			Optional(),

@@ -16,8 +16,8 @@ type DSrcer interface {
 
 // SyncMSG for interactive with gateway
 type SyncMSG interface {
-	StartAndWaitRet(mid string, timeOut time.Duration) (interface{}, error)
-	HandleReceive(mid string, payload interface{})
+	StartAndWaitRet(mID string, timeOut time.Duration) (any, error)
+	HandleReceive(mID string, payload any)
 }
 
 type ctxCancel struct {
@@ -40,24 +40,24 @@ func NewMsgInteractive() SyncMSG {
 }
 
 // StartAndWaitRet ...
-func (mi *MsgInteractive) StartAndWaitRet(mid string, timeOut time.Duration) (interface{}, error) {
-	mcc, ok := mi.mccs[mid]
+func (mi *MsgInteractive) StartAndWaitRet(mID string, timeOut time.Duration) (any, error) {
+	mcc, ok := mi.mccs[mID]
 	if !ok {
 		tctx, tcancel := context.WithTimeout(context.Background(), timeOut)
 		mcc = ctxCancel{
 			mu:     &sync.Mutex{},
 			ctx:    tctx,
 			cancel: tcancel,
-			rsp:    make(chan interface{}),
+			rsp:    make(chan any),
 		}
-		mi.mccs[mid] = mcc
+		mi.mccs[mID] = mcc
 	}
 	mcc.mu.Lock()
 	defer mcc.cancel()
 	defer func() {
 		mcc.mu.Unlock()
 		close(mcc.rsp)
-		delete(mi.mccs, mid)
+		delete(mi.mccs, mID)
 	}()
 	for {
 		select {
@@ -70,8 +70,8 @@ func (mi *MsgInteractive) StartAndWaitRet(mid string, timeOut time.Duration) (in
 }
 
 // HandleReceive ....
-func (mi *MsgInteractive) HandleReceive(mid string, payload interface{}) {
-	if mcc, ok := mi.mccs[mid]; ok {
+func (mi *MsgInteractive) HandleReceive(mID string, payload any) {
+	if mcc, ok := mi.mccs[mID]; ok {
 		select {
 		case <-mcc.ctx.Done():
 			return

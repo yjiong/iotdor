@@ -11,11 +11,11 @@ import (
 	"github.com/yjiong/iotdor/utils"
 )
 
-var gwStat = []bool{false, true}
+var gwStat = []string{"offline", "online"}
 
-func (m *Manage) gatewayInfoHandle(gwID, gwCtag string, stat int) {
+func (m *Manage) gatewayInfoHandle(gwID, gwCtag, ver string, stat int) {
 	if exist, _ := m.entC.Gateway.Query().Where(gateway.Gwid(gwID)).Exist(m.ctx); !exist {
-		addGateway(m.ctx, m.entC, gwID, m.iotdName, "", "", gwStat[stat], 60)
+		addGateway(m.ctx, m.entC, gwID, m.iotdName, "", "", gwStat[stat], ver, 60)
 	}
 	if stat > 0 {
 		if ret, err := m.mqttCmd(gwID, InitSysGet); err == nil {
@@ -32,17 +32,17 @@ func (m *Manage) gatewayInfoHandle(gwID, gwCtag string, stat int) {
 			if ret, err := m.mqttCmd(gwID, ListDevItems); err == nil {
 				log.Debugln(ret)
 				var eds []ent.Device
-				unMarshlDev(ret,&eds)
+				unMarshlDev(ret, &eds)
 				log.Debugf("%+v", eds)
 				//TODO
 			}
 		}
 	} else {
-		m.entC.Gateway.Update().Where(gateway.Gwid(gwID)).SetOnline(false).Exec(m.ctx)
+		m.entC.Gateway.Update().Where(gateway.Gwid(gwID)).SetStat("offline").Exec(m.ctx)
 	}
 }
 
-func (m *Manage) mqttCmd(gwID, cmdType string) (interface{}, error) {
+func (m *Manage) mqttCmd(gwID, cmdType string) (any, error) {
 	mid := utils.GetSnowflakeID()
 	go m.SendData(fmt.Sprintf("%s/%s", gwID, m.iotdName), map[string]string{
 		"cmd": cmdType,

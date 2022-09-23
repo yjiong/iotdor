@@ -82,16 +82,16 @@ func (gc *GatewayCreate) SetNillableInstallationLocation(s *string) *GatewayCrea
 	return gc
 }
 
-// SetOnline sets the "online" field.
-func (gc *GatewayCreate) SetOnline(b bool) *GatewayCreate {
-	gc.mutation.SetOnline(b)
+// SetStat sets the "stat" field.
+func (gc *GatewayCreate) SetStat(s string) *GatewayCreate {
+	gc.mutation.SetStat(s)
 	return gc
 }
 
-// SetNillableOnline sets the "online" field if the given value is not nil.
-func (gc *GatewayCreate) SetNillableOnline(b *bool) *GatewayCreate {
-	if b != nil {
-		gc.SetOnline(*b)
+// SetNillableStat sets the "stat" field if the given value is not nil.
+func (gc *GatewayCreate) SetNillableStat(s *string) *GatewayCreate {
+	if s != nil {
+		gc.SetStat(*s)
 	}
 	return gc
 }
@@ -372,13 +372,13 @@ func (gc *GatewayCreate) createSpec() (*Gateway, *sqlgraph.CreateSpec) {
 		})
 		_node.InstallationLocation = value
 	}
-	if value, ok := gc.mutation.Online(); ok {
+	if value, ok := gc.mutation.Stat(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
+			Type:   field.TypeString,
 			Value:  value,
-			Column: gateway.FieldOnline,
+			Column: gateway.FieldStat,
 		})
-		_node.Online = value
+		_node.Stat = value
 	}
 	if value, ok := gc.mutation.DeleteFlag(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{

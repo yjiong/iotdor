@@ -48,6 +48,7 @@ func (m *Manage) MsgHandle() {
 		case msg := <-m.DataDownChan():
 			gwID := msg.Get("sender").MustString()
 			gwCtag := msg.Get("ctag").MustString()
+			gwSer := msg.Get("api").MustString()
 			if cmd, err := msg.Get("cmd").String(); err == nil {
 				log.Debugf("receive mqtt data cmd=%s", cmd)
 				tstamp, _ := msg.Get("tstamp").Int64()
@@ -68,7 +69,7 @@ func (m *Manage) MsgHandle() {
 					}
 				case GwStat:
 					stat := msg.Get("data").MustInt()
-					go m.gatewayInfoHandle(gwID, gwCtag, stat)
+					go m.gatewayInfoHandle(gwID, gwCtag, gwSer, stat)
 				default:
 					if mid, _ := msg.Get("seq").String(); len(mid) > 0 {
 						m.mia.HandleReceive(mid, msg.Get("data").Interface())

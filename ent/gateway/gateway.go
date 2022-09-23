@@ -23,8 +23,8 @@ const (
 	FieldBroker = "broker"
 	// FieldInstallationLocation holds the string denoting the installation_location field in the database.
 	FieldInstallationLocation = "installation_location"
-	// FieldOnline holds the string denoting the online field in the database.
-	FieldOnline = "online"
+	// FieldStat holds the string denoting the stat field in the database.
+	FieldStat = "stat"
 	// FieldDeleteFlag holds the string denoting the delete_flag field in the database.
 	FieldDeleteFlag = "delete_flag"
 	// FieldUpInterval holds the string denoting the up_interval field in the database.
@@ -64,7 +64,7 @@ var Columns = []string{
 	FieldSvrid,
 	FieldBroker,
 	FieldInstallationLocation,
-	FieldOnline,
+	FieldStat,
 	FieldDeleteFlag,
 	FieldUpInterval,
 	FieldVersion,

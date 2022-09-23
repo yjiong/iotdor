@@ -125,29 +125,28 @@ func delUserByID(ctx context.Context, c *ent.Client, id int) error {
 
 func addGateway(ctx context.Context,
 	c *ent.Client,
-	gwid, svrid, broker, installAt string,
-	stat bool,
+	gwid, svrid, broker, installAt, stat, ver string,
 	upInterval int) (*ent.Gateway, error) {
 	return c.Gateway.Create().
 		SetGwid(gwid).
 		SetSvrid(svrid).
 		SetBroker(broker).
 		SetInstallationLocation(installAt).
-		SetOnline(stat).
+		SetStat(stat).
+		SetVersion(ver).
 		SetUpInterval(upInterval).
 		Save(ctx)
 }
 
 func updateGateway(ctx context.Context,
 	c *ent.Client,
-	gwid, svrid, broker, installAt, ver string,
-	stat bool,
+	gwid, svrid, broker, installAt, ver, stat string,
 	upInterval int) error {
 	return c.Gateway.Update().Where(gateway.Gwid(gwid)).
 		SetSvrid(svrid).
 		SetBroker(broker).
 		SetInstallationLocation(installAt).
-		SetOnline(stat).
+		SetStat(stat).
 		SetVersion(ver).
 		SetUpInterval(upInterval).
 		Exec(ctx)

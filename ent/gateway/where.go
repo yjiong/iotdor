@@ -123,10 +123,10 @@ func InstallationLocation(v string) predicate.Gateway {
 	})
 }
 
-// Online applies equality check predicate on the "online" field. It's identical to OnlineEQ.
-func Online(v bool) predicate.Gateway {
+// Stat applies equality check predicate on the "stat" field. It's identical to StatEQ.
+func Stat(v string) predicate.Gateway {
 	return predicate.Gateway(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldOnline), v))
+		s.Where(sql.EQ(s.C(FieldStat), v))
 	})
 }
 
@@ -696,31 +696,116 @@ func InstallationLocationContainsFold(v string) predicate.Gateway {
 	})
 }
 
-// OnlineEQ applies the EQ predicate on the "online" field.
-func OnlineEQ(v bool) predicate.Gateway {
+// StatEQ applies the EQ predicate on the "stat" field.
+func StatEQ(v string) predicate.Gateway {
 	return predicate.Gateway(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldOnline), v))
+		s.Where(sql.EQ(s.C(FieldStat), v))
 	})
 }
 
-// OnlineNEQ applies the NEQ predicate on the "online" field.
-func OnlineNEQ(v bool) predicate.Gateway {
+// StatNEQ applies the NEQ predicate on the "stat" field.
+func StatNEQ(v string) predicate.Gateway {
 	return predicate.Gateway(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldOnline), v))
+		s.Where(sql.NEQ(s.C(FieldStat), v))
 	})
 }
 
-// OnlineIsNil applies the IsNil predicate on the "online" field.
-func OnlineIsNil() predicate.Gateway {
+// StatIn applies the In predicate on the "stat" field.
+func StatIn(vs ...string) predicate.Gateway {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
 	return predicate.Gateway(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldOnline)))
+		s.Where(sql.In(s.C(FieldStat), v...))
 	})
 }
 
-// OnlineNotNil applies the NotNil predicate on the "online" field.
-func OnlineNotNil() predicate.Gateway {
+// StatNotIn applies the NotIn predicate on the "stat" field.
+func StatNotIn(vs ...string) predicate.Gateway {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
 	return predicate.Gateway(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldOnline)))
+		s.Where(sql.NotIn(s.C(FieldStat), v...))
+	})
+}
+
+// StatGT applies the GT predicate on the "stat" field.
+func StatGT(v string) predicate.Gateway {
+	return predicate.Gateway(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldStat), v))
+	})
+}
+
+// StatGTE applies the GTE predicate on the "stat" field.
+func StatGTE(v string) predicate.Gateway {
+	return predicate.Gateway(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldStat), v))
+	})
+}
+
+// StatLT applies the LT predicate on the "stat" field.
+func StatLT(v string) predicate.Gateway {
+	return predicate.Gateway(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldStat), v))
+	})
+}
+
+// StatLTE applies the LTE predicate on the "stat" field.
+func StatLTE(v string) predicate.Gateway {
+	return predicate.Gateway(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldStat), v))
+	})
+}
+
+// StatContains applies the Contains predicate on the "stat" field.
+func StatContains(v string) predicate.Gateway {
+	return predicate.Gateway(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldStat), v))
+	})
+}
+
+// StatHasPrefix applies the HasPrefix predicate on the "stat" field.
+func StatHasPrefix(v string) predicate.Gateway {
+	return predicate.Gateway(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldStat), v))
+	})
+}
+
+// StatHasSuffix applies the HasSuffix predicate on the "stat" field.
+func StatHasSuffix(v string) predicate.Gateway {
+	return predicate.Gateway(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldStat), v))
+	})
+}
+
+// StatIsNil applies the IsNil predicate on the "stat" field.
+func StatIsNil() predicate.Gateway {
+	return predicate.Gateway(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldStat)))
+	})
+}
+
+// StatNotNil applies the NotNil predicate on the "stat" field.
+func StatNotNil() predicate.Gateway {
+	return predicate.Gateway(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldStat)))
+	})
+}
+
+// StatEqualFold applies the EqualFold predicate on the "stat" field.
+func StatEqualFold(v string) predicate.Gateway {
+	return predicate.Gateway(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldStat), v))
+	})
+}
+
+// StatContainsFold applies the ContainsFold predicate on the "stat" field.
+func StatContainsFold(v string) predicate.Gateway {
+	return predicate.Gateway(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldStat), v))
 	})
 }
 

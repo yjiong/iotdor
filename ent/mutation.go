@@ -1143,7 +1143,7 @@ type GatewayMutation struct {
 	svrid                 *string
 	broker                *string
 	installation_location *string
-	online                *bool
+	stat                  *string
 	delete_flag           *bool
 	up_interval           *int
 	addup_interval        *int
@@ -1487,53 +1487,53 @@ func (m *GatewayMutation) ResetInstallationLocation() {
 	delete(m.clearedFields, gateway.FieldInstallationLocation)
 }
 
-// SetOnline sets the "online" field.
-func (m *GatewayMutation) SetOnline(b bool) {
-	m.online = &b
+// SetStat sets the "stat" field.
+func (m *GatewayMutation) SetStat(s string) {
+	m.stat = &s
 }
 
-// Online returns the value of the "online" field in the mutation.
-func (m *GatewayMutation) Online() (r bool, exists bool) {
-	v := m.online
+// Stat returns the value of the "stat" field in the mutation.
+func (m *GatewayMutation) Stat() (r string, exists bool) {
+	v := m.stat
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldOnline returns the old "online" field's value of the Gateway entity.
+// OldStat returns the old "stat" field's value of the Gateway entity.
 // If the Gateway object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *GatewayMutation) OldOnline(ctx context.Context) (v bool, err error) {
+func (m *GatewayMutation) OldStat(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldOnline is only allowed on UpdateOne operations")
+		return v, errors.New("OldStat is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldOnline requires an ID field in the mutation")
+		return v, errors.New("OldStat requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldOnline: %w", err)
+		return v, fmt.Errorf("querying old value for OldStat: %w", err)
 	}
-	return oldValue.Online, nil
+	return oldValue.Stat, nil
 }
 
-// ClearOnline clears the value of the "online" field.
-func (m *GatewayMutation) ClearOnline() {
-	m.online = nil
-	m.clearedFields[gateway.FieldOnline] = struct{}{}
+// ClearStat clears the value of the "stat" field.
+func (m *GatewayMutation) ClearStat() {
+	m.stat = nil
+	m.clearedFields[gateway.FieldStat] = struct{}{}
 }
 
-// OnlineCleared returns if the "online" field was cleared in this mutation.
-func (m *GatewayMutation) OnlineCleared() bool {
-	_, ok := m.clearedFields[gateway.FieldOnline]
+// StatCleared returns if the "stat" field was cleared in this mutation.
+func (m *GatewayMutation) StatCleared() bool {
+	_, ok := m.clearedFields[gateway.FieldStat]
 	return ok
 }
 
-// ResetOnline resets all changes to the "online" field.
-func (m *GatewayMutation) ResetOnline() {
-	m.online = nil
-	delete(m.clearedFields, gateway.FieldOnline)
+// ResetStat resets all changes to the "stat" field.
+func (m *GatewayMutation) ResetStat() {
+	m.stat = nil
+	delete(m.clearedFields, gateway.FieldStat)
 }
 
 // SetDeleteFlag sets the "delete_flag" field.
@@ -1870,8 +1870,8 @@ func (m *GatewayMutation) Fields() []string {
 	if m.installation_location != nil {
 		fields = append(fields, gateway.FieldInstallationLocation)
 	}
-	if m.online != nil {
-		fields = append(fields, gateway.FieldOnline)
+	if m.stat != nil {
+		fields = append(fields, gateway.FieldStat)
 	}
 	if m.delete_flag != nil {
 		fields = append(fields, gateway.FieldDeleteFlag)
@@ -1905,8 +1905,8 @@ func (m *GatewayMutation) Field(name string) (ent.Value, bool) {
 		return m.Broker()
 	case gateway.FieldInstallationLocation:
 		return m.InstallationLocation()
-	case gateway.FieldOnline:
-		return m.Online()
+	case gateway.FieldStat:
+		return m.Stat()
 	case gateway.FieldDeleteFlag:
 		return m.DeleteFlag()
 	case gateway.FieldUpInterval:
@@ -1936,8 +1936,8 @@ func (m *GatewayMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldBroker(ctx)
 	case gateway.FieldInstallationLocation:
 		return m.OldInstallationLocation(ctx)
-	case gateway.FieldOnline:
-		return m.OldOnline(ctx)
+	case gateway.FieldStat:
+		return m.OldStat(ctx)
 	case gateway.FieldDeleteFlag:
 		return m.OldDeleteFlag(ctx)
 	case gateway.FieldUpInterval:
@@ -1997,12 +1997,12 @@ func (m *GatewayMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetInstallationLocation(v)
 		return nil
-	case gateway.FieldOnline:
-		v, ok := value.(bool)
+	case gateway.FieldStat:
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetOnline(v)
+		m.SetStat(v)
 		return nil
 	case gateway.FieldDeleteFlag:
 		v, ok := value.(bool)
@@ -2080,8 +2080,8 @@ func (m *GatewayMutation) ClearedFields() []string {
 	if m.FieldCleared(gateway.FieldInstallationLocation) {
 		fields = append(fields, gateway.FieldInstallationLocation)
 	}
-	if m.FieldCleared(gateway.FieldOnline) {
-		fields = append(fields, gateway.FieldOnline)
+	if m.FieldCleared(gateway.FieldStat) {
+		fields = append(fields, gateway.FieldStat)
 	}
 	if m.FieldCleared(gateway.FieldDeleteFlag) {
 		fields = append(fields, gateway.FieldDeleteFlag)
@@ -2109,8 +2109,8 @@ func (m *GatewayMutation) ClearField(name string) error {
 	case gateway.FieldInstallationLocation:
 		m.ClearInstallationLocation()
 		return nil
-	case gateway.FieldOnline:
-		m.ClearOnline()
+	case gateway.FieldStat:
+		m.ClearStat()
 		return nil
 	case gateway.FieldDeleteFlag:
 		m.ClearDeleteFlag()
@@ -2147,8 +2147,8 @@ func (m *GatewayMutation) ResetField(name string) error {
 	case gateway.FieldInstallationLocation:
 		m.ResetInstallationLocation()
 		return nil
-	case gateway.FieldOnline:
-		m.ResetOnline()
+	case gateway.FieldStat:
+		m.ResetStat()
 		return nil
 	case gateway.FieldDeleteFlag:
 		m.ResetDeleteFlag()

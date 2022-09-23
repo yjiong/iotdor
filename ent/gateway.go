@@ -29,8 +29,8 @@ type Gateway struct {
 	Broker string `json:"broker,omitempty"`
 	// InstallationLocation holds the value of the "installation_location" field.
 	InstallationLocation string `json:"installation_location,omitempty"`
-	// Online holds the value of the "online" field.
-	Online bool `json:"online,omitempty"`
+	// Stat holds the value of the "stat" field.
+	Stat string `json:"stat,omitempty"`
 	// DeleteFlag holds the value of the "delete_flag" field.
 	DeleteFlag bool `json:"delete_flag,omitempty"`
 	// UpInterval holds the value of the "up_interval" field.
@@ -83,11 +83,11 @@ func (*Gateway) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case gateway.FieldOnline, gateway.FieldDeleteFlag:
+		case gateway.FieldDeleteFlag:
 			values[i] = new(sql.NullBool)
 		case gateway.FieldID, gateway.FieldUpInterval:
 			values[i] = new(sql.NullInt64)
-		case gateway.FieldGwid, gateway.FieldSvrid, gateway.FieldBroker, gateway.FieldInstallationLocation, gateway.FieldVersion, gateway.FieldSummary:
+		case gateway.FieldGwid, gateway.FieldSvrid, gateway.FieldBroker, gateway.FieldInstallationLocation, gateway.FieldStat, gateway.FieldVersion, gateway.FieldSummary:
 			values[i] = new(sql.NullString)
 		case gateway.FieldCreateTime, gateway.FieldUpdateTime:
 			values[i] = new(sql.NullTime)
@@ -150,11 +150,11 @@ func (ga *Gateway) assignValues(columns []string, values []interface{}) error {
 			} else if value.Valid {
 				ga.InstallationLocation = value.String
 			}
-		case gateway.FieldOnline:
-			if value, ok := values[i].(*sql.NullBool); !ok {
-				return fmt.Errorf("unexpected type %T for field online", values[i])
+		case gateway.FieldStat:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field stat", values[i])
 			} else if value.Valid {
-				ga.Online = value.Bool
+				ga.Stat = value.String
 			}
 		case gateway.FieldDeleteFlag:
 			if value, ok := values[i].(*sql.NullBool); !ok {
@@ -243,8 +243,8 @@ func (ga *Gateway) String() string {
 	builder.WriteString("installation_location=")
 	builder.WriteString(ga.InstallationLocation)
 	builder.WriteString(", ")
-	builder.WriteString("online=")
-	builder.WriteString(fmt.Sprintf("%v", ga.Online))
+	builder.WriteString("stat=")
+	builder.WriteString(ga.Stat)
 	builder.WriteString(", ")
 	builder.WriteString("delete_flag=")
 	builder.WriteString(fmt.Sprintf("%v", ga.DeleteFlag))

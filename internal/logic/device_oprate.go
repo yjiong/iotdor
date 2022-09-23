@@ -1,6 +1,8 @@
 package logic
 
 import (
+	"github.com/bitly/go-simplejson"
+	log "github.com/sirupsen/logrus"
 	"github.com/yjiong/iotdor/ent"
 	"github.com/yjiong/iotdor/ent/device"
 	"github.com/yjiong/iotdor/ent/gateway"
@@ -44,6 +46,9 @@ func (m *Manage) addOrUpdateDevice(dev *ent.Device, gw *ent.Gateway) error {
 }
 
 func unMarshlDev(aed any, ueds *[]ent.Device) {
+	if sj, ok := aed.(*simplejson.Json); ok {
+		log.Debugln(sj)
+	}
 	if eds, ok := aed.([]any); ok {
 		for _, ed := range eds {
 			unMarshlDev(ed, ueds)
