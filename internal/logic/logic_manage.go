@@ -55,6 +55,7 @@ func (m *Manage) MsgHandle() {
 				tstr := time.Unix(tstamp, 0).Local().Format("2006-01-02 15:04:05")
 				switch cmd {
 				case AutoUpdata:
+					go m.checkAndUpdateDev(gwID, gwCtag)
 					md := getRawMap(msg.Get("data").MustMap(), tstr)
 					if devID, ok := md["devid"].(string); ok {
 						md["status"] = "normal"

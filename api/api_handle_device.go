@@ -12,6 +12,17 @@ func (dtr *IotdorTran) allDevices(w http.ResponseWriter, r *http.Request) {
 	respJSON(w, dtr.AllDevices())
 }
 
+func (dtr *IotdorTran) deviceInfo(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+	if devid, ok := params["devid"]; ok {
+		if vs, err := dtr.DeviceInfo(devid); err == nil {
+			respJSON(w, vs)
+			return
+		}
+	}
+	respError(http.StatusOK, w, errors.New("device not exist"))
+}
+
 func (dtr *IotdorTran) deviceRealTimeValue(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	if devid, ok := params["devid"]; ok {

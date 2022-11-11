@@ -1,0 +1,107 @@
+  /device/get_all_device_id:
+    get:
+      security:
+        - api_key: [] 
+      tags:
+        - 当前数据
+      summary: 获取所有设备ID
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: Can not get device ID
+          content:
+            application/json:
+              schema:
+                type: object
+  /device/realtime_data/{devid}:
+    get:
+      security:
+        - api_key: []
+      tags:
+        - 当前数据
+      summary: 获取设备实时数据
+      parameters:
+        - description: devid 设备ID
+          name: devid
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: Can not get realtime data
+          content:
+            application/json:
+              schema:
+                type: object
+  /device/history_data/{devid}:
+    post:
+      security:
+        - api_key: []
+      tags:
+        - 历史数据与统计数据
+      summary: 获取设备历史数据
+      parameters:
+        - description: devid 设备ID
+          name: devid
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuerySection'
+        required: true
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RspDBData'          
+        '404':
+          description: Can not get realtime data
+          content:
+            application/json:
+              schema:
+                type: object
+  /device/get_device_info/{devid}:
+    get:
+      security:
+        - api_key: []
+      tags:
+        - 设备信息
+      summary: 获取设备信息
+      parameters:
+        - description: devid 设备ID
+          name: devid
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: Can not get device info
+          content:
+            application/json:
+              schema:
+                type: object

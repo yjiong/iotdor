@@ -1,0 +1,116 @@
+  /config/sys/user_info:
+    get:
+      security:
+        - api_key: []
+      tags:
+        - 系统用户信息
+      summary: 获取用户信息
+      description: 获取用户信息
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RPUser'
+        '404':
+          description: get user_info error
+  /config/sys/add_user:
+    post:
+      security:
+        - api_key: []
+      tags:
+        - 系统用户信息
+      summary: 添加用户
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TWUser'
+        required: true
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: access denided
+          content:
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: add user failed
+          content:
+            application/json:
+              schema:
+                type: object
+  /config/sys/update_user:
+    put:
+      security:
+        - api_key: []
+      tags:
+        - 系统用户信息
+      summary: 更新用户(修改密码，电话, 设置为管理员)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TWUser'
+        required: true
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: access denided
+          content:
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: update user failed
+          content:
+            application/json:
+              schema:
+                type: object
+  /config/sys/delete_user/{uname}:
+    delete:
+      security:
+        - api_key: []
+      tags:
+        - 系统用户信息
+      summary: 删除用户
+      parameters:
+        - description: 用户名
+          name: uname
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: access denided
+          content:
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: delete user failed
+          content:
+            application/json:
+              schema:
+                type: object

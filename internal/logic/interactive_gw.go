@@ -14,7 +14,7 @@ import (
 var gwStat = []string{"offline", "online"}
 
 func (m *Manage) gatewayInfoHandle(gwID, gwCtag, ver string, stat int) {
-	if exist, _ := m.entC.Gateway.Query().Where(gateway.Gwid(gwID)).Exist(m.ctx); !exist {
+	if egw, err := m.entC.Gateway.Query().Where(gateway.Gwid(gwID)).Only(m.ctx); egw == nil || err != nil {
 		addGateway(m.ctx, m.entC, gwID, m.iotdName, "", "", gwStat[stat], ver, 60)
 	}
 	if stat > 0 {
@@ -25,20 +25,28 @@ func (m *Manage) gatewayInfoHandle(gwID, gwCtag, ver string, stat int) {
 			uit, _ := strconv.Atoi(fmt.Sprintf("%s", rm["interval"]))
 			updateGateway(m.ctx, m.entC, gwID, m.iotdName, burl, "", ver, gwStat[stat], uit)
 		}
-		if m.redisC.Get(m.ctx, m.mkRedisKeyPrefix(gwID, GatewayCtagValue)).String() != gwCtag {
+		m.checkAndUpdateDev(gwID, gwCtag)
+	} else {
+		m.entC.Gateway.Update().Where(gateway.Gwid(gwID)).SetStat("offline").Exec(m.ctx)
+	}
+}
+
+func (m *Manage) checkAndUpdateDev(gwID, gwCtag string) {
+	if m.redisC.Get(m.ctx, m.mkRedisKeyPrefix(gwID, GatewayCtagValue)).String() != gwCtag {
+		if egw, err := m.entC.Gateway.Query().Where(gateway.Gwid(gwID)).Only(m.ctx); egw != nil && err == nil {
 			if err := m.redisC.Set(m.ctx, m.mkRedisKeyPrefix(gwID, GatewayCtagValue), gwCtag, 0).Err(); err != nil {
 				log.Error(err)
 			}
 			if ret, err := m.mqttCmd(gwID, ListDevItems); err == nil {
 				log.Debugln(ret)
-				var eds []ent.Device
+				var eds []*ent.Device
 				unMarshlDev(ret, &eds)
 				log.Debugf("%+v", eds)
-				//TODO
+				for _, ed := range eds {
+					m.addOrUpdateDevice(ed, egw)
+				}
 			}
 		}
-	} else {
-		m.entC.Gateway.Update().Where(gateway.Gwid(gwID)).SetStat("offline").Exec(m.ctx)
 	}
 }
 

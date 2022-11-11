@@ -6,9 +6,7 @@ Vagrantfile
 *.log
 # certs
 certs/
-api/static/myyaml/
-api/static/example.yaml
-api/static/outline.yaml
+
 # builds
 dist/
 build/*
@@ -17,3 +15,4 @@ debpackage/opt/*
 docker/iotdor.tgz
 *.deb            
 test/
+log/

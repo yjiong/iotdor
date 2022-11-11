@@ -1,6 +1,9 @@
 package logic
 
 import (
+	"encoding/json"
+	"strconv"
+
 	"github.com/bitly/go-simplejson"
 	log "github.com/sirupsen/logrus"
 	"github.com/yjiong/iotdor/ent"
@@ -45,7 +48,7 @@ func (m *Manage) addOrUpdateDevice(dev *ent.Device, gw *ent.Gateway) error {
 		Exec(m.ctx)
 }
 
-func unMarshlDev(aed any, ueds *[]ent.Device) {
+func unMarshlDev(aed any, ueds *[]*ent.Device) {
 	if sj, ok := aed.(*simplejson.Json); ok {
 		log.Debugln(sj)
 	}
@@ -55,17 +58,23 @@ func unMarshlDev(aed any, ueds *[]ent.Device) {
 		}
 	} else {
 		if aem, ok := aed.(map[string]any); ok {
+			ri, _ := aem["read_interval"].(json.Number)
+			riint, _ := strconv.Atoi(string(ri))
+			si, _ := aem["store_interval"].(json.Number)
+			siint, _ := strconv.Atoi(string(si))
+			name, _ := aem["devname"].(string)
+			sa, _ := aem["summary"].(string)
 			ed := ent.Device{
-				DevID: aem["devid"].(string),
-				Type:  aem["type"].(string),
-				Conn:  aem["conn"].(map[string]any),
-				//ReadInterval:  aem["read_interval"].(json.Number),
-				//StoreInterval: aem["store_interval"].(json.Number),
-				//Name:       aem["devname"].(string),
-				DeleteFlag: false,
-				//Summary:    aem["summary"].(string),
+				DevID:         aem["devid"].(string),
+				Type:          aem["type"].(string),
+				Conn:          aem["conn"].(map[string]any),
+				ReadInterval:  riint,
+				StoreInterval: siint,
+				Name:          name,
+				DeleteFlag:    false,
+				Summary:       sa,
 			}
-			*ueds = append(*ueds, ed)
+			*ueds = append(*ueds, &ed)
 		}
 	}
 }

@@ -399,6 +399,33 @@ paths:
             application/json:
               schema:
                 type: object
+  /device/get_device_info/{devid}:
+    get:
+      security:
+        - api_key: []
+      tags:
+        - 设备信息
+      summary: 获取设备信息
+      parameters:
+        - description: devid 设备ID
+          name: devid
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: Can not get device info
+          content:
+            application/json:
+              schema:
+                type: object
   /config/sys/user_info:
     get:
       security:
@@ -983,9 +1010,9 @@ paths:
         - api_key: []
       tags:
         - 系统组织结构地理位置与设备关联信息
-      summary:  获取已关联组织结构地理位置的设备
+      summary: 根据position_id获取已关联该组织结构地理位置的设备信息
       parameters:
-        - description: 获取已关联组织结构地理位置的设备
+        - description: position_id
           name: posid
           in: path
           required: true
@@ -1010,6 +1037,39 @@ paths:
             application/json:
               schema:
                 type: object
+  /config/sys/organization_position_person_charge/{posid}:
+    get:
+      security:
+        - api_key: []
+      tags:
+        - 系统组织结构地理位置与设备关联信息
+      summary: 根据position_id获取已关联该组织结构地理位置的负责人信息
+      parameters:
+        - description: position_id
+          name: posid
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: access denided
+          content:
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: get organization person in charge faied
+          content:
+            application/json:
+              schema:
+                type: object
   /config/sys/organization_position_and_device/{posid}/{devid}:
     post:
       security:
@@ -1018,7 +1078,7 @@ paths:
         - 系统组织结构地理位置与设备关联信息
       summary:  关联组织结构地理位置的设备
       parameters:
-        - description: 关联组织结构地理位置的ID(需存在)
+        - description: 关联组织结构地理位置的position_id(需存在)
           name: posid
           in: path
           required: true
@@ -1056,7 +1116,7 @@ paths:
         - 系统组织结构地理位置与设备关联信息
       summary:  除移已关联组织结构地理位置的设备
       parameters:
-        - description: 关联组织结构地理位置的ID(需存在)
+        - description: 关联组织结构地理位置的position_id(需存在)
           name: posid
           in: path
           required: true

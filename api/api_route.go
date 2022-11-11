@@ -18,7 +18,10 @@ func configRoute(mr *mux.Router, dtr *IotdorTran) {
 
 	mrSysRt.HandleFunc("/organization_position", dtr.organizationPosition).Methods("GET", "POST", "PUT")
 	mrSysRt.HandleFunc("/organization_position/{posid}", dtr.organizationPositionDel).Methods("DELETE")
+	mrSysRt.HandleFunc("/organization_position_person_charge/{posid}/{uname}", dtr.personChargeOrganizationPosition).Methods("POST", "DELETE")
 	mrSysRt.HandleFunc("/organization_position_and_device/{posid}/{devid}", dtr.addDeviceToOrganizationPosition).Methods("POST", "DELETE")
+	mrSysRt.HandleFunc("/organization_position_device/{posid}", dtr.organizationPositionDevices).Methods("GET")
+	mrSysRt.HandleFunc("/organization_position_person_charge/{posid}", dtr.organizationPositionPersonCharge).Methods("GET")
 }
 
 func gatewayRoute(mr *mux.Router, dtr *IotdorTran) {
@@ -31,4 +34,5 @@ func deviceRoute(mr *mux.Router, dtr *IotdorTran) {
 	mr.HandleFunc("/realtime_data/{devid}", dtr.deviceRealTimeValue)
 	mr.HandleFunc("/history_data/{devid}", dtr.deviceHistoryValue)
 	mr.HandleFunc("/get_all_device_id", dtr.allDevices)
+	mr.HandleFunc("/get_device_info/{devid}", dtr.deviceInfo)
 }

@@ -1,0 +1,341 @@
+  /config/sys/organization_position:
+    get:
+      security:
+        - api_key: []
+      tags:
+        - 系统组织结构地理位置与设备关联信息
+      summary:  获取组织结构地理位置信息
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: access denided
+          content:
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: get organization position info failed
+          content:
+            application/json:
+              schema:
+                type: object
+    post:
+      security:
+        - api_key: []
+      tags:
+        - 系统组织结构地理位置与设备关联信息
+      summary:  添加组织结构地理位置信息
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrganizationPosition'
+        required: true
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: access denided
+          content:
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: create organization position failed
+          content:
+            application/json:
+              schema:
+                type: object
+    put:
+      security:
+        - api_key: []
+      tags:
+        - 系统组织结构地理位置与设备关联信息
+      summary:  更新组织结构地理位置信息
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrganizationPosition'
+        required: true
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: access denided
+          content:
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: update organization position info failed 
+          content:
+            application/json:
+              schema:
+                type: object
+  /config/sys/organization_position/{posid}:
+    delete:
+      security:
+        - api_key: []
+      tags:
+        - 系统组织结构地理位置与设备关联信息
+      summary:  删除组织结构地理位置信息
+      parameters:
+        - description: 组织结构地理位置的名称
+          name: posid
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: access denided
+          content:
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: remove organization position info failed 
+          content:
+            application/json:
+              schema:
+                type: object
+  /config/sys/organization_position_person_charge/{posid}/{uname}:
+    post:
+      security:
+        - api_key: []
+      tags:
+        - 系统组织结构地理位置与设备关联信息
+      summary:  设置组织结构地理位置负责人
+      parameters:
+        - description: 组织结构地理位置posid
+          name: posid
+          in: path
+          required: true
+          schema:
+            type: string
+        - description: 设置组织结构地理位置负责人(需在用户内已经存在的)
+          name: uname
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: access denided
+          content:
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: add organization person charge failed
+          content:
+            application/json:
+              schema:
+                type: object
+    delete:
+      security:
+        - api_key: []
+      tags:
+        - 系统组织结构地理位置与设备关联信息
+      summary:  删除组织结构地理位置负责人
+      parameters:
+        - description: 组织结构地理位置posid
+          name: posid
+          in: path
+          required: true
+          schema:
+            type: string
+        - description: 删除组织结构地理位置负责人uname
+          name: uname
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: access denided
+          content:
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: remove organization person charge failed
+          content:
+            application/json:
+              schema:
+                type: object
+  /config/sys/organization_position_device/{posid}:
+    get:
+      security:
+        - api_key: []
+      tags:
+        - 系统组织结构地理位置与设备关联信息
+      summary: 根据position_id获取已关联该组织结构地理位置的设备信息
+      parameters:
+        - description: position_id
+          name: posid
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: access denided
+          content:
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: get organization device faied
+          content:
+            application/json:
+              schema:
+                type: object
+  /config/sys/organization_position_person_charge/{posid}:
+    get:
+      security:
+        - api_key: []
+      tags:
+        - 系统组织结构地理位置与设备关联信息
+      summary: 根据position_id获取已关联该组织结构地理位置的负责人信息
+      parameters:
+        - description: position_id
+          name: posid
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: access denided
+          content:
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: get organization person in charge faied
+          content:
+            application/json:
+              schema:
+                type: object
+  /config/sys/organization_position_and_device/{posid}/{devid}:
+    post:
+      security:
+        - api_key: []
+      tags:
+        - 系统组织结构地理位置与设备关联信息
+      summary:  关联组织结构地理位置的设备
+      parameters:
+        - description: 关联组织结构地理位置的position_id(需存在)
+          name: posid
+          in: path
+          required: true
+          schema:
+            type: string
+        - description: 关联组织结构地理位置的设备(需在设备列表内存在，并且尚未关联)
+          name: devid
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: access denided
+          content:
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: add organization device
+          content:
+            application/json:
+              schema:
+                type: object
+    delete:
+      security:
+        - api_key: []
+      tags:
+        - 系统组织结构地理位置与设备关联信息
+      summary:  除移已关联组织结构地理位置的设备
+      parameters:
+        - description: 关联组织结构地理位置的position_id(需存在)
+          name: posid
+          in: path
+          required: true
+          schema:
+            type: string
+        - description: 除移已关联组织结构地理位置的设备
+          name: devid
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: access denided
+          content:
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: remove organization device
+          content:
+            application/json:
+              schema:
+                type: object

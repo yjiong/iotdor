@@ -24,6 +24,7 @@ type GatewayControler interface {
 // DeviceControler ....
 type DeviceControler interface {
 	AllDevices() []string
+	DeviceInfo(devid string) (*ent.Device, error)
 	DeviceRealTimeValue(devid string) map[string]string
 	DeviceHistoryValue(devid string, qs utils.QuerySection) any
 }
@@ -44,7 +45,8 @@ type OrganiTreeControler interface {
 // OrganiPositionControler ....
 type OrganiPositionControler interface {
 	OrganizationPosition() ([]*ent.OrganizationPosition, error)
-	ListOrganizationPositionDevices(*ent.OrganizationPosition) ([]*ent.Device, error)
+	ListOrganizationPositionDevices(posid string) ([]*ent.Device, error)
+	ListOrganizationPositionCharges(posid string) ([]*ent.User, error)
 	CreateOrganizationPosition(o ent.OrganizationPosition) error
 	UpdateOrganizationPosition(o ent.OrganizationPosition) error
 	DeleteOrganizationPosition(posid string) error

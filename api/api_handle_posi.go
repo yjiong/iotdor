@@ -8,17 +8,27 @@ import (
 	"github.com/yjiong/iotdor/ent"
 )
 
-func (dtr *IotdorTran) getPositionDevice(oes []*ent.OrganizationPosition) []map[string]any {
+func (dtr *IotdorTran) getPositionDevices(posid string) []string {
+	devs := make([]string, 0)
+	pds, _ := dtr.ListOrganizationPositionDevices(posid)
+	for _, p := range pds {
+		devs = append(devs, p.DevID)
+	}
+	return devs
+}
+
+func (dtr *IotdorTran) getPositionUsers(posid string) []string {
+	users := make([]string, 0)
+	pcs, _ := dtr.ListOrganizationPositionCharges(posid)
+	for _, p := range pcs {
+		users = append(users, p.Name)
+	}
+	return users
+}
+
+func (dtr *IotdorTran) getPositionDevicesUsers(oes []*ent.OrganizationPosition) []map[string]any {
 	rps := make([]map[string]any, 0)
-	devs := make([]map[string]any, 0)
 	for _, o := range oes {
-		ps, _ := dtr.ListOrganizationPositionDevices(o)
-		devs = devs[:0]
-		for _, p := range ps {
-			devs = append(devs, map[string]any{
-				"devid": p.DevID,
-			})
-		}
 		rps = append(rps, map[string]any{
 			"position_id":            o.PositionID,
 			"address":                o.Address,
@@ -26,10 +36,36 @@ func (dtr *IotdorTran) getPositionDevice(oes []*ent.OrganizationPosition) []map[
 			"unit_no":                o.UnitNo,
 			"longitude_and_latitude": o.LongitudeAndLatitude,
 			"summary":                o.Summary,
-			"devices":                devs,
+			"devices":                dtr.getPositionDevices(o.PositionID),
+			"users":                  dtr.getPositionUsers(o.PositionID),
 		})
 	}
 	return rps
+}
+
+func (dtr *IotdorTran) organizationPositionDevices(w http.ResponseWriter, r *http.Request) {
+	var err error
+	var devs []*ent.Device
+	if posid, ok := mux.Vars(r)["posid"]; ok {
+		if devs, err = dtr.ListOrganizationPositionDevices(posid); err == nil {
+			respJSON(w, devs)
+			return
+		}
+	} else {
+		err = errors.New("error: need posid")
+	}
+	respError(http.StatusOK, w, err)
+}
+
+func (dtr *IotdorTran) organizationPositionPersonCharge(w http.ResponseWriter, r *http.Request) {
+	var err error
+	if posid, ok := mux.Vars(r)["posid"]; ok {
+		users := dtr.getPositionUsers(posid)
+		respJSON(w, users)
+		return
+	}
+	err = errors.New("error: need posid")
+	respError(http.StatusOK, w, err)
 }
 
 func (dtr *IotdorTran) organizationPosition(w http.ResponseWriter, r *http.Request) {
@@ -38,7 +74,7 @@ func (dtr *IotdorTran) organizationPosition(w http.ResponseWriter, r *http.Reque
 	case "GET":
 		ps, err := dtr.OrganizationPosition()
 		if err == nil {
-			respJSON(w, dtr.getPositionDevice(ps))
+			respJSON(w, dtr.getPositionDevicesUsers(ps))
 			return
 		}
 	case "POST":

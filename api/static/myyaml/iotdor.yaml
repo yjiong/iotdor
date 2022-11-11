@@ -1,0 +1,321 @@
+openapi: 3.0.3
+info:
+  description: This is iotdor server .
+  title: IOTDOR API
+  contact:
+    url: 'https://github.com/yjiong'
+    email: yjiong@msn.com
+  version: v1.0.0
+#server: http:/xxx 
+paths:
+  /api/login:
+    post:
+      tags:
+        - 登录
+      summary: login
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginUser'
+        required: true
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: login failed
+          content:
+            application/json:
+              schema:
+                type: object
+  /gateway/list:
+    get:
+      tags:
+        - 网关信息
+      summary: 网关列表
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: Can not get gateway list
+          content:
+            application/json:
+              schema:
+                type: object
+      security:
+        - api_key: [] 
+#  /gateway/{gatewaysn}/info:
+#    get:
+#      consumes:
+#        - application/json
+#      tags:
+#        - 配置信息
+#      summary: 获取网关信息
+#      parameters:
+#        - type: string
+#          description: gatewaysn 网关序列号
+#          name: gatewaysn
+#          in: path
+#          required: true
+#      responses:
+#        '200':
+#          description: ok
+#          schema:
+#            type: object
+#        '404':
+#          description: get version string error
+#          schema:
+#            type: object
+#  '/gateway/{gatewaysn}/cmdline':
+#    post:
+#      security:
+#        - api_key: []
+#      consumes:
+#        - application/json
+#      tags:
+#        - 升级和远程命令
+#      summary: 在网关上执行shell命令
+#      parameters:
+#        - type: string
+#          description: gatewaysn 网关序列号
+#          name: gatewaysn
+#          in: path
+#          required: true
+#        - type: string
+#          description: cmd
+#          name: cmd
+#          in: query
+#          required: true
+#      responses:
+#        '200':
+#          description: ok
+#          schema:
+#            type: string
+#        '401':
+#          description: access denided
+#          schema:
+#            type: object
+#        '404':
+#          description: Can not alibration time
+#          schema:
+#            type: object
+#  '/gateway/{gatewaysn}/devices':
+#    get:
+#      consumes:
+#        - application/json
+#      tags:
+#        - 配置信息
+#      summary: 获取设备信息
+#      parameters:
+#        - type: string
+#          description: gatewaysn 网关序列号
+#          name: gatewaysn
+#          in: path
+#          required: true
+#      responses:
+#        '200':
+#          description: ok
+#          schema:
+#            type: object
+#        '404':
+#          description: Can not list device add device first
+#          schema:
+#            type: object
+#    put:
+#      security:
+#        - api_key: []
+#      consumes:
+#        - application/json
+#      tags:
+#        - 配置信息
+#      summary: 添加或更新设备
+#      parameters:
+#        - type: string
+#          description: gatewaysn 网关序列号
+#          name: gatewaysn
+#          in: path
+#          required: true
+#        - description: 设备信息(若ID存在则为更新，否则为新添加)
+#          name: t_mn_info
+#          in: body
+#          required: true
+#          schema:
+#            $ref: '#/components/schemas/TDevice'
+#      responses:
+#        '200':
+#          description: ok
+#          schema:
+#            type: object
+#        '401':
+#          description: access denided
+#          schema:
+#            type: object
+#        '404':
+#          description: Can not insert device
+#          schema:
+#            type: object
+#    delete:
+#      security:
+#        - api_key: []
+#      consumes:
+#        - application/json
+#      tags:
+#        - 配置信息
+#      summary: 删除设备
+#      parameters:
+#        - type: string
+#          description: gatewaysn 网关序列号
+#          name: gatewaysn
+#          in: path
+#          required: true
+#        - type: string
+#          description: 设备ID
+#          name: device_id
+#          in: query
+#          required: true
+#      responses:
+#        '200':
+#          description: ok
+#          schema:
+#            type: object
+#        '401':
+#          description: access denided
+#          schema:
+#            type: object
+#        '404':
+#          description: Can not delete MNinfo
+#          schema:
+#            type: object
+#  '/gateway/{gatewaysn}/suport_device':
+#    get:
+#      consumes:
+#        - application/json
+#      tags:
+#        - 配置信息
+#      summary: 获取驱动支持的设备类型信息
+#      parameters:
+#        - type: string
+#          description: gatewaysn 网关序列号
+#          name: gatewaysn
+#          in: path
+#          required: true
+#      responses:
+#        '200':
+#          description: ok
+#          schema:
+#            type: object
+#        '404':
+#          description: please check gatewaydrive program is running
+#          schema:
+#            type: object
+#  '/gateway/{gatewaysn}/serial_debug':
+#    post:
+#      security:
+#        - api_key: []
+#      consumes:
+#        - application/json
+#      tags:
+#        - 升级和远程命令
+#      summary: 串口调试
+#      parameters:
+#        - type: string
+#          description: gatewaysn 网关序列号
+#          name: gatewaysn
+#          in: path
+#          required: true
+#        - description: 串口调试参数
+#          name: serial_params
+#          in: body
+#          required: true
+#          schema:
+#            $ref: '#/components/schemas/SerialParams'
+#      responses:
+#        '200':
+#          description: ok
+#          schema:
+#            type: string
+#        '401':
+#          description: access denided
+#          schema:
+#            type: object
+#        '404':
+#          description: Can not debug serial port
+#          schema:
+#            type: object
+#  '/gateway/{gatewaysn}/update_devdrive':
+#    post:
+#      security:
+#        - api_key: []
+#      description: update devdrive 请上传文件名为devdrive.tgz的网关驱动程序（devdrive的压缩文件)
+#      consumes:
+#        - multipart/form-data
+#      produces:
+#        - application/json
+#      tags:
+#        - 升级和远程命令
+#      summary: 更新网关设备驱动
+#      operationId: file.upload
+#      parameters:
+#        - type: string
+#          description: gatewaysn 网关序列号
+#          name: gatewaysn
+#          in: path
+#          required: true
+#        - type: file
+#          description: 上传驱动更新文件
+#          name: file
+#          in: formData
+#          required: true
+#      responses:
+#        '200':
+#          description: ok
+#          schema:
+#            type: object
+#        '404':
+#          description: update gatewaydrive failed
+#          schema:
+#            type: object
+#  '/gateway/{gatewaysn}/update_gateway':
+#    post:
+#      security:
+#        - api_key: []
+#      description: update gateway 请上传文件名为gateway.tgz的网关主程序（gateway的压缩文件)
+#      consumes:
+#        - multipart/form-data
+#      produces:
+#        - application/json
+#      tags:
+#        - 升级和远程命令
+#      summary: 更新网关主程序
+#      parameters:
+#        - type: string
+#          description: gatewaysn 网关序列号
+#          name: gatewaysn
+#          in: path
+#          required: true
+#        - type: file
+#          description: 上传网关主程序更新文件
+#          name: file
+#          in: formData
+#          required: true
+#      responses:
+#        '200':
+#          description: ok
+#          schema:
+#            type: object
+#        '401':
+#          description: access denided
+#          schema:
+#            type: object
+#        '404':
+#          description: update gateway failed
+#          schema:
+#            type: object

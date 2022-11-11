@@ -1,0 +1,204 @@
+components:
+  schemas:
+    LoginUser:
+      type: object
+      properties:
+        password:
+          type: string
+          example: "123456"
+          format: password
+        username:
+          type: string
+          example: "iotd-AMMETER"
+    QuerySection:
+      type: object
+      properties:
+        page_size:
+          description: 每页记录数
+          type: integer
+          example: 50
+        pages_index:
+          description: 第几页 （开始页为0）
+          type: integer
+        since:
+          description: '起始时间'
+          type: string
+          format: date-time
+        until:
+          description: '终止时间'
+          type: string
+          format: date-time
+    RspDBData:
+      type: object
+      properties:
+        columns: 
+          description: 列名
+          type: string
+        datas:
+          description: 数据
+          type: array
+          items:
+            type: object
+        pages:
+          description: 页数
+          type: integer
+    #SerialParams:
+      #type: object
+      #properties:
+        #baudrate:
+          #description: 波特率 e.g. 9600
+          #type: integer
+        #com:
+          #description: 串口
+          #type: string
+        #data_bit:
+          #description: 数据位 e.g. 8
+          #type: integer
+        #is_hex:
+          #description: 16进制发送 =1 ，assic 发送 =0
+          #type: integer
+        #parity:
+          #description: '奇偶校验 N, E或O'
+          #type: string
+        #payload:
+          #description: 发送内容
+          #type: string
+        #stop_bit:
+          #description: 停止位 e.g. 1
+          #type: integer
+        #time_out:
+          #description: 超时 e.g. 1
+          #type: integer
+    #TDevice:
+      #type: object
+      #properties:
+        #address:
+          #description: 通讯地址(比如moodbus地址)
+          #type: integer
+        #baudrate:
+          #description: 波特率
+          #type: integer
+        #com:
+          #description: 通讯串口
+          #type: string
+        #data_bit:
+          #description: 数据位
+          #type: integer
+        #dev_name:
+          #description: 设备名称
+          #type: string
+        #dev_params:
+          #description: 设备的参数(一般情况不需要)
+          #type: string
+        #dev_type:
+          #description: 设备类型(驱动名)
+          #type: string
+        #id:
+          #description: device_id
+          #type: string
+        #ip_addr:
+          #description: 若是网络设备，填ip地址或url
+          #type: string
+        #parity:
+          #description: '奇偶校验("N", "E", "O")'
+          #type: string
+        #stop_bit:
+          #description: 停止位
+          #type: string
+    RPUser:
+      type: object
+      properties:
+        name:
+          type: string
+        admin_flag:
+          type: boolean
+        phone:
+          type: string
+        last_login_ip:
+          type: string
+        last_login_time:
+          type: string
+    TWUser:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+        admin_flag:
+          type: boolean
+          default: false
+          description: 是否设置为管理员
+        phone:
+          type: string
+    OrganizationTree:        
+      type: object
+      properties:
+        id:
+          type: integer
+          description: id节点的id.
+        name:
+          type: string
+          description: 组织结构的名称
+    CreateOrganizationTree:        
+      type: object
+      properties:
+        parent_id:
+          type: integer
+          description: parent_id(创建根的时候为0)是该层级的节点的父节点.
+        name:
+          type: string
+          description: 要创建的组织结构的名称
+    AddOrganizationTree:        
+      type: object
+      properties:
+        id:
+          type: integer
+          description: id是位于将要添加的节点的临近节点的id.
+        name:
+          type: string
+          description: 要添加的组织结构的名称
+        left_or_right:
+          type: string
+          description: 添加在给定id节点的左(前)边还是右(后)边,值为(left|right)
+          example: right
+    OrganizationPosition:        
+      type: object
+      properties:
+        position_id:
+          type: string
+          description: 组织结构地理位置的ID("创建时，置空即可，由系统后端生成")
+          example: ""
+        address:
+          type: string
+          description: 详细地址
+          example: 无锡市新区太湖大道XX号
+        floor:
+          type: string
+          description: 楼层
+          example: 5
+        unit_no:
+          type: string
+          description: 单元号(门牌号之类的)
+          example: 501
+        longitude_and_latituude:    
+          type: string
+          description: 经纬度
+          example: 120.28429,31.52853
+        summary:
+          type: string
+          description: 简介备注
+          example: 二比程序员宅基地
+  securitySchemes:
+    #xxxstore_auth:
+      #type: oauth2
+      #flows:
+        #implicit:
+          #authorizationUrl: https://xxx.xxx.xxx/oauth/authorize
+          #scopes:
+            #write:pets: modify pets in your account
+            #read:pets: read your pets
+    api_key:
+      type: apiKey
+      name: Authorization
+      in: header

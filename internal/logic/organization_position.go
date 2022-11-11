@@ -17,8 +17,17 @@ func (m *Manage) OrganizationPosition() ([]*ent.OrganizationPosition, error) {
 }
 
 // ListOrganizationPositionDevices ....
-func (m *Manage) ListOrganizationPositionDevices(eo *ent.OrganizationPosition) ([]*ent.Device, error) {
-	return eo.QueryDevices().All(m.ctx)
+func (m *Manage) ListOrganizationPositionDevices(posid string) ([]*ent.Device, error) {
+	return m.entC.OrganizationPosition.Query().
+		Where(organizationposition.PositionID(posid)).
+		QueryDevices().All(m.ctx)
+}
+
+// ListOrganizationPositionCharges ....
+func (m *Manage) ListOrganizationPositionCharges(posid string) ([]*ent.User, error) {
+	return m.entC.OrganizationPosition.Query().
+		Where(organizationposition.PositionID(posid)).
+		QueryPersonCharges().All(m.ctx)
 }
 
 // CreateOrganizationPosition .....
@@ -102,7 +111,8 @@ func (m *Manage) SetPersonChargeWithOrganizationPosition(posid, uname string) er
 	o, oerr := m.entC.OrganizationPosition.Query().Where(organizationposition.PositionID(posid)).Only(m.ctx)
 	u, uerr := m.entC.User.Query().Where(user.Name(uname)).Only(m.ctx)
 	if oerr == nil && uerr == nil {
-		return u.Update().AddPersonCharges(o).Exec(m.ctx)
+		//return u.Update().AddPersonCharges(o).Exec(m.ctx)
+		return o.Update().AddPersonCharges(u).Exec(m.ctx)
 	}
 	return fmt.Errorf("%v-%v", oerr, uerr)
 }
@@ -110,9 +120,9 @@ func (m *Manage) SetPersonChargeWithOrganizationPosition(posid, uname string) er
 // RemovePersonChargeWithOrganizationPosition .....
 func (m *Manage) RemovePersonChargeWithOrganizationPosition(posid, uname string) error {
 	o, oerr := m.entC.OrganizationPosition.Query().Where(organizationposition.PositionID(posid)).Only(m.ctx)
-	u, uerr := m.entC.User.Query().Where(user.Name(uname)).Only(m.ctx)
+	u, uerr := o.QueryPersonCharges().Where(user.Name(uname)).Only(m.ctx)
 	if oerr == nil && uerr == nil {
-		return o.Update().RemovePersonCharges(u).Exec(m.ctx)
+		return o.Update().RemovePersonChargeIDs(u.ID).Exec(m.ctx)
 	}
 	return fmt.Errorf("%v-%v", oerr, uerr)
 }

@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/yjiong/iotdor/ent"
+	"github.com/yjiong/iotdor/ent/device"
 	"github.com/yjiong/iotdor/ent/group"
 	"github.com/yjiong/iotdor/ent/user"
 	"github.com/yjiong/iotdor/utils"
@@ -29,6 +30,11 @@ func (m *Manage) AllDevices() (ids []string) {
 		}
 	}
 	return
+}
+
+// DeviceInfo ....
+func (m *Manage) DeviceInfo(devid string) (*ent.Device, error) {
+	return m.entC.Device.Query().Where(device.DevID(devid)).Only(m.ctx)
 }
 
 // DeviceRealTimeValue ....
